@@ -977,7 +977,7 @@ function nextDuel(){
   const flip=Math.random()<.5, idA=flip?pb:pa, idB=flip?pa:pb;
   H.vk++; H.votes={}; H.own={[idA]:"A",[idB]:"B"}; H.cur={idA,idB};
   Music.setMood("vote");
-  setPhase({...head, ph:"vote", A:x.ans[idA], B:x.ans[idB], vc:0, vt:online().filter(p=>!H.own[p.pid]).length}, T_VOTE, endVote);
+  setPhase({...head, ph:"vote", vk:H.vk, A:x.ans[idA], B:x.ans[idB], vc:0, vt:online().filter(p=>!H.own[p.pid]).length}, T_VOTE, endVote);
   botsAct();
 }
 function endVote(){
@@ -1435,7 +1435,7 @@ function playerRender(){
   const mine=st?.sc?.find(s=>s[0]===P.pid);
   let cur=null, idx=0, total=0;
   if (st?.ph==="answer" && me.asg){ total=me.asg.length; const left=me.asg.filter(a=>!a[2] && !P.sentA[a[0]]); cur=left[0]||null; idx=total-left.length; }
-  const voted = st?.ph==="seg" ? (me.ready||P.sentV["r"+st.pt]) : st?.ph==="vote" ? (me.voted||P.sentV[st.vk]) : st?.ph==="bestq" ? (me.voted||P.sentV["bq"+st.pt]) : st?.ph==="wguess" ? (me.voted||P.sentV["w"+st.wk]) : null;
+  const voted = st?.ph==="seg" ? (me.ready||P.sentV["r"+st.pt]) : st?.ph==="vote" ? (me.voted||P.sentV["v"+st.pt]) : st?.ph==="bestq" ? (me.voted||P.sentV["bq"+st.pt]) : st?.ph==="wguess" ? (me.voted||P.sentV["w"+st.pt]) : null;
   const wrote = (st?.ph==="write"||st?.ph==="wans") && (me.done || P.sentQ===st.pt);
   if (st && st.t!=null && st.t<=2 && P.draft.trim()){
     const v=clean(P.draft, st.ph==="write"?QLEN:MAXLEN);
@@ -1483,7 +1483,7 @@ function playerRender(){
     else body=[ h("div",{class:"ptop"},h("span",{class:"lbl"},"مين كاتب هالجواب؟"),clock()),
       h("p",{class:"muted"},st.q),
       h("p",{class:"disp pq"},"«"+st.x+"»"),
-      ...st.opts.filter(o=>o[0]!==P.pid).map(([id,name,av])=>h("button",{class:"vbtn",onclick:()=>{ P.sentV["w"+st.wk]=name; send({t:"g",k:st.wk,id}); playerRender(); }},
+      ...st.opts.filter(o=>o[0]!==P.pid).map(([id,name,av])=>h("button",{class:"vbtn",onclick:()=>{ P.sentV["w"+st.pt]=name; send({t:"g",k:st.wk,id}); playerRender(); }},
         h("b",{},av), h("span",{},name))) ];
   }
   else if (st.ph==="wrevintro") body=[h("p",{class:"big"},"🥁 هلّأ الكشف!"),h("p",{class:"muted center"},"عيونكم عالشاشة الكبيرة")];
@@ -1515,7 +1515,7 @@ function playerRender(){
     if (me.opt) body=[h("p",{class:"big"},"جوابك على الشاشة 🤞"),h("p",{class:"muted center"},"إنت والي ضدك ما بتصوّتوا بهالسؤال. الباقي بيقرروا."), h("p",{class:"center"},clock())];
     else if (voted) body=[h("p",{class:"big"},`صوّتت لـ ${voted} ✓`),h("p",{class:"muted center"},"استنى النتيجة…")];
     else {
-      const opt=(k,txt)=>h("button",{class:"vbtn",onclick:()=>{ P.sentV[st.vk]=k; send({t:"vote",k:st.vk,c:k}); playerRender(); }},
+      const opt=(k,txt)=>h("button",{class:"vbtn",onclick:()=>{ P.sentV["v"+st.pt]=k; send({t:"vote",k:st.vk,c:k}); playerRender(); }},
         h("b",{},k), h("span",{}, txt));
       body=[ h("div",{class:"ptop"},h("span",{class:"lbl"},"مين الأضحك؟"),clock()), h("p",{class:"muted"},st.q), opt("A",st.A), opt("B",st.B) ];
     }
