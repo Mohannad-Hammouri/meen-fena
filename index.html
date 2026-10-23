@@ -209,6 +209,9 @@ details.settings .chip{width:44px;height:44px;justify-content:center;padding:0}
 .mlabel{display:flex;flex-direction:column;min-width:0}
 .mlabel span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px}
 .mbtns{display:flex;gap:6px;flex-wrap:wrap}
+.prow{display:flex;align-items:center;gap:12px;min-width:0}
+.pav{font-size:2rem}
+.chip.danger{background:var(--coral);border-color:var(--coral);color:var(--ink)}
 .livetag{margin-inline-start:8px;font-size:.75rem;font-weight:600;color:var(--ink);background:var(--mint);border-radius:999px;padding:0 8px}
 .mrow input[type=range]{flex:1;min-width:160px;accent-color:var(--sky)}
 .voicebox{display:flex;flex-direction:column;gap:6px;align-items:center;max-width:60ch;text-align:center}
@@ -962,7 +965,7 @@ function home(note){
 }
 
 /* ================= HOST ================= */
-const H = { peer:null, net:false, netMsg:"", code:"", st:{ph:"lobby"}, P:new Map(),
+const H = { kicked:new Set(), panelDraw:null, peer:null, net:false, netMsg:"", code:"", st:{ph:"lobby"}, P:new Map(),
   settings:{rounds:1, bots:0}, timeouts:[], iv:null, tok:0, closing:false, onEnd:null,
   seg:0, si:-1, rd:0, batch:null, mk:0, mAsk:{}, mAns:{}, mList:[], mguess:{}, msub:null, jk:0, jpick:null, jvotes:{}, jown:{}, jtarget:null, di:-1, votes:{}, vk:0, own:{}, wq:{}, bq:{}, bqOwn:{}, bqList:[], ready:{}, revGuess:{}, whoGuesses:[], whoOpts:[], ri:-1, who:null, whoList:[], wi:-1, wk:0, guess:{}, wAuthor:null };
 function later(ms,fn){ H.timeouts.push(setTimeout(fn,ms)); }
@@ -998,18 +1001,73 @@ function openHostPeer(){
 }
 
 /* ---- messages from phones ---- */
+const normName = n => String(n||"").replace(/\s+/g,"").replace(/[أإآ]/g,"ا").replace(/ة/g,"ه").replace(/ى/g,"ي").toLowerCase();
+const STALE_MS = 15000;
+function isGone(p){ return !p.bot && (!p.on || !p.conn?.open || Date.now()-(p.seen||0)>STALE_MS); }
 function onHostMsg(conn, d){
   if (!d || typeof d!=="object") return;
   if (d.t==="hello" && typeof d.pid==="string"){
-    const pid=d.pid.slice(0,24); conn._pid=pid;
+    let pid=d.pid.slice(0,24);
     const name=clean(d.name,16)||"لاعب", av=AVS.includes(d.av)?d.av:"🐳";
+    if (H.kicked.has(pid)){ try{ conn.send({t:"kicked"}); }catch{} setTimeout(()=>{ try{ conn.close(); }catch{} },400); return; }
     let p=H.P.get(pid);
-    if (!p){ p={pid,name,av,score:0,on:true,bot:false,conn}; H.P.set(pid,p); Music.play("pop"); }
-    else { p.name=name; p.av=av; p.conn=conn; if(!p.on) Music.play("pop"); p.on=true; }
+    if (!p){
+      // same name coming back on a new phone or a fresh browser: give them their old seat (and score) back
+      const twin=[...H.P.values()].find(x=>!x.bot && normName(x.name)===normName(name) && isGone(x));
+      if (twin){ p=twin; pid=twin.pid; try{ conn.send({t:"you",pid}); }catch{} }
+    }
+    conn._pid=pid;
+    if (!p){ p={pid,name,av,score:0,on:true,bot:false,conn,seen:Date.now()}; H.P.set(pid,p); Music.play("pop"); }
+    else {
+      const old=p.conn; p.name=name; p.av=av; p.conn=conn; p.seen=Date.now();
+      if (!p.on) Music.play("pop"); p.on=true;
+      if (old && old!==conn) try{ old.close(); }catch{}
+    }
     sendTo(p); push(); hostRender(); return;
   }
-  const p = H.P.get(conn._pid); if (!p) return;
+  const p = H.P.get(conn._pid);
+  if (!p || p.conn!==conn){ if (!H.kicked.has(conn._pid)) try{ conn.send({t:"who"}); }catch{} return; }   // we lost track of this phone: ask it to say hello again
+  p.seen=Date.now();
+  if (!p.on){ p.on=true; push(); hostRender(); }
+  if (d.t==="ping") return;
   handleAction(p, d);
+}
+/* a phone that went quiet (screen off, lost signal) is marked away so nobody waits for it */
+setInterval(()=>{
+  if (!H.code) return;
+  let changed=false;
+  for (const p of [...H.P.values()]){
+    if (p.bot || !p.on) continue;
+    if (Date.now()-(p.seen||0)>STALE_MS){ if (H.st.ph==="lobby") H.P.delete(p.pid); else p.on=false; changed=true; }
+  }
+  if (changed){ checkDone(); push(); hostRender(); }
+}, 3000);
+function kickPlayer(pid){
+  const p=H.P.get(pid); if (!p) return;
+  if (!p.bot) H.kicked.add(pid);
+  if (p.conn){ try{ p.conn.send({t:"kicked"}); }catch{} setTimeout(()=>{ try{ p.conn.close(); }catch{} },400); }
+  H.P.delete(pid);
+  if (p.bot) H.settings.bots=[...H.P.values()].filter(x=>x.bot).length;
+  Music.play("womp"); checkDone(); push(); hostRender();
+}
+function playersPanel(){
+  const ov=h("div",{class:"qrover",role:"dialog","aria-label":"اللاعبين",onclick:e=>{ if(e.target===ov) close(); }});
+  const close=()=>{ H.panelDraw=null; ov.remove(); };
+  const sure={};
+  const draw=()=>{
+    const list=[...H.P.values()].sort((a,b)=>(b.on-a.on)||(b.score-a.score));
+    ov.replaceChildren(h("div",{class:"mpanel"},
+      h("h2",{class:"disp",style:"margin:0;color:var(--sun)"},"👥 اللاعبين"),
+      h("p",{class:"muted small",style:"margin:0"},"إذا حدا فصل ورجع دخل بنفس الاسم، بيرجع لمكانه ونقاطه. واللي بدك تطلّعه من اللعبة، اطرده من هون."),
+      list.length ? list.map(p=>h("div",{class:"mrow"},
+        h("div",{class:"prow"}, h("span",{class:"pav","aria-hidden":"true"},p.av),
+          h("div",{class:"mlabel"}, h("strong",{},p.name), h("span",{class:"muted small"}, (p.bot?"🤖 بوت":p.on?"🟢 متصل":"🔴 مفصول")+" · "+p.score.toLocaleString("en")+" نقطة"))),
+        h("button",{class:"chip"+(sure[p.pid]?" danger":""),onclick:()=>{ if (sure[p.pid]){ kickPlayer(p.pid); delete sure[p.pid]; } else { sure[p.pid]=1; setTimeout(()=>{ delete sure[p.pid]; if(H.panelDraw) draw(); },4000); } draw(); }},
+          sure[p.pid]?"متأكد؟ اطرد":"🚪 طرد")))
+      : h("p",{class:"muted"},"لسا ما في لاعبين."),
+      h("button",{class:"btn",onclick:close},"تمام")));
+  };
+  H.panelDraw=draw; draw(); document.body.append(ov);
 }
 function countAuto(p,d){ if (d.auto && H.stats) H.stats.auto[p.pid]=(H.stats.auto[p.pid]||0)+1; }
 function handleAction(p, d){
@@ -1485,7 +1543,7 @@ function podium(top, rv, animate){
   return h("div",{class:"podium"}, top[1]?slot(2):null, slot(1), top[2]?slot(3):null);
 }
 function toLobby(){
-  clearLater(); for (const [k,p] of H.P) if(!p.on) H.P.delete(k);
+  clearLater(); H.kicked.clear(); for (const [k,p] of H.P) if(!p.on) H.P.delete(k);
   for (const p of H.P.values()) p.score=0;
   H.seg=0; H.rd=0; Music.setMood("lobby"); setPhase({ph:"lobby"});
 }
@@ -1540,6 +1598,7 @@ function hostRender(){
     Tracks.blocked ? h("button",{class:"chip",style:"border-color:var(--coral)",onclick:()=>Tracks.retry()},"🔇 اكبس لتشغيل الموسيقى") : null,
     TIMED.includes(st.ph) && st.ph!=="seg" ? ib("⏭","خلّصنا، كمّل",skipPhase) : null,
     st.ph!=="lobby" ? ib("📱","QR للانضمام",showQR) : null,
+    ib("👥","اللاعبين",playersPanel),
     ib("🎵","الموسيقى",musicPanel),
     ib(Music.muted?"🔇":"🔊","الصوت",e=>{ const m=Music.toggle(); e.currentTarget.textContent=m?"🔇":"🔊"; }),
     st.ph!=="lobby" ? ib("↩","رجوع للّوبي",toLobby) : null);
@@ -1720,6 +1779,7 @@ function hostRender(){
   const wasOpen = H.keepSettings || app.querySelector("details.settings")?.open;
   app.replaceChildren(bar, h("main",{class:"stage"}, body));
   if (wasOpen){ const d=app.querySelector("details.settings"); if (d) d.open=true; }
+  if (H.panelDraw) H.panelDraw();
   H.keepSettings=false;
 }
 
@@ -1751,7 +1811,7 @@ function joinForm(err, preset){
 function status(msg, sub){ P.sig=null; app.replaceChildren(h("div",{class:"phone"},h("div",{class:"pmain"},h("p",{class:"big"},msg), sub?h("p",{class:"muted center"},sub):null))); }
 
 function playerJoin(code,name,av){
-  P.code=code; P.name=name; P.av=av; P.pid=myPid(); P.found=false; wake();
+  P.code=code; P.name=name; P.av=av; P.pid=myPid(); P.found=false; P.kicked=false; wake();
   ls.set("mf.last", JSON.stringify({code, at:Date.now()}));
   if (!netOK()) return joinForm("ما قدرنا نحمّل مكتبة الاتصال. تأكد إنك فاتح رابط اللعبة الأصلي ومعك إنترنت.", code);
   status("عم ندوّر على الغرفة…", `الكود ${code}`);
@@ -1761,6 +1821,7 @@ function playerJoin(code,name,av){
   P.peer.on("error", e=>{
     if (e.type==="peer-unavailable"){ if (!P.found) joinForm(`ما لقينا لعبة بالكود ${code}. تأكد من الرقم على الشاشة.`, code); else retryLater(); }
     else if (!P.found) joinForm("ما قدرنا نتصل. جرّب كمان مرة، ويفضل تكونوا على نفس الواي فاي.", code);
+    else retryLater();
   });
   P.peer.on("disconnected", ()=>{ try{ P.peer.reconnect(); }catch{} });
 }
@@ -1768,15 +1829,44 @@ function connectHost(){
   const conn=P.peer.connect(NS+P.code,{reliable:true});
   P.conn=conn;
   conn.on("open", ()=>{ P.found=true; conn.send({t:"hello",pid:P.pid,name:P.name,av:P.av}); flush(); });
-  conn.on("data", d=>{ if (d && d.t==="st"){ P.st=d.st; P.out=P.out.filter(o=>o.pt===d.st.pt && !confirmed(o.msg,d.st)); playerRender(); } });
-  conn.on("close", ()=>{ if (P.conn===conn) retryLater(); });
-  conn.on("error", ()=>{ if (P.conn===conn) retryLater(); });
+  conn.on("data", d=>{
+    if (d && d.t==="who"){ try{ conn.send({t:"hello",pid:P.pid,name:P.name,av:P.av}); }catch{} return; }
+    if (d && d.t==="you" && typeof d.pid==="string"){ P.pid=d.pid; ls.set("mf.pid",d.pid); P.sig=null; return; }
+    if (d && d.t==="kicked"){ P.kicked=true; clearTimeout(P.retry); P.retry=null; try{ P.peer?.destroy(); }catch{} kickedScreen(); return; }
+    if (d && d.t==="st"){ P.st=d.st; P.out=P.out.filter(o=>o.pt===d.st.pt && !confirmed(o.msg,d.st)); playerRender(); } });
+  conn.on("close", ()=>{ if (P.conn===conn && !P.kicked) retryLater(); });
+  conn.on("error", ()=>{ if (P.conn===conn && !P.kicked) retryLater(); });
 }
 function retryLater(){
-  if (P.retry) return;
-  status("انقطع الاتصال… عم نرجع","لا تسكّر الصفحة");
-  P.retry=setTimeout(()=>{ P.retry=null; if (P.peer && !P.peer.destroyed){ if(P.peer.disconnected) try{P.peer.reconnect();}catch{} connectHost(); } },2000);
+  if (P.retry || P.kicked) return;
+  status("انقطع الاتصال… عم نرجع","لا تسكّر الصفحة، بترجع لحالك");
+  P.retry=setTimeout(()=>{
+    P.retry=null; if (P.kicked) return;
+    if (!P.peer || P.peer.destroyed){ rejoin(); return; }               // the signalling link died: start a fresh one, same seat
+    if (P.peer.disconnected) try{ P.peer.reconnect(); }catch{}
+    connectHost();
+  },2000);
 }
+function rejoin(){
+  try{ P.peer?.destroy(); }catch{}
+  P.peer=new Peer();
+  P.peer.on("open", connectHost);
+  P.peer.on("error", ()=>retryLater());
+  P.peer.on("disconnected", ()=>{ try{ P.peer.reconnect(); }catch{} });
+}
+function kickedScreen(){
+  P.sig=null;
+  app.replaceChildren(h("div",{class:"phone"},h("div",{class:"pmain"},
+    h("p",{class:"big"},"🚪"), h("p",{class:"big"},"طلعت من اللعبة"),
+    h("p",{class:"muted center"},"الشاشة الرئيسية طلّعتك. إذا بدك ترجع، احكي مع اللي ماسك الشاشة."),
+    h("button",{class:"btn ghost",onclick:()=>{ P.kicked=false; home(); }},"رجوع"))));
+}
+/* heartbeat so the main screen knows this phone is still here; and reconnect straight away when the phone wakes up */
+setInterval(()=>{ try{ if (P.conn?.open && !P.kicked) P.conn.send({t:"ping"}); }catch{} }, 4000);
+document.addEventListener("visibilitychange", ()=>{
+  if (document.visibilityState!=="visible" || !P.code || P.kicked || !P.found) return;
+  if (!P.conn?.open){ clearTimeout(P.retry); P.retry=null; retryLater(); }
+});
 function send(msg){ P.out.push({msg, pt:P.st?.pt}); flush(); }
 function flush(){ if (!P.conn?.open) return; for (const o of P.out) try{ P.conn.send(o.msg); }catch{} }
 function confirmed(m, st){
