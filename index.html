@@ -31,6 +31,7 @@
 :root[data-scene="2"]{--bg:#221f50;--stage:#2c2866;--panel:#373278;--line:#4c4795;--g1:rgba(170,150,255,.26);--g2:rgba(255,163,177,.12);--g3:rgba(140,200,255,.10)}
 :root[data-scene="3"]{--bg:#111a2d;--stage:#19243f;--panel:#212f51;--line:#33446d;--g1:rgba(255,214,133,.24);--g2:rgba(17,26,45,0);--g3:rgba(140,200,255,.07)}
 :root[data-scene="4"]{--bg:#3a1c40;--stage:#4a2551;--panel:#5a2e61;--line:#78417a;--g1:rgba(255,165,115,.28);--g2:rgba(255,214,133,.14);--g3:rgba(255,120,150,.14)}
+:root[data-scene="6"]{--bg:#2a1f4d;--stage:#352863;--panel:#413174;--line:#5a4795;--g1:rgba(255,214,133,.32);--g2:rgba(255,163,177,.14);--g3:rgba(140,200,255,.12)}
 :root[data-scene="5"]{--bg:#1e2147;--stage:#292c59;--panel:#34376a;--line:#4a4e8b;--g1:rgba(255,214,133,.30);--g2:rgba(140,200,255,.12);--g3:rgba(255,163,177,.12)}
 html,body{height:100%}
 body{
@@ -146,6 +147,11 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 .qitem .by{display:flex;align-items:center;gap:8px;margin-top:10px;font-family:var(--display);font-weight:800;color:#1f8a6b;animation:drop .6s cubic-bezier(.3,1.6,.5,1)}
 .qitem.top{box-shadow:0 0 0 5px var(--sun),0 7px 0 var(--skydeep)}
 .small{font-size:.9rem}
+.award{display:flex;flex-direction:column;align-items:center;gap:14px}
+.aicon{font-size:6rem;line-height:1;animation:drop .7s cubic-bezier(.3,1.6,.5,1)}
+.atitle{font-size:clamp(2.6rem,6vw,4.4rem);color:var(--sun);margin:0}
+.award.on .lobbyp .who{animation:pop .8s cubic-bezier(.3,1.6,.5,1)}
+.awhy{font-size:1.6rem;margin:0;color:var(--cream)}
 .kl{display:block}
 .stage{font-size:1.2rem}
 .title{font-size:clamp(3rem,8vw,5.5rem);color:var(--sun);margin:0;text-shadow:0 5px 0 var(--ink)}
@@ -603,7 +609,7 @@ const Music = (() => {
 })();
 
 /* ================= your own music: one file per segment, kept on this device ================= */
-const SLOTS = [["all","كل اللعبة (إذا ما اخترتوا لفقرة)"],["0","اللوبي"],["1","🤪 مين فينا؟"],["2","✍️ كمّل الجملة"],["3","🕵️ مين كاتبها؟"],["4","🔥 فقرة التعويض وأحلى سؤال"],["5","👑 إعلان النتيجة"]];
+const SLOTS = [["all","كل اللعبة (إذا ما اخترتوا لفقرة)"],["0","اللوبي"],["1","🤪 مين فينا؟"],["2","✍️ كمّل الجملة"],["3","🕵️ مين كاتبها؟"],["4","🔥 فقرة التعويض وأحلى سؤال"],["6","🏆 حفل الجوائز"],["5","👑 إعلان النتيجة"]];
 const SILENT=(()=>{ try{ const n=800, b=new ArrayBuffer(44+n*2), v=new DataView(b), w=(o,t)=>{ for(let i=0;i<t.length;i++) v.setUint8(o+i,t.charCodeAt(i)); };
   w(0,"RIFF"); v.setUint32(4,36+n*2,true); w(8,"WAVE"); w(12,"fmt "); v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,1,true);
   v.setUint32(24,8000,true); v.setUint32(28,16000,true); v.setUint16(32,2,true); v.setUint16(34,16,true); w(36,"data"); v.setUint32(40,n*2,true);
@@ -632,7 +638,7 @@ const Tracks = {
     this.src=null; this.sync(this.slot);
   },
   /* songs that live next to index.html in a "music" folder (e.g. on GitHub Pages) play for everyone who opens the link */
-  SITE:{all:"all","0":"lobby","1":"meen-feena","2":"kammel","3":"meen-katebha","4":"taaweed","5":"results"},
+  SITE:{all:"all","0":"lobby","1":"meen-feena","2":"kammel","3":"meen-katebha","4":"taaweed","5":"results","6":"awards"},
   siteUrls:{},
   async loadSite(){
     if (location.protocol==="file:") return;
@@ -805,20 +811,21 @@ function onHostMsg(conn, d){
   const p = H.P.get(conn._pid); if (!p) return;
   handleAction(p, d);
 }
+function countAuto(p,d){ if (d.auto && H.stats) H.stats.auto[p.pid]=(H.stats.auto[p.pid]||0)+1; }
 function handleAction(p, d){
   const st=H.st;
   if (d.t==="ans" && st.ph==="answer"){
     const pr=H.batch?.prompts.find(x=>x.key===d.k);
     const x=clean(d.x,MAXLEN);
-    if (pr && pr.pair.includes(p.pid) && x && !pr.ans[p.pid]){ pr.ans[p.pid]=x; Music.play("blip"); }
+    if (pr && pr.pair.includes(p.pid) && x && !pr.ans[p.pid]){ pr.ans[p.pid]=x; Music.play("blip"); countAuto(p,d); }
   } else if (d.t==="vote" && st.ph==="vote" && d.k===H.vk && (d.c==="A"||d.c==="B") && !H.own[p.pid] && !H.votes[p.pid]){
     H.votes[p.pid]=d.c; Music.play("tick");
   } else if (d.t==="q" && st.ph==="write"){
-    const x=clean(d.x,QLEN); if (x && !H.wq[p.pid]){ H.wq[p.pid]=x; Music.play("blip"); }
+    const x=clean(d.x,QLEN); if (x && !H.wq[p.pid]){ H.wq[p.pid]=x; Music.play("blip"); countAuto(p,d); }
   } else if (d.t==="ready" && st.ph==="seg"){
     if (!H.ready[p.pid]){ H.ready[p.pid]=1; Music.play("pop"); }
   } else if (d.t==="wa" && st.ph==="wans"){
-    const x=clean(d.x,MAXLEN); if (x && !H.who.ans[p.pid]){ H.who.ans[p.pid]=x; Music.play("blip"); }
+    const x=clean(d.x,MAXLEN); if (x && !H.who.ans[p.pid]){ H.who.ans[p.pid]=x; Music.play("blip"); countAuto(p,d); }
   } else if (d.t==="g" && st.ph==="wguess" && d.k===H.wk && p.pid!==H.wAuthor && d.id!==p.pid && st.opts.some(o=>o[0]===d.id) && !H.guess[p.pid]){
     H.guess[p.pid]=d.id; Music.play("tick");
   } else if (d.t==="bq" && st.ph==="bestq" && H.bqList.some(q=>q[0]===d.id) && H.bqOwn[p.pid]!==d.id && !H.bq[p.pid]){
@@ -901,11 +908,11 @@ function botsAct(){
   const st=H.st, bots=online().filter(p=>p.bot);
   for (const b of bots){
     if (st.ph==="answer") H.batch.prompts.filter(x=>x.pair.includes(b.pid)).forEach((x,i)=>
-      at(rnd(6,25)*1000*(i+1), ()=>handleAction(b,{t:"ans",k:x.key,x:pick(BOT_ANS)})));
+      at(rnd(6,25)*1000*(i+1), ()=>handleAction(b,{t:"ans",k:x.key,x:pick(BOT_ANS),auto:Math.random()<.3?1:0})));
     if (st.ph==="vote" && !H.own[b.pid]) at(rnd(3,14)*1000, ()=>handleAction(b,{t:"vote",k:H.vk,c:pick(["A","B"])}));
     if (st.ph==="write") at(rnd(8,40)*1000, ()=>handleAction(b,{t:"q",x:nextPrompt(Math.random()<.5?"q":"s")}));
     if (st.ph==="seg") at(rnd(2,7)*1000, ()=>handleAction(b,{t:"ready"}));
-    if (st.ph==="wans") at(rnd(6,30)*1000, ()=>handleAction(b,{t:"wa",x:pick(BOT_ANS)}));
+    if (st.ph==="wans") at(rnd(6,30)*1000, ()=>handleAction(b,{t:"wa",x:pick(BOT_ANS),auto:Math.random()<.3?1:0}));
     if (st.ph==="wguess" && b.pid!==H.wAuthor) at(rnd(3,12)*1000, ()=>{ const ok=st.opts.filter(o=>o[0]!==b.pid); handleAction(b,{t:"g",k:H.wk,id:pick(ok)[0]}); });
     if (st.ph==="bestq") at(rnd(3,14)*1000, ()=>{ const ok=H.bqList.filter(q=>q[0]!==H.bqOwn[b.pid]); if(ok.length) handleAction(b,{t:"bq",id:pick(ok)[0]}); });
   }
@@ -925,6 +932,7 @@ function startGame(){
   if (online().length<3) return;
   clearLater();
   for (const p of H.P.values()) p.score=0;
+  H.stats={votes:{}, sweeps:{}, right:{}, fooled:{}, auto:{}, seg4start:null};
   H.seg=0; Music.play("tada");
   nextSegment();
 }
@@ -984,6 +992,9 @@ function endVote(){
   setPhase({...st, ph:"reveal", rv:0, res, t:0});
   at(2600,()=>{ H.st.rv=1; Music.play("roll",2.4); push(); hostRender(); });
   at(5100,()=>{ H.st.rv=2; H.st.res.who=who; if(pA) pA.score+=res.pts.A; if(pB) pB.score+=res.pts.B;
+    if (H.stats){ const S=H.stats;
+      if (H.seg<=2){ S.votes[H.cur.idA]=(S.votes[H.cur.idA]||0)+vA; S.votes[H.cur.idB]=(S.votes[H.cur.idB]||0)+vB; }
+      if (res.sweep){ const w=win==="A"?H.cur.idA:H.cur.idB; S.sweeps[w]=(S.sweeps[w]||0)+1; } }
     Music.play(vA+vB===0?"womp":res.sweep?"applause":"tada"); if(res.sweep) confetti(); push(); hostRender(); });
   at(10500,nextDuel);
 }
@@ -1042,8 +1053,9 @@ function nextReveal(){
   Music.duck(true); Music.play("roll",2.2);
   setPhase({ph:"wrev", seg:3, q:H.who.q, x, wi:H.ri, wn:H.whoList.length, rv:0, tally:opts.map(([pid,name,av])=>[pid,name,av,tally[pid]||0]), res:{right,fooled}});
   at(2600,()=>{
-    for (const [pid,g] of Object.entries(guesses)) if (g===author){ const p=H.P.get(pid); if(p) p.score+=WHO_RIGHT; }
+    for (const [pid,g] of Object.entries(guesses)) if (g===author){ const p=H.P.get(pid); if(p) p.score+=WHO_RIGHT; if(H.stats) H.stats.right[pid]=(H.stats.right[pid]||0)+1; }
     if (a) a.score+=fooled*WHO_FOOL;
+    if (H.stats && fooled) H.stats.fooled[author]=(H.stats.fooled[author]||0)+fooled;
     H.st.rv=1; H.st.res.author=[author,a?.name||"",a?.av||""]; H.st.res.pts=fooled*WHO_FOOL;
     Music.duck(false); Music.play(right?"tada":"womp"); if(fooled>=2 && right===0) confetti(); push(); hostRender(); });
   at(8500,nextReveal);
@@ -1051,6 +1063,7 @@ function nextReveal(){
 /* segment 4 */
 function startWrite(){
   H.wq={};
+  if (H.stats) H.stats.seg4start=Object.fromEntries([...H.P.values()].map(p=>[p.pid,p.score]));
   Music.setMood("write");
   setPhase({ph:"write", seg:4}, T_WRITE, endWrite);
   botsAct();
@@ -1080,7 +1093,46 @@ function endBestQ(){
   at(2200,()=>{ H.st.rv=1; Music.play("tada"); confetti(); push(); hostRender(); });
   at(11000,finalScreen);
 }
+/* Arabic counting: 1 صوت واحد, 2 صوتين, 3-10 أصوات, 11+ صوت */
+const cnt=(n,one,two,few,many)=> n===1?one : n===2?two : n<=10?`${n} ${few}` : `${n} ${many}`;
+const AWARDS = [
+  {key:"votes",  icon:"😂", title:"ملك النكت",     why:n=>"جمع "+cnt(n,"صوت واحد","صوتين","أصوات","صوت")},
+  {key:"sweeps", icon:"💥", title:"الساحق",        why:n=>"أخذ كل الأصوات "+cnt(n,"مرة","مرتين","مرات","مرة")},
+  {key:"right",  icon:"🕵️", title:"قارئ الأفكار",  why:n=>"عرف "+cnt(n,"كاتب واحد","كاتبين","كتّاب","كاتب")+" صح"},
+  {key:"fooled", icon:"🥸", title:"أخطر مخادع",    why:n=>"ضلّل الناس "+cnt(n,"مرة","مرتين","مرات","مرة")},
+  {key:"seg4",   icon:"🔥", title:"ملك التعويض",   why:n=>`جاب ${n} نقطة بالتعويض`},
+  {key:"auto",   icon:"🐢", title:"السلحفاة",      why:n=>n===1?"جواب انبعت لحاله آخر ثانية":cnt(n,"","جوابين","أجوبة","جواب")+" انبعتوا لحالهم آخر ثانية"},
+];
+function computeAwards(){
+  const S=H.stats; if (!S) return [];
+  const seg4={};
+  if (S.seg4start) for (const p of H.P.values()) seg4[p.pid]=p.score-(S.seg4start[p.pid]||0);
+  const src={votes:S.votes, sweeps:S.sweeps, right:S.right, fooled:S.fooled, seg4, auto:S.auto};
+  const out=[];
+  for (const a of AWARDS){
+    const m=src[a.key]||{}, best=Math.max(0,...Object.values(m));
+    if (best<=0) continue;                                   // nobody earned it: skip the award
+    const winners=Object.entries(m).filter(([,v])=>v===best).map(([pid])=>H.P.get(pid)).filter(Boolean);
+    if (!winners.length) continue;
+    if (winners.length>=3 && winners.length>=online().length) continue;   // everyone tied: nobody stands out
+    out.push({icon:a.icon, title:a.title, why:a.why(best), who:winners.map(p=>[p.pid,p.name,p.av])});
+  }
+  return out;
+}
 function finalScreen(){
+  const list=computeAwards();
+  if (!list.length) return podiumScreen();
+  Music.setMood("vote");
+  setPhase({ph:"awards", rv:-1, list});
+  let t=4200;
+  list.forEach((a,i)=>{
+    at(t,()=>{ H.st.rv=i; H.st.shown=false; Music.play("roll",1.8); push(); hostRender(); });
+    at(t+2000,()=>{ H.st.shown=true; Music.play("tada"); push(); hostRender(); });
+    t+=6200;
+  });
+  at(t+600, podiumScreen);
+}
+function podiumScreen(){
   const ranked=sc().sort((a,b)=>b[3]-a[3]), top=ranked.slice(0,3);
   Music.setMood("lobby"); Music.duck(true);
   setPhase({ph:"podium", rv:0, top});
@@ -1147,6 +1199,7 @@ function segLabel(st){
 function sceneFor(st){
   if (!st || st.ph==="lobby") return "0";
   if (["podium","final"].includes(st.ph)) return "5";
+  if (st.ph==="awards") return "6";
   if (["bestq","bestqr"].includes(st.ph)) return "4";
   return st.seg ? String(st.seg) : "0";
 }
@@ -1277,6 +1330,17 @@ function hostRender(){
         q, h("div",{class:"vn muted small",style:"color:#4a6290"},`${v} أصوات`),
         st.rv ? h("div",{class:"by"},av," ",name," ",pts?`+${pts}`:"") : null)))
     ];
+  } else if (st.ph==="awards"){
+    const a=st.list[st.rv];
+    body = st.rv<0
+      ? [h("span",{class:"segintro"},h("span",{class:"icon","aria-hidden":"true"},"🏆")), h("p",{class:"banner"},"حفل الجوائز!"), h("p",{class:"muted"},`${st.list.length} ألقاب الليلة`)]
+      : [h("p",{class:"kind"},`${st.rv+1} من ${st.list.length}`),
+         h("div",{class:"award"+(st.shown?" on":"")},
+           h("span",{class:"aicon","aria-hidden":"true"},a.icon),
+           h("h2",{class:"disp atitle"},a.title),
+           st.shown ? [h("div",{class:"lobbyp"}, a.who.map(([pid,name,av])=>h("div",{class:"who ok"},h("div",{class:"av big","aria-hidden":"true"},av),h("div",{class:"nm"},name)))),
+                       h("p",{class:"awhy"}, a.who.length>1?`تعادل! ${a.why}`:a.why)]
+                    : h("p",{class:"banner"},"🥁")) ];
   } else if (st.ph==="podium"){
     const t=st.top, msg=["النتيجة النهائية… 🥁","🥉 المركز الثالث","🥈 المركز الثاني","والمركز الأول… 🥁🥁🥁", kingLine(t[0])][st.rv];
     body=[h("p",{class:"banner",style:"font-size:clamp(2.2rem,5.5vw,4rem)"},msg), podium(t,st.rv,true)];
@@ -1375,11 +1439,11 @@ function playerRender(){
   const wrote = (st?.ph==="write"||st?.ph==="wans") && (me.done || P.sentQ===st.pt);
   if (st && st.t!=null && st.t<=2 && P.draft.trim()){
     const v=clean(P.draft, st.ph==="write"?QLEN:MAXLEN);
-    if (st.ph==="answer" && cur && P.draftKey===cur[0]){ P.sentA[cur[0]]=1; send({t:"ans",k:cur[0],x:v}); P.draft=""; return playerRender(); }
-    if (st.ph==="wans" && !wrote && P.draftKey==="wans"+st.pt){ P.sentQ=st.pt; send({t:"wa",x:v}); P.draft=""; return playerRender(); }
-    if (st.ph==="write" && !wrote && P.draftKey==="write"+st.pt){ P.sentQ=st.pt; send({t:"q",x:v}); P.draft=""; return playerRender(); }
+    if (st.ph==="answer" && cur && P.draftKey===cur[0]){ P.sentA[cur[0]]=1; send({t:"ans",k:cur[0],x:v,auto:1}); P.draft=""; return playerRender(); }
+    if (st.ph==="wans" && !wrote && P.draftKey==="wans"+st.pt){ P.sentQ=st.pt; send({t:"wa",x:v,auto:1}); P.draft=""; return playerRender(); }
+    if (st.ph==="write" && !wrote && P.draftKey==="write"+st.pt){ P.sentQ=st.pt; send({t:"q",x:v,auto:1}); P.draft=""; return playerRender(); }
   }
-  const sig = st ? [st.ph,st.pt,st.seg,st.rd,st.di,st.vk,st.rv,cur?.[0]||"",voted||"",wrote?1:0,me.opt||"",me.author?1:0,["score","final"].includes(st.ph)?JSON.stringify(st.sc):""].join("|") : "none";
+  const sig = st ? [st.ph,st.pt,st.shown?1:0,st.seg,st.rd,st.di,st.vk,st.rv,cur?.[0]||"",voted||"",wrote?1:0,me.opt||"",me.author?1:0,["score","final"].includes(st.ph)?JSON.stringify(st.sc):""].join("|") : "none";
   if (sig===P.sig && app.querySelector(".phone .ptop")){
     app.querySelectorAll(".ptimer").forEach(el=>{ el.textContent=st?.t??""; el.classList.toggle("hot",(st?.t??99)<=5); });
     const pts=app.querySelector(".ptop .pts"); if(pts) pts.textContent=(mine?mine[3]:0).toLocaleString("en");
@@ -1473,6 +1537,11 @@ function playerRender(){
         h("b",{},i+1), h("span",{}, q, me.own===id ? h("small",{},"هاد سؤالك") : null))) ];
   }
   else if (st.ph==="bestqr") body=[h("p",{class:"big"},"شوف الشاشة! 👑")];
+  else if (st.ph==="awards"){
+    const a=st.list[st.rv], mine=a && st.shown && a.who.some(w=>w[0]===P.pid);
+    body = mine ? [h("p",{class:"big"},"🏆 مبروك!"), h("p",{class:"big",style:"font-size:3rem"},a.icon), h("p",{class:"big"},`إنت ${a.title}!`), h("p",{class:"muted center"},a.why)]
+         : [h("p",{class:"big"},"🏆 حفل الجوائز"), a&&st.shown ? h("p",{class:"muted center"},`${a.icon} ${a.title}: ${a.who.map(w=>w[1]).join(" و ")}`) : h("p",{class:"muted center"},"عيونكم عالشاشة 👀")];
+  }
   else if (st.ph==="podium"){
     const t=st.top||[], me1=(p)=>p&&p[0]===P.pid;
     const line=(p,label)=> me1(p) ? `${label}: إنت! 🎉` : `${label}: ${p[2]} ${p[1]}`;
