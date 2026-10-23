@@ -631,7 +631,22 @@ const Tracks = {
     const db=await this.open(); if(db) try{ db.transaction("t","readwrite").objectStore("t").delete(slot); }catch{}
     this.src=null; this.sync(this.slot);
   },
-  urlFor(slot){ return this.urls[slot] || this.urls.all || null; },
+  /* songs that live next to index.html in a "music" folder (e.g. on GitHub Pages) play for everyone who opens the link */
+  SITE:{all:"all","0":"lobby","1":"meen-feena","2":"kammel","3":"meen-katebha","4":"taaweed","5":"results"},
+  siteUrls:{},
+  async loadSite(){
+    if (location.protocol==="file:") return;
+    const exts=["mp3","m4a","mp4","wav","ogg","mov"];          // first one found wins; video files play their sound only
+    await Promise.all(Object.entries(this.SITE).map(async([slot,name])=>{
+      const found=await Promise.all(exts.map(async ext=>{
+        const u=`music/${name}.${ext}`;
+        try{ const r=await fetch(u,{method:"HEAD",cache:"no-cache"}); const ct=r.headers.get("content-type")||"";
+             return r.ok && !ct.includes("text/html") ? u : null; }catch{ return null; }
+      }));
+      const u=found.find(Boolean); if (u) this.siteUrls[slot]=u;
+    }));
+  },
+  urlFor(slot){ return this.urls[slot] || this.siteUrls[slot] || this.urls.all || this.siteUrls.all || null; },
   target(){ return this.muted?0:(this.ducked?this.vol*.25:this.vol); },
   fade(el,to,ms,done){ if(!el) return; const from=el.volume, t0=performance.now();
     const step=()=>{ const k=Math.min(1,(performance.now()-t0)/ms); el.volume=Math.max(0,Math.min(1,from+(to-from)*k)); if(k<1) requestAnimationFrame(step); else done&&done(); }; step(); },
@@ -666,7 +681,7 @@ const Tracks = {
   setVol(v){ this.vol=v; ls.set("mf.vol",String(v)); if(this.a) this.a.volume=this.target(); },
   preview(slot){                       // full-length listen from the music panel; press again to stop
     if (this.pvSlot===slot) return this.stopPreview();
-    const url=this.urls[slot]; if(!url) return;
+    const url=this.urls[slot]||this.siteUrls[slot]; if(!url) return;
     if (this.pv) this.pv.pause(); if (this.a) this.a.pause(); Music.silence(true);
     const el=new Audio(url); el.volume=this.target(); this.pv=el; this.pvSlot=slot;
     el.onended=()=>{ this.stopPreview(); this.onPreviewChange&&this.onPreviewChange(); };
@@ -690,14 +705,14 @@ function musicPanel(){
   const ov=h("div",{class:"qrover",role:"dialog","aria-label":"موسيقى اللعبة",onclick:e=>{ if(e.target===ov) close(); }});
   const draw=()=>{
     const rows=SLOTS.map(([slot,label])=>{
-      const f=Tracks.files[slot];
+      const f=Tracks.files[slot], site=Tracks.siteUrls[slot];
       const live = Tracks.a && !Tracks.pv && (Tracks.slot===slot || (slot==="all" && !Tracks.urls[Tracks.slot]));
-      const inp=h("input",{type:"file",accept:"audio/*",id:"mfile-"+slot,hidden:true,onchange:async e=>{ const file=e.target.files[0]; if(file){ await Tracks.put(slot,file); draw(); } }});
+      const inp=h("input",{type:"file",accept:"audio/*,video/mp4,video/quicktime,.mp4,.mov,.m4a",id:"mfile-"+slot,hidden:true,onchange:async e=>{ const file=e.target.files[0]; if(file){ await Tracks.put(slot,file); draw(); } }});
       return h("div",{class:"mrow"},
-        h("div",{class:"mlabel"}, h("strong",{},label, live?h("span",{class:"livetag"},"🔊 شغّالة هلّأ"):null), h("span",{class:"muted small"}, f?f.name:(slot==="all"?"ولا ملف: الموسيقى المدمجة":"زي «كل اللعبة»"))),
+        h("div",{class:"mlabel"}, h("strong",{},label, live?h("span",{class:"livetag"},"🔊 شغّالة هلّأ"):null), h("span",{class:"muted small"}, f ? f.name : site ? "🌐 من الموقع: "+site : (slot==="all"?"ولا ملف: الموسيقى المدمجة":"زي «كل اللعبة»"))),
         h("div",{class:"mbtns"},
           inp, h("label",{class:"chip",for:"mfile-"+slot,tabindex:"0",style:"cursor:pointer"}, f?"تغيير":"اختيار ملف"),
-          f ? h("button",{class:"chip",onclick:()=>{ Tracks.preview(slot); draw(); }}, Tracks.pvSlot===slot?"■ إيقاف":"▶ اسمعها") : null,
+          (f||site) ? h("button",{class:"chip",onclick:()=>{ Tracks.preview(slot); draw(); }}, Tracks.pvSlot===slot?"■ إيقاف":"▶ اسمعها") : null,
           f ? h("button",{class:"chip",onclick:async()=>{ await Tracks.del(slot); draw(); }},"✕") : null));
     });
     const vol=h("input",{type:"range",min:"0",max:"1",step:"0.05",id:"mvol",value:String(Tracks.vol),oninput:e=>Tracks.setVol(+e.target.value)});
@@ -705,6 +720,7 @@ function musicPanel(){
       h("h2",{class:"disp",style:"margin:0;color:var(--sun)"},"🎵 موسيقى اللعبة"),
       h("p",{class:"muted small",style:"margin:0"},"اختاروا ملفات موسيقى من جهازكم (MP3 أو غيره)، واحد لكل اللعبة أو واحد لكل فقرة. الملفات بتنحفظ على هالجهاز للمرات الجاية. اللي ما بتختارولها ملف بتشتغل فيها الموسيقى المدمجة."),
       h("p",{class:"muted small",style:"margin:0"},"كل أغنية بتشتغل كاملة ولحالها بالمرحلة اللي حطيتوها فيها، وبتعيد من أولها لما تخلص. يعني أغنية «اللوبي» بتسمعوها وإنتو باللوبي، وأغنية كل فقرة بتبلّش مع شاشة الفقرة."),
+      h("p",{class:"muted small",style:"margin:0"},"الأغاني اللي بمجلد music على الموقع (🌐) بتشتغل عند أي حدا بيفتح الرابط. الملف اللي بتختاروه هون بيغطّي عليها على هالجهاز بس."),
       h("p",{class:"muted small",style:"margin:0"},"بدكم موسيقى مجانية؟ ادخلوا Pixabay Music وابحثوا: game show، upbeat ukulele، happy funk، quiz."),
       ...rows,
       h("div",{class:"mrow"}, h("label",{class:"lbl",for:"mvol"},"علو الموسيقى"), vol),
@@ -752,6 +768,7 @@ const online = () => [...H.P.values()].filter(p=>p.on);
 function startHost(){
   Music.init(); Music.setMood("lobby"); Tracks.unlock(); wake();
   H.code = newCode(); H.st = { ph:"lobby" };
+  Tracks.loadSite().then(()=>{ Tracks.src=undefined; try{ hostRender(); }catch{} });
   openHostPeer(); hostRender();
 }
 function openHostPeer(){
