@@ -1071,8 +1071,23 @@ function startWrite(){
 function endWrite(){
   const order=shuffle(online().map(p=>p.pid)), M=order.length;
   if (M<3){ setPhase({ph:"segskip",seg:4}); at(5000,finalScreen); return; }
-  const prompts=order.map((pid,i)=>({ key:`4.${i}.${Date.now()%1e6}`, q:H.wq[pid]||nextPrompt(Math.random()<.5?"q":"s"), author:H.wq[pid]?pid:null,
-                                     pair:[order[(i+1)%M], order[(i+2)%M]], ans:{} }));   // each player answers exactly 2, never their own
+  const stamp=Date.now()%1e6, writers=order.filter(pid=>H.wq[pid]);
+  let prompts;
+  if (writers.length===M){
+    // everyone wrote: each question goes to the next two players in a circle, so everyone answers exactly 2 and never their own
+    prompts=order.map((pid,i)=>({ key:`4.${i}.${stamp}`, q:H.wq[pid], author:pid, pair:[order[(i+1)%M], order[(i+2)%M]], ans:{} }));
+  } else if (writers.length){
+    // only the questions players actually wrote; each to the two least-busy players who did not write it
+    const load=Object.fromEntries(order.map(pid=>[pid,0]));
+    prompts=shuffle(writers).map((pid,i)=>{
+      const pick2=shuffle(order.filter(x=>x!==pid)).sort((a,b)=>load[a]-load[b]).slice(0,2);
+      pick2.forEach(x=>load[x]++);
+      return { key:`4.${i}.${stamp}`, q:H.wq[pid], author:pid, pair:pick2, ans:{} };
+    });
+  } else {
+    // nobody wrote anything: fall back to the game's own questions so the round still happens
+    prompts=order.map((pid,i)=>({ key:`4.${i}.${stamp}`, q:nextPrompt(Math.random()<.5?"q":"s"), author:null, pair:[order[(i+1)%M], order[(i+2)%M]], ans:{} }));
+  }
   H.batch={prompts:shuffle(prompts), mult:MULT[4]};
   H.rd=1; startAnswer();
 }
@@ -1172,8 +1187,9 @@ function avatar(av,name,ok,badge,pid){ const fresh=pid&&!seenAv.has(pid); if(pid
 function timerEl(t,T){ const el=h("div",{class:"timer"+(t<=5?" hot":""),role:"timer","aria-label":t+" ثانية"},h("span",{},t)); el.style.setProperty("--p",T?t/T:0); return el; }
 function board(list, myPid){
   const sorted=[...list].sort((a,b)=>b[3]-a[3]);
-  return h("div",{class:"board"}, sorted.map((p,i)=>h("div",{class:"rowp"+(i===0&&p[3]>0?" first":"")+(p[4]?"":" off")},
-    h("span",{class:"r"},i+1), h("div",{class:"av","aria-hidden":"true"},p[2]), h("span",{class:"nm"},p[1]+(p[0]===myPid?" (إنت)":"")), h("span",{class:"sc"},p[3].toLocaleString("en")))));
+  // on a phone the yellow row is "you"; on the main screen it is first place
+  return h("div",{class:"board"}, sorted.map((p,i)=>h("div",{class:"rowp"+((myPid ? p[0]===myPid : i===0&&p[3]>0)?" first":"")+(p[4]?"":" off")},
+    h("span",{class:"r"}, i===0&&p[3]>0&&myPid ? "👑" : i+1), h("div",{class:"av","aria-hidden":"true"},p[2]), h("span",{class:"nm"},p[1]+(p[0]===myPid?" (إنت)":"")), h("span",{class:"sc"},p[3].toLocaleString("en")))));
 }
 function qrBox(size=220){
   const url=joinUrl(H.code);
