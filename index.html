@@ -1,0 +1,1485 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+</head>
+<body>
+<title>مين فينا؟ المجنونة</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;700;800&family=Readex+Pro:wght@400;600;700&display=swap">
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+/* Layout: one stage — big host screen (TV/laptop) + compact phone controller, same file. Soft "evening sky" blue, single committed look. */
+:root{
+  --bg:#172a4b; --stage:#1e355e; --panel:#264272; --line:#3a5a92;
+  --sky:#8cc8ff; --skydeep:#4d8fd6; --sun:#ffd685; --cream:#eef5ff; --muted:#aac0e2;
+  --mint:#86e6c8; --coral:#ffa3b1; --ink:#0f1f3b; --card:#f5f9ff;
+  --display:"Baloo Bhaijaan 2","Readex Pro",Tahoma,sans-serif;
+  --body:"Readex Pro",Tahoma,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+@property --bg{syntax:"<color>";inherits:true;initial-value:#172a4b}
+@property --g1{syntax:"<color>";inherits:true;initial-value:rgba(140,200,255,.22)}
+@property --g2{syntax:"<color>";inherits:true;initial-value:rgba(134,230,200,.10)}
+@property --g3{syntax:"<color>";inherits:true;initial-value:rgba(255,214,133,.08)}
+:root{--g1:rgba(140,200,255,.22);--g2:rgba(134,230,200,.10);--g3:rgba(255,214,133,.08)}
+/* scenes: 1 turquoise lagoon · 2 violet ink · 3 detective spotlight · 4 sunset finale · 5 golden night (results) */
+:root[data-scene="1"]{--bg:#0f3644;--stage:#14475a;--panel:#1b586c;--line:#2d7389;--g1:rgba(95,225,210,.26);--g2:rgba(255,214,133,.10);--g3:rgba(140,200,255,.12)}
+:root[data-scene="2"]{--bg:#221f50;--stage:#2c2866;--panel:#373278;--line:#4c4795;--g1:rgba(170,150,255,.26);--g2:rgba(255,163,177,.12);--g3:rgba(140,200,255,.10)}
+:root[data-scene="3"]{--bg:#111a2d;--stage:#19243f;--panel:#212f51;--line:#33446d;--g1:rgba(255,214,133,.24);--g2:rgba(17,26,45,0);--g3:rgba(140,200,255,.07)}
+:root[data-scene="4"]{--bg:#3a1c40;--stage:#4a2551;--panel:#5a2e61;--line:#78417a;--g1:rgba(255,165,115,.28);--g2:rgba(255,214,133,.14);--g3:rgba(255,120,150,.14)}
+:root[data-scene="5"]{--bg:#1e2147;--stage:#292c59;--panel:#34376a;--line:#4a4e8b;--g1:rgba(255,214,133,.30);--g2:rgba(140,200,255,.12);--g3:rgba(255,163,177,.12)}
+html,body{height:100%}
+body{
+  margin:0;background-color:var(--bg);color:var(--cream);font-family:var(--body);font-size:16px;line-height:1.6;direction:rtl;
+  background-image:
+    radial-gradient(70% 55% at 50% -15%, var(--g1), transparent 70%),
+    radial-gradient(45% 40% at 0% 100%, var(--g2), transparent 70%),
+    radial-gradient(45% 40% at 100% 100%, var(--g3), transparent 70%);
+  background-attachment:fixed;
+  transition:--bg 1.4s ease, --g1 1.4s ease, --g2 1.4s ease, --g3 1.4s ease, background-color 1.4s ease;
+}
+:root[data-scene="3"] body{background-image:
+    radial-gradient(38% 60% at 50% -10%, var(--g1), transparent 75%),
+    radial-gradient(45% 40% at 0% 100%, var(--g2), transparent 70%),
+    radial-gradient(45% 40% at 100% 100%, var(--g3), transparent 70%)}
+.rules{margin:0;padding-inline-start:1.4em;text-align:start;max-width:40ch;font-size:clamp(1.3rem,2.8vw,1.8rem);display:flex;flex-direction:column;gap:8px}
+.rules li::marker{font-family:var(--display);font-weight:800;color:var(--sky)}
+.phone .rules{font-size:1.15rem}
+.segintro .icon{font-size:4.5rem;line-height:1;display:block;margin-bottom:6px;animation:drop .7s cubic-bezier(.3,1.6,.5,1)}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+button{font-family:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
+.wrap{min-height:100%;padding-block:20px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column}
+.disp{font-family:var(--display);font-weight:800;line-height:1.2;text-wrap:balance}
+.muted{color:var(--muted)}
+.btn{border:0;border-radius:16px;padding:14px 22px;font-size:1.1rem;font-weight:700;background:var(--sky);color:var(--ink);box-shadow:0 4px 0 var(--skydeep);transition:transform .08s}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--skydeep)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--cream);border:2px solid var(--line);box-shadow:none}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;border:2px solid var(--line);background:transparent;color:var(--cream);font-weight:600;font-size:.95rem}
+.chip[aria-pressed="true"]{background:var(--sky);color:var(--ink);border-color:var(--sky)}
+.field{width:100%;padding:14px 16px;border-radius:14px;border:2px solid var(--line);background:var(--ink);color:var(--cream);font:inherit;font-size:1.15rem}
+.lbl{font-size:.8rem;letter-spacing:.04em;color:var(--muted);font-weight:600}
+
+/* ---------- home ---------- */
+.home{flex:1;display:grid;place-items:center;text-align:center}
+.home h1{font-size:clamp(3rem,10vw,6.5rem);margin:0;color:var(--sun);text-shadow:0 5px 0 var(--ink)}
+.home h1 small{display:block;font-size:.36em;color:var(--sky);margin-top:4px}
+.home .pick{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:28px}
+.home .pick .btn{min-width:240px;padding:20px 26px;font-size:1.25rem}
+.home .hint{max-width:48ch;margin:22px auto 0;font-size:.95rem}
+.warn{background:var(--panel);border:2px solid var(--coral);border-radius:14px;padding:12px 16px;margin-top:14px;max-width:60ch;text-align:start;font-size:.95rem}
+
+/* ---------- host ---------- */
+.hbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding-bottom:14px;border-bottom:2px dashed var(--line)}
+.code{display:flex;align-items:baseline;gap:12px}
+.code b{font-family:var(--display);font-size:clamp(1.5rem,3vw,2.1rem);color:var(--sun);letter-spacing:.12em;font-variant-numeric:tabular-nums;direction:ltr}
+.hbar .tools{display:flex;gap:8px;flex-wrap:wrap}
+.segchip{font-family:var(--display);font-weight:800;color:var(--sun);font-size:clamp(1.6rem,3.4vw,2.4rem);line-height:1.2}
+.stage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding-block:22px;text-align:center}
+.qcard{max-width:28ch;font-size:clamp(2.2rem,5.2vw,3.8rem);margin:0;line-height:1.25}
+.qsm{font-size:clamp(1.7rem,3.6vw,2.6rem)}
+.kind{font-family:var(--display);font-weight:700;color:var(--coral);font-size:1.4rem}
+.timer{--p:1;width:110px;height:110px;border-radius:50%;display:grid;place-items:center;
+  background:conic-gradient(var(--sky) calc(var(--p)*360deg), var(--panel) 0);font-family:var(--display);font-weight:800;font-size:2.4rem;color:var(--cream);position:relative;flex:none}
+.timer::before{content:"";position:absolute;inset:10px;border-radius:50%;background:var(--stage)}
+.timer span{position:relative;font-variant-numeric:tabular-nums}
+.timer.hot{background:conic-gradient(var(--coral) calc(var(--p)*360deg), var(--panel) 0)}
+.timer.hot span{color:var(--coral);animation:pulse .5s infinite alternate}
+@keyframes pulse{to{transform:scale(1.12)}}
+.duel{display:flex;gap:22px;flex-wrap:wrap;justify-content:center;align-items:center;width:100%}
+.who{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:96px;position:relative}
+.av{font-size:3rem;line-height:1;width:78px;height:78px;display:grid;place-items:center;border-radius:50%;background:var(--panel);border:3px solid var(--line)}
+.who.ok .av{border-color:var(--mint)}
+.who .tick{position:absolute;top:-4px;left:6px;background:var(--mint);color:var(--ink);border-radius:999px;font-size:.8rem;font-weight:700;padding:0 8px}
+.who .nm{font-weight:700;font-size:1.05rem}
+.answers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;width:min(1100px,100%)}
+.ans{position:relative;background:var(--card);color:var(--ink);border-radius:24px;padding:28px 24px 22px;min-width:0;
+  font-size:clamp(1.6rem,3.3vw,2.5rem);font-weight:700;line-height:1.4;box-shadow:0 7px 0 var(--skydeep);transition:transform .5s,opacity .5s,box-shadow .5s;overflow-wrap:anywhere}
+.ans .tag{position:absolute;top:-18px;right:20px;background:var(--skydeep);color:var(--cream);font-family:var(--display);font-weight:800;font-size:1.3rem;padding:0 14px;border-radius:10px}
+.ans .bar{height:10px;border-radius:6px;background:rgba(15,31,59,.12);margin-top:18px;overflow:hidden}
+.ans .bar i{display:block;height:100%;width:0;background:var(--skydeep)}
+.ans .bar.anim i{animation:grow 1.4s cubic-bezier(.2,.8,.2,1)}
+@keyframes grow{from{width:0}}
+.ans .vn{font-family:var(--display);font-weight:700;font-size:1.1rem;margin-top:6px;color:#4a6290}
+.ans.win{transform:scale(1.05) rotate(-1deg);box-shadow:0 0 0 6px var(--sun),0 9px 0 var(--skydeep)}
+.ans.lose{opacity:.5;transform:scale(.95)}
+.ans .owner{margin-top:14px;display:flex;align-items:center;gap:10px;justify-content:center;font-family:var(--display);font-weight:800;font-size:1.5rem;color:var(--ink);animation:drop .6s cubic-bezier(.3,1.6,.5,1)}
+.ans .pts{color:#1f8a6b}
+@keyframes drop{from{transform:translateY(-30px) scale(.4);opacity:0}}
+.banner{font-family:var(--display);font-weight:800;font-size:clamp(1.9rem,4.6vw,3.2rem);color:var(--sun);animation:drop .6s cubic-bezier(.3,1.6,.5,1);margin:0}
+.segintro .num{font-family:var(--display);font-weight:800;color:var(--sky);font-size:1.6rem}
+.segintro h2{font-size:clamp(2.8rem,8vw,5.4rem);margin:0;color:var(--sun);animation:drop .7s cubic-bezier(.3,1.6,.5,1)}
+.segintro p{max-width:44ch;margin:8px auto 0;font-size:1.2rem}
+.lobby{display:grid;grid-template-columns:auto minmax(0,1fr);gap:28px;align-items:center;width:min(1000px,100%)}
+.joinbox{background:var(--card);color:var(--ink);border-radius:20px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:8px;max-width:260px}
+.joinbox .qr{width:220px;height:220px;display:grid;place-items:center}
+.joinbox .qr img,.joinbox .qr canvas{width:220px!important;height:220px!important}
+.joinbox .code2{font-family:var(--display);font-weight:800;font-size:2rem;letter-spacing:.15em;direction:ltr;color:var(--ink)}
+.qrover{position:fixed;inset:0;z-index:20;background:rgba(15,31,59,.85);display:grid;place-items:center;padding:20px}
+.qrover .joinbox{max-width:340px}
+.qrover .joinbox .qr{width:280px;height:280px}
+.qrover .joinbox .qr img,.qrover .joinbox .qr canvas{width:280px!important;height:280px!important}
+.joinbox .url{font-size:.75rem;direction:ltr;overflow-wrap:anywhere;color:#4a6290}
+.lobbyp{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
+.who.new{animation:drop .5s}
+.empty{border:2px dashed var(--line);border-radius:18px;padding:22px 26px}
+.settings{display:flex;flex-direction:column;gap:12px;align-items:center}
+.settings .row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center}
+.board{width:min(640px,100%);display:flex;flex-direction:column;gap:10px}
+.rowp{display:grid;grid-template-columns:44px 56px minmax(0,1fr) auto;align-items:center;gap:12px;background:var(--panel);border-radius:16px;padding:10px 16px;text-align:start}
+.rowp .r{font-family:var(--display);font-weight:800;font-size:1.5rem;color:var(--muted)}
+.rowp .av{width:50px;height:50px;font-size:1.8rem;border-width:2px}
+.rowp .nm{font-weight:700;font-size:1.1rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rowp .sc{font-family:var(--display);font-weight:800;font-size:1.5rem;color:var(--sun);font-variant-numeric:tabular-nums}
+.rowp.first{background:var(--sun);color:var(--ink)}
+.rowp.first .sc,.rowp.first .r{color:var(--ink)}
+.rowp.off{opacity:.5}
+.qlist{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;width:min(1100px,100%)}
+.qitem{background:var(--card);color:var(--ink);border-radius:18px;padding:16px 18px;text-align:start;font-weight:700;font-size:1.15rem;line-height:1.45;position:relative;min-width:0;overflow-wrap:anywhere;box-shadow:0 5px 0 var(--skydeep)}
+.qitem .n{font-family:var(--display);font-weight:800;color:var(--skydeep);margin-inline-end:6px}
+.qitem .by{display:flex;align-items:center;gap:8px;margin-top:10px;font-family:var(--display);font-weight:800;color:#1f8a6b;animation:drop .6s cubic-bezier(.3,1.6,.5,1)}
+.qitem.top{box-shadow:0 0 0 5px var(--sun),0 7px 0 var(--skydeep)}
+.small{font-size:.9rem}
+.kl{display:block}
+.stage{font-size:1.2rem}
+.title{font-size:clamp(3rem,8vw,5.5rem);color:var(--sun);margin:0;text-shadow:0 5px 0 var(--ink)}
+.lcol{display:flex;flex-direction:column;gap:20px;align-items:center;min-width:0}
+.big-btn{font-size:1.5rem;padding:18px 40px;border-radius:20px}
+.empty{font-size:1.4rem;color:var(--muted);margin:0}
+.ibtn{width:48px;height:48px;border-radius:50%;border:2px solid var(--line);background:transparent;color:var(--cream);font-size:1.3rem;display:grid;place-items:center;cursor:pointer}
+.ibtn:hover{background:var(--panel)}
+details.settings{width:min(560px,100%);border:2px solid var(--line);border-radius:16px;padding:10px 16px}
+details.settings summary{cursor:pointer;font-weight:700;color:var(--muted);text-align:center;list-style-position:inside}
+details.settings[open]{display:flex;flex-direction:column;gap:12px}
+details.settings[open] summary{margin-bottom:6px}
+details.settings .row{display:grid;grid-template-columns:150px auto;justify-content:center;align-items:center;gap:14px}
+details.settings .row .lbl{text-align:start;font-size:.95rem}
+details.settings .chips{display:flex;gap:8px;justify-content:flex-start}
+details.settings .chip{width:44px;height:44px;justify-content:center;padding:0}
+.podium{display:flex;align-items:flex-end;justify-content:center;gap:clamp(8px,2vw,22px);width:min(760px,100%)}
+.pod{flex:1;max-width:220px;min-width:0;display:flex;flex-direction:column;align-items:center;gap:10px}
+.pod .blk{width:100%;border-radius:18px 18px 0 0;background:var(--panel);border:2px solid var(--line);border-bottom:0;display:grid;place-items:start center;padding-top:12px;font-size:2.4rem}
+.pod.p1 .blk{height:clamp(120px,22vh,220px);background:var(--sun);border-color:var(--sun)}
+.pod.p2 .blk{height:clamp(90px,16vh,160px)}
+.pod.p3 .blk{height:clamp(66px,11vh,115px)}
+.pwho{display:flex;flex-direction:column;align-items:center;gap:2px;min-height:160px;justify-content:flex-end;min-width:0;max-width:100%}
+.pwho .nm{font-weight:700;font-size:1.15rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.av.big{width:96px;height:96px;font-size:3.5rem}
+.av.q{opacity:.45;font-family:var(--display);color:var(--muted)}
+.psc{font-family:var(--display);font-weight:800;color:var(--sun);font-size:1.4rem;font-variant-numeric:tabular-nums}
+.pod.p1 .pwho .av:not(.q){border-color:var(--sun);box-shadow:0 0 0 6px rgba(255,214,133,.25)}
+.pod.fresh .pwho{animation:pop .8s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{from{transform:translateY(50px) scale(.3);opacity:0}}
+.mpanel{background:var(--stage);border:2px solid var(--line);border-radius:22px;padding:22px;width:min(640px,100%);max-height:90vh;overflow:auto;display:flex;flex-direction:column;gap:12px;text-align:start}
+.mrow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:10px}
+.mlabel{display:flex;flex-direction:column;min-width:0}
+.mlabel span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px}
+.mbtns{display:flex;gap:6px;flex-wrap:wrap}
+.livetag{margin-inline-start:8px;font-size:.75rem;font-weight:600;color:var(--ink);background:var(--mint);border-radius:999px;padding:0 8px}
+.mrow input[type=range]{flex:1;min-width:160px;accent-color:var(--sky)}
+.voicebox{display:flex;flex-direction:column;gap:6px;align-items:center;max-width:60ch;text-align:center}
+.voicebox .row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center}
+.waiting{display:flex;flex-direction:column;align-items:center;gap:6px}
+.waiting .wl{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:900px}
+.wchip{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:2px 12px;font-weight:600;font-size:.95rem}
+.gbar{width:70px;height:6px;border-radius:4px;background:var(--panel);overflow:hidden}
+.gbar i{display:block;height:100%;background:var(--sun)}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:5}
+
+/* ---------- phone ---------- */
+.phone{max-width:480px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:18px;flex:1}
+.ptop{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.ptop .me{display:flex;align-items:center;gap:10px;font-weight:700;min-width:0}
+.ptop .me span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ptop .pts{font-family:var(--display);font-weight:800;color:var(--sun);font-size:1.4rem;font-variant-numeric:tabular-nums}
+.pmain{flex:1;display:flex;flex-direction:column;gap:14px;justify-content:center}
+.pq{font-size:1.65rem;color:var(--cream);margin:0;line-height:1.35}
+.avs{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.avs button{font-size:1.7rem;aspect-ratio:1;max-width:100%;border-radius:12px;border:2px solid var(--line);background:var(--ink)}
+.avs button[aria-pressed="true"]{border-color:var(--sky);background:var(--panel)}
+textarea.field{min-height:120px;resize:none}
+.count{font-size:.85rem;text-align:start;font-variant-numeric:tabular-nums}
+.vbtn{width:100%;text-align:start;border:0;border-radius:18px;padding:18px 18px;background:var(--card);color:var(--ink);font-size:1.25rem;font-weight:700;box-shadow:0 5px 0 var(--skydeep);display:flex;gap:12px;align-items:flex-start;overflow-wrap:anywhere}
+.vbtn b{font-family:var(--display);font-weight:800;color:var(--skydeep);font-size:1.4rem;line-height:1.1}
+.vbtn:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+.vbtn small{display:block;color:#4a6290;font-weight:600}
+.big{font-family:var(--display);font-weight:800;font-size:2.1rem;color:var(--sun);text-align:center;margin:0}
+.center{text-align:center}
+.ptimer{font-family:var(--display);font-weight:800;font-size:1.6rem;color:var(--sky);font-variant-numeric:tabular-nums}
+.ptimer.hot{color:var(--coral)}
+@media (max-width:720px){.answers{grid-template-columns:minmax(0,1fr)}.lobby{grid-template-columns:minmax(0,1fr);justify-items:center}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap" id="app"></div>
+<canvas class="confetti" id="confetti" hidden></canvas>
+
+<script>
+/* ================= question banks (none of these repeat the original examples) ================= */
+const QS = [
+ "اخترع اسم لماركة ملابس بتبيع بس بجامات.",
+ "لو صار في أولمبياد للكسل، شو الرياضة اللي رح تاخد فيها ذهبية؟",
+ "شو أغرب طلب ممكن تطلبه من موظف الدليفري؟",
+ "لو كنت شبح لطيف، كيف رح تخوّف الناس؟",
+ "اكتب عنوان كتاب تنمية بشرية ما حدا رح يشتريه.",
+ "شو أسوأ مكان ممكن تعطس فيه؟",
+ "لو الحيوانات بتحكي، مين أنكد حيوان وشو بيحكي؟",
+ "اخترع نكهة شيبس ما حدا طلبها.",
+ "شو أغرب إشي ممكن تقرأه بإعلان بيع سيارة مستعملة؟",
+ "شو الاختراع اللي العالم مش محتاجه بس بدك تعمله؟",
+ "اخترع لعبة أطفال فكرتها غلط من أساسها.",
+ "لو الإنترنت انقطع عن العالم أسبوع، شو أول إشي رح يصير؟",
+ "اخترع عيد جديد، وشو بنعمل فيه؟",
+ "شو أسوأ موهبة ممكن تقدّمها ببرنامج مواهب؟",
+ "لو صرت ساحر ليوم واحد، شو أتفه سحر رح تعمله؟",
+ "اكتب أسوأ ريفيو لمطعم شاورما.",
+ "اخترع اسم لفرقة موسيقية كلها أعمام.",
+ "شو أكثر إشي ممل ممكن تعمله بالفضاء؟",
+ "اكتب أول جملة بمذكرات قطة.",
+ "شو أسوأ هدية تخرّج؟",
+ "لو عندك زر بيوقف الزمن، شو أتفه إشي رح تعمله؟",
+ "اخترع اسم لدوري كرة قدم للجدّات.",
+ "اكتب إعلان توظيف لوظيفة ما حدا بدّه إياها.",
+ "شو أغرب سؤال ممكن يسألك إياه سائق التكسي؟",
+ "اخترع خدمة اشتراك شهري سخيفة.",
+ "شو أسوأ اسم ممكن تسمّي فيه قطة؟",
+ "اكتب شعار لمحطة بنزين صادقة زيادة عن اللزوم.",
+ "لو صار لازم كل الناس يلبسوا زي موحّد، شو رح يكون؟",
+ "شو أكثر جملة بتنحكى بعزايم العيلة؟",
+ "شو أسوأ إشي ممكن تحطّه بشنطة السفر بالغلط؟",
+ "اخترع اسم لمشروب ساخن جديد للشتوية.",
+ "شو أغرب واجب ممكن يعطيه المعلّم للطلاب؟",
+ "لو صار عندك روبوت بالبيت، شو أول إشي رح يرفض يعمله؟",
+ "اخترع رياضة جديدة بتنلعب بالمطبخ.",
+ "اكتب تحذير غريب لازم ينكتب على علبة الحمص.",
+ "لو بدك تعمل برنامج طبخ، شو اسمه وشو أول طبخة؟",
+ "اكتب رسالة واتساب من قطتك بعد ما تأخرت عليها بالأكل.",
+ "اكتب تقييم نجمة وحدة لكوكب الأرض.",
+ "شو اسم الحلقة الأخيرة من مسلسل حياتك؟",
+ "لو حياتك إعلان تلفزيوني، شو الجملة اللي بتنقال بالآخر بسرعة؟",
+ "اخترع اسم لمرض بيصيب الناس بس يوم الأحد الصبح.",
+ "لو الطقس عنده مزاج، شو بيعمل لما يزعل منّا؟",
+ "اكتب أغرب بند ممكن تلاقيه بعقد إيجار شقة.",
+ "اخترع شعار لشركة بتبيع هوا معبّى.",
+ "اكتب رسالة اعتذار من الواي فاي لكل أهل البيت.",
+ "لو كان للبامية نقابة، شو أول مطالبها؟",
+ "شو أغرب إشي ممكن يحكيه الـGPS وإنت ضايع؟",
+ "اكتب عنوان محاضرة جامعية ما حدا رح يحضرها.",
+ "اكتب أول تغريدة لسلحفاة اكتشفت الإنترنت.",
+ "لو الشبشب بيحكي، شو بيحكي قبل ما تطيّره الماما؟",
+ "اخترع اسم لفيلم رعب صار كله بالمطبخ.",
+ "شو أغرب وظيفة رح نشوفها بإعلانات بعد مية سنة؟",
+ "لو الأكل بيحكي، شو بتحكي المقلوبة لحظة ما تنقلب؟",
+ "اخترع اسم لعطر ريحته زي الكعك بالعيد.",
+ "شو أذكى عذر ممكن تحكيه لما تغفى بنص الاجتماع؟",
+ "لو كان عندك ذيل، شو رح تستخدمه فيه؟",
+ "اكتب ملخّص حلقة كرتون بطلها صحن فول.",
+ "شو أغرب إشي ممكن ينباع بمكينة بيع أوتوماتيكية؟",
+ "لو البيت بيحكي، شو بيحكي لما كلكم تطلعوا؟",
+ "اخترع اسم لتطبيق بيذكّرك بإشي ما إله داعي.",
+ "شو أسوأ نغمة ممكن تختارها لتلفونك؟",
+ "لو المطر صار يستأذن قبل ما ينزل، شو بيحكي؟",
+ "اكتب تعليمات تشغيل للريموت كأنه جهاز فضائي.",
+ "شو الإشي اللي لو صار رياضة أولمبية، بنربح فيه أكيد؟",
+ "اخترع اسم لبطل خارق قوّته الوحيدة إنه بيلاقي الريموت.",
+ "شو أغرب إشي ممكن يصير برحلة مدرسية؟",
+ "لو كتبت كتاب طبخ للكسالى، شو أول وصفة فيه؟",
+ "شو أسوأ اسم لسفينة فضاء؟",
+ "اكتب آخر رسالة بعتها ديناصور قبل الانقراض.",
+ "لو عندك مساعد شخصي بطيء جدًا، شو أول مهمة بتعطيه إياها؟",
+ "اخترع لعبة بتنلعب بالسيارة برحلة طويلة.",
+ "لو كنت معلّم ليوم، شو المادة الجديدة اللي رح تدرّسها؟",
+ "اكتب وصف شقة للإيجار بأسلوب مبالغ فيه.",
+ "شو أسوأ إشي ممكن يصير لما تنفتح الكاميرا بالغلط باجتماع أونلاين؟",
+ "اخترع اسم لكيكة عيد ميلاد غريبة.",
+ "شو أحلى عذر ممكن تحكيه لما تتأخر على العزيمة؟",
+ "اكتب إعلان تلفزيوني لمكنسة كهربائية شايفة حالها.",
+ "لو فتحت محل، شو رح تبيع وشو اسمه؟",
+ "شو الإشي اللي لازم يكون إله دليل استخدام بس ما إله؟",
+ "اخترع اسم لنادي للناس اللي دايمًا بينسوا.",
+ "شو أغرب سؤال ممكن يسأله طفل لأبوه؟",
+ "لو صار للمكيّف حساب إنستغرام، شو أول بوست؟",
+ "اكتب إعلان لمسابقة ما حدا رح يشارك فيها.",
+ "شو أغرب إشي رح ينعرض بالمتحف بعد ألف سنة؟",
+ "لو الخروف عرف إن العيد قرّب، شو خطته؟",
+ "اخترع اسم لبرنامج مسابقات الحكم فيه قطة.",
+ "شو أسوأ مكان ممكن تعمل فيه حفلة مفاجئة؟",
+ "اكتب رسالة من الغسالة للجرابات الضايعة.",
+ "شو الإشي اللي القطط بتفكّر فيه طول اليوم؟",
+ "لو انعمل فيلم عن عيلتك، شو اسمه؟",
+ "اخترع اسم لدوا بيعالج الكسل.",
+ "شو أغرب إشي ممكن تلاقيه تحت الكنباية؟",
+ "لو الكراسي بتحكي، شو بتحكي بآخر يوم مدرسة؟",
+ "اكتب أول سطر بخطاب مدرّب خسر فريقه 10-0.",
+ "اخترع اسم لإذاعة بتبث للدجاج.",
+ "شو أغرب إشي ممكن يصير بطابور الخبز؟",
+ "لو للنملة سيرة ذاتية، شو أهم إنجاز فيها؟",
+ "اخترع اسم لماركة سيارات بتمشي بس للخلف.",
+ "شو أول إشي رح يعمله البطريق لو زار عمّان؟",
+ "اكتب نشرة جوية من كوكب بعيد.",
+ "اخترع لعبة جديدة للعيد غير العيدية.",
+ "شو أحلى اسم لمحل عصير؟",
+ "اكتب خبر عاجل عن قطة ربحت الانتخابات بالحارة.",
+ "لو صار عندك ميكروفون بيكبّر صوت أفكارك، شو أول جملة بتطلع؟"
+];
+const SS = [
+ "أكثر إشي بيضحكني بالعيد هو ______",
+ "عرفت إن الفيلم سيء لما ______",
+ "لو كان عندي قوة خارقة، كانت رح تكون ______",
+ "أغرب إشي عملته وأنا نعسان هو ______",
+ "سر الخلطة السرية تبعت ستي هو ______",
+ "عرفت إن الطبخة خربت لما ______",
+ "أنا مش كسلان، أنا بس ______",
+ "أسوأ إشي ممكن تلاقيه بغرفة الفندق هو ______",
+ "آخر إشي بحكيه قبل ما أنام هو ______",
+ "لو بدي أكتب كتاب، رح يكون اسمه ______",
+ "عرفت إن الرحلة رح تكون كارثة لما ______",
+ "أحلى إشي بأيام المدرسة كان ______",
+ "كل ما أنزل عالسوق برجع ومعي ______",
+ "أكبر إنجاز بحياتي لهلأ هو ______",
+ "لو خطفوني الفضائيين، أول إشي رح أحكيلهم ______",
+ "أسوأ وقت ممكن يرن فيه تلفونك هو ______",
+ "إذا شفت جارنا بالبيجاما بالشارع، معناها ______",
+ "السبب الحقيقي إني ما بردّ عالتلفون هو ______",
+ "لو صحيت لقيت حالي بطل فيلم، رح يكون فيلم ______",
+ "الإشي الوحيد اللي ما بشاركه مع حدا هو ______",
+ "لما المدير يقول «تعال لعندي شوي»، أول إشي بفكر فيه ______",
+ "عرفت إن الواي فاي ضعيف لما ______",
+ "أنا بقدر أعيش بدون أي إشي إلا ______",
+ "أول إشي بعمله لو ربحت مليون هو ______",
+ "عرفت إن الضيوف رح يطوّلوا لما ______",
+ "أغرب إشي لقيته بجيبة بنطلوني هو ______",
+ "لو صرت رئيس بلدية ليوم، أول قرار رح يكون ______",
+ "عرفت إن العطلة خلصت لما ______",
+ "أكثر صوت بيرعبني بالليل هو ______",
+ "أسوأ إشي ممكن تكتشفه بأول يوم بالشقة الجديدة هو ______",
+ "لو التلفون صار يحكي الحقيقة، أول إشي رح يفضحه عني ______",
+ "لو فتحت مطعم، الطبق الرئيسي رح يكون ______",
+ "عرفت إن العرس رح يكون غريب لما ______",
+ "لو الحياة لعبة فيديو، أول مرحلة فيها كانت ______",
+ "أول إشي بعمله لما يقطع النت هو ______",
+ "لو صحيت وأنا قطة، أول إشي رح أعمله هو ______",
+ "عرفت إني كبرت لما ______",
+ "الماما بتعرف إني عامل إشي غلط لما ______",
+ "عرفت إن الكابتن جديد لما ______",
+ "أكثر إشي بستناه بالعيد هو ______",
+ "لو كان للبيت قانون واحد، رح يكون ______",
+ "عرفت إن القطة بتخطط لإشي لما ______",
+ "أحلى أكلة طلعت معي بالغلط كانت ______",
+ "لو رجعت بالزمن، أول إشي رح أحكيه لحالي وأنا صغير ______",
+ "أكبر لغز بحياتي هو ______",
+ "عرفت إن الجو حر زيادة لما ______",
+ "الإشي اللي لازم يتعلّموه بالمدارس هو ______",
+ "لو صار عندي روبوت، أول إشي رح أعلّمه هو ______",
+ "عرفت إن الحلاق مش مركّز لما ______",
+ "أسرع إشي بيخلص بالبيت هو ______",
+ "لو صار للأكل مسابقة جمال، الفائز رح يكون ______",
+ "أحلى صوت بالدنيا هو صوت ______",
+ "عرفت إني صرت مشهور بالحارة لما ______",
+ "سيدي بيعمل كل يوم نفس الإشي: ______",
+ "أصعب قرار باخده كل يوم هو ______",
+ "لو عشت يوم كامل بدون تلفون، رح أقضيه ______",
+ "عرفت إن الأكل مالح زيادة لما ______",
+ "لو صرت حيوان ليوم واحد، رح أختار أكون ______",
+ "أغرب هدية ممكن تجيبها لصاحبك هي ______",
+ "عرفت إن الصبح إجا بسرعة لما ______",
+ "أكثر إشي بيعصبني بالطابور هو ______",
+ "لو صار عندي مطعم بالفضاء، اسمه رح يكون ______",
+ "عرفت إن الكيكة ما زبطت لما ______",
+ "أحسن طريقة تصحّي فيها أخوك الصغير هي ______",
+ "عرفت إن البرنامج التلفزيوني طوّل لما ______",
+ "أغرب إشي بيعمله الناس بالمصعد هو ______"
+];
+/* "who wrote it?": personal prompts, so the answer says something about who wrote it */
+const WS = [
+ "شو أول إشي بتعمله لما تصحى الصبح؟",
+ "لو ربحت مليون دينار، شو أول إشي بتشتريه؟",
+ "شو أغرب أكلة بتحبها؟",
+ "لو بدك تعيش جوّا فيلم أو مسلسل، أي واحد بتختار؟",
+ "شو الموهبة السرية اللي عندك؟",
+ "شو أكثر كلمة بتحكيها بدون ما تنتبه؟",
+ "لو صرت حيوان ليوم واحد، شو بتكون؟",
+ "شو الإشي اللي ما بتقدر تعيش بدونه؟",
+ "لو بتقدر تسافر لأي مكان بكرة، وين بتروح؟",
+ "شو أغرب عادة عندك؟",
+ "شو أكثر إشي بيضحكك؟",
+ "لو بتقدر تصير مشهور بإشي، شو بيكون؟",
+ "شو أسوأ أكلة جرّبتها بحياتك؟",
+ "شو أول إشي بتعمله لما تروّح عالبيت؟",
+ "لو صار عندك قوة خارقة وحدة، شو بتختار؟",
+ "شو الأغنية اللي دايمًا بتعلق براسك؟",
+ "شو الإشي الصغير اللي بتخاف منه؟",
+ "لو عندك يوم إجازة كامل، كيف بتقضيه؟",
+ "لو بدك تفتح مشروع، شو بيكون؟",
+ "شو الأكلة اللي بتقدر توكلها كل يوم؟",
+ "شو أغرب إشي اشتريته بحياتك؟",
+ "لو بتقدر تحكي مع حيوان واحد، أي واحد بتختار؟",
+ "شو أكثر إشي بتأجّله دايمًا؟",
+ "لو صرت مدير المدرسة ليوم، شو أول قرار؟",
+ "شو الإشي اللي بيضحّكك حتى لو كنت زعلان؟",
+ "شو أحلى هدية أخذتها بحياتك؟",
+ "لو بتقدر تتعلّم أي مهارة بيوم واحد، شو بتختار؟",
+ "شو أول إشي بتطلبه بالمطعم دايمًا؟",
+ "شو أكثر تطبيق بتفتحه على تلفونك؟",
+ "لو كتبت كتاب عن حياتك، شو اسمه؟",
+ "شو أحلى مكان رحت عليه بحياتك؟",
+ "شو أكثر إشي بتحبه بالعيد؟"
+];
+/* templates: a near-endless supply of fresh prompts */
+const PERS = ["خالك","جاركم أبو محمد","مديرك","سائق التكسي","أستاذ الرياضيات","الحلاق","سيدك","بياع الفلافل","ابن عمك","حارس العمارة","مذيع الأخبار","أخوك الصغير","صاحب الدكانة","طبيب الأسنان","مدرّب المنتخب"];
+const ROLES = ["رئيس فيفا","مذيع نشرة جوية","وزير السعادة","مدرب يوغا","شيف بمطعم فاخر","رائد فضاء","مغني راب","حكم مباراة","مدير مطار","يوتيوبر طبخ","ساحر بالسيرك","مضيف طيران"];
+const PLACES = ["بعرس","بالمطار","بالمصعد","على التلفزيون","بالمول","باجتماع أولياء الأمور","بالحديقة","بالجيم","بطابور البنك","بالسينما","بمطعم فاخر","بالمخيّم الصيفي"];
+const THINGS = ["المكيّف","الريموت","جرس الباب","الشبشب","البوتاجاز","التلفزيون","الكرسي","الموبايل","الصراف الآلي","المصعد","الشاحن","الفرن"];
+const PRODS = ["عطر","مشروب طاقة","تطبيق","شامبو","مسلسل كرتون","مطعم","معجون أسنان","بودكاست"];
+const pick = a => a[Math.random()*a.length|0];
+const QT = [
+ ()=>`لو ${pick(PERS)} صار ${pick(ROLES)}، شو أول قرار رح ياخده؟`,
+ ()=>`شو أسوأ جملة ممكن ${pick(PERS)} يحكيها ${pick(PLACES)}؟`,
+ ()=>`لو ${pick(THINGS)} بيحكي، شو أول شكوى رح يقدّمها؟`,
+ ()=>`اكتب عنوان خبر عاجل عن ${pick(PERS)} ${pick(PLACES)}.`,
+ ()=>`شو السر اللي ${pick(PERS)} مخبّيه عن الكل؟`,
+ ()=>`لو ${pick(PERS)} صار عنده برنامج تلفزيوني، شو اسمه؟`,
+ ()=>`لو ${pick(THINGS)} قرّر يستقيل، شو رح يكتب بالاستقالة؟`,
+ ()=>`اكتب رسالة واتساب من ${pick(THINGS)} لصاحب البيت.`,
+ ()=>`اكتب تقييم نجمة وحدة لـ${pick(PERS)} بعد ما شفته ${pick(PLACES)}.`,
+ ()=>`شو الموهبة السرية عند ${pick(PERS)}؟`
+];
+const ST = [
+ ()=>`عرفت إن ${pick(PERS)} مش طبيعي لما ______`,
+ ()=>`أسوأ إشي ممكن تعمله ${pick(PLACES)} هو ______`,
+ ()=>`${pick(PERS)} دايمًا بيحكي «______»`,
+ ()=>`لو صار ${pick(PERS)} ${pick(ROLES)}، أول إشي رح يعمله هو ______`,
+ ()=>`السبب الحقيقي إن ${pick(THINGS)} خربان هو ______`,
+ ()=>`آخر مرة شفت ${pick(PERS)} ${pick(PLACES)} كان عم ______`
+];
+const BOT_ANS = [
+ "صورة سيدي ببدلة سبايدرمان","الواي فاي تبع الجيران","منسف بالكاتشب","خالتي أم ناصر عالسبيكر",
+ "فاتورة الكهربا","كيس أكياس جوّا كيس","بدي أحكي مع المدير تبعك","رسالة صوتية 7 دقايق",
+ "الريموت مخبّى بالفريزر","عم بتعلّم دبكة أونلاين","سجّلت بنادي زومبا بالغلط","لايك على صورة من 2014",
+ "قال: إحنا عيلة وحدة","كلمة سر الواي فاي 12345678","صحن حمص عالكيبورد","هدوء غريب ومخيف",
+ "بنطلون رياضة رسمي","ستوري للعدس","بيبيع سمك بالصحرا","بيغني أم كلثوم بالحمّام"
+];
+const AVS = ["🐳","🦁","🐐","🦉","🐸","🍉","🌶️","🧆","🫖","🐓","🦊","🐢"];
+const BOTS = [["بوت أبو صالح","🤖"],["بوت أم ناصر","👾"],["بوت المدير","🦾"],["بوت الجار","📟"]];
+const T_ANSWER = 60, T_VOTE = 45, T_WRITE = 120, MAXLEN = 90, QLEN = 120, NS = "mnfn-v3-";
+const MULT = {1:100, 2:100, 4:200}, BESTQ_PTS = 200, T_GUESS = 30, WHO_RIGHT = 100, WHO_FOOL = 50, NSEG = 4, T_INTRO = 40;
+const SEGS = {
+  1:{icon:"🤪", title:"مين فينا؟", rules:["كل اثنين بيوصلهم نفس السؤال على تلفوناتهم.","كل واحد بيكتب أضحك جواب خلال دقيقة، سرًّا.","الباقي بيصوّتوا للأضحك. كل صوت = 100 نقطة."], desc:"سؤال مجنون، اثنين بيجاوبوا، والكل بيصوّت. كل صوت = 100 نقطة.", kind:"q"},
+  2:{icon:"✍️", title:"كمّل الجملة", rules:["بتوصلكم بداية جملة فيها فراغ ______.","كمّلوها بأغرب أو أضحك طريقة خلال دقيقة.","الباقي بيصوّتوا. كل صوت = 100 نقطة."], desc:"بداية جملة وإنتو بتكمّلوها بأضحك طريقة. كل صوت = 100 نقطة.", kind:"s"},
+  3:{icon:"🕵️", title:"مين كاتبها؟", rules:["الكل بيجاوب على نفس السؤال خلال دقيقة.","بتنعرض الأجوبة بدون أسماء، وإنتو بتخمّنوا مين كاتب كل جواب.","تخمين صح = 100 نقطة، وكل واحد بتضلّله بجوابك = 50."], desc:"الكل بيجاوب على نفس السؤال، وبعدين بنخمّن مين كاتب كل جواب. تخمين صح = 100، وكل واحد بتضلّله = 50.", kind:"g"},
+  4:{icon:"🔥", title:"فقرة التعويض", rules:["كل واحد بيكتب سؤال مجنون خلال دقيقتين.","أسئلتكم بتروح لناس ثانيين يجاوبوا عليها، دقيقة لكل سؤال.","كل صوت = 200 نقطة، وبالآخر بنصوّت لأحلى سؤال."], desc:"إنتو بتكتبوا الأسئلة، وغيركم بيجاوب عليها. كل صوت = 200 نقطة!", kind:"w"}
+};
+
+/* ================= helpers ================= */
+const app = document.getElementById("app");
+function h(tag, attrs, ...kids){
+  const el = document.createElement(tag);
+  for (const [k,v] of Object.entries(attrs||{})){
+    if (v==null || v===false) continue;
+    if (k==="class") el.className=v;
+    else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+    else if (k==="style") el.style.cssText=v;
+    else el.setAttribute(k, v===true ? "" : v);
+  }
+  for (const k of kids.flat()){ if (k==null||k===false) continue; el.append(k instanceof Node ? k : document.createTextNode(String(k))); }
+  return el;
+}
+const clean = (s,n)=> String(s||"").replace(/[\u0000-\u001f​-‏‪-‮⁦-⁩]/g," ").trim().slice(0,n);
+const shuffle = a => { a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]} return a; };
+const rnd = (a,b)=> a + Math.random()*(b-a);
+const ls = { get(k){try{return localStorage.getItem(k)}catch{return null}}, set(k,v){try{localStorage.setItem(k,v)}catch{}} };
+async function wake(){ try{ await navigator.wakeLock?.request("screen"); }catch{} }
+const netOK = () => typeof window.Peer === "function";
+function joinUrl(code){ return location.href.split(/[?#]/)[0] + "?c=" + code; }
+const localOnly = () => location.protocol==="file:" || /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
+
+/* fresh prompts every game: remembered across games on the main screen */
+const Used = {
+  set:null,
+  load(){ if(!this.set){ try{ this.set=new Set(JSON.parse(ls.get("mf.used")||"[]")); }catch{ this.set=new Set(); } } return this.set; },
+  add(q){ const s=this.load(); s.add(q); const arr=[...s].slice(-800); this.set=new Set(arr); ls.set("mf.used",JSON.stringify(arr)); }
+};
+function nextPrompt(kind){
+  const used=Used.load(), all=kind==="q"?QS:kind==="s"?SS:WS, bank=all.filter(x=>!used.has(x)), gens=kind==="q"?QT:kind==="s"?ST:null;
+  let q=null;
+  if (bank.length && (!gens || Math.random()<.8)) q=pick(bank);       // mostly hand-written prompts, templates add variety
+  for (let i=0; !q && gens && i<40; i++){ const c=pick(gens)(); if(!used.has(c)) q=c; }
+  if (!q) q=pick(bank.length?bank:all);
+  Used.add(q); return q;
+}
+
+/* ================= music: cheerful, generated live on the main screen ================= */
+const Music = (() => {
+  let gate, ctx, master, mus, sfx, noise, timer=null, mood=null, step=0, nextT=0, muted=false;
+  const PENT=[0,2,4,7,9], C4=261.63;
+  const f = d => { const i=((d%5)+5)%5, o=Math.floor(d/5); return C4*Math.pow(2,(PENT[i]+12*o)/12); };
+  function init(){
+    if (ctx) { ctx.resume(); return; }
+    try { ctx = new (window.AudioContext||window.webkitAudioContext)(); } catch { return; }
+    master = ctx.createGain(); master.gain.value = .7; master.connect(ctx.destination);
+    gate = ctx.createGain(); gate.gain.value = 1; gate.connect(master);
+    mus = ctx.createGain(); mus.gain.value = .5; mus.connect(gate);
+    sfx = ctx.createGain(); sfx.gain.value = .85; sfx.connect(master);
+    noise = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
+    const d = noise.getChannelData(0); for (let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
+  }
+  function env(g,t,a,peak,dec){ g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(peak,t+a); g.gain.exponentialRampToValueAtTime(0.0001,t+a+dec); }
+  function osc(type,fr,t,dur,v,out,a=.005){ const o=ctx.createOscillator(), g=ctx.createGain(); o.type=type; o.frequency.setValueAtTime(fr,t); env(g,t,a,v,dur); o.connect(g).connect(out); o.start(t); o.stop(t+a+dur+.05); return o; }
+  function marimba(t,fr,v=.22,out=mus){ osc("sine",fr,t,.45,v,out,.002); osc("sine",fr*4,t,.08,v*.35,out,.001); osc("triangle",fr*2,t,.18,v*.25,out,.002); }
+  function kick(t,v=.5,out=mus){ const o=osc("sine",150,t,.22,v,out,.003); o.frequency.exponentialRampToValueAtTime(48,t+.15); }
+  function nz(t,type,freq,v,dec,out=mus,q=1){ const s=ctx.createBufferSource(), b=ctx.createBiquadFilter(), g=ctx.createGain(); s.buffer=noise; b.type=type; b.frequency.value=freq; b.Q.value=q; env(g,t,.002,v,dec); s.connect(b).connect(g).connect(out); s.start(t,Math.random()*.5); s.stop(t+dec+.05); }
+  function clap(t,v=.28,out=mus){ for(let i=0;i<3;i++) nz(t+i*.012,"bandpass",1600,v*(i===2?1:.6),i===2?.13:.02,out,1.2); }
+  function shaker(t,v=.05){ nz(t,"highpass",7500,v,.035); }
+  function wood(t,v=.35,out=sfx){ osc("triangle",1050,t,.05,v,out,.001); osc("sine",1580,t,.03,v*.4,out,.001); }
+  function bassN(t,fr,dur){ const o=ctx.createOscillator(), lp=ctx.createBiquadFilter(), g=ctx.createGain(); o.type="square"; o.frequency.value=fr; lp.type="lowpass"; lp.frequency.value=520; env(g,t,.008,.16,dur); o.connect(lp).connect(g).connect(mus); o.start(t); o.stop(t+dur+.05); }
+  const _=null;
+  const MEL = {
+    lobby:[ 5,_,7,_, 8,_,7,5, 6,_,_,_, 4,_,_,_,   3,_,4,_, 5,_,4,3, 2,_,_,_, _,_,_,_,
+            5,_,7,_, 8,_,9,_, 8,_,7,_, 5,_,_,_,   6,5,4,_, 3,_,4,_, 5,_,_,_, _,_,_,_ ],
+    write:[ 5,_,_,_, 7,_,_,_, 6,_,5,_, 4,_,_,_,   3,_,_,_, 4,_,5,_, 2,_,_,_, _,_,_,_,
+            5,_,_,_, 7,_,8,_, 7,_,_,_, 5,_,_,_,   4,_,3,_, 4,_,_,_, 5,_,_,_, _,_,_,_ ],
+    answer:[ 5,_,5,7, _,5,8,_, 7,_,5,_, 4,_,_,_,  4,_,4,6, _,4,7,_, 6,_,4,_, 3,_,_,_,
+             5,_,5,7, _,5,8,_, 9,_,8,_, 7,_,_,_,  8,7,6,5, 4,_,6,_, 5,_,_,_, _,_,_,_ ],
+    vote:[ 7,_,8,_, 9,_,8,7, _,_,5,_, 6,_,_,_,   4,_,5,_, 6,_,5,4, _,_,2,_, 3,_,_,_,
+           7,_,8,_, 9,_,8,7, _,_,9,_, 8,_,_,_,   7,6,5,_, 4,_,3,_, 5,_,_,_, _,_,_,_ ],
+  };
+  const MOODS = {
+    lobby:{bpm:112, mel:"lobby", clap:true, shake:true},
+    write:{bpm:96, mel:"write", clap:false, shake:true},
+    answer:{bpm:126, mel:"answer", clap:false, shake:true, tickTock:true},
+    vote:{bpm:118, mel:"vote", clap:true, shake:true},
+  };
+  const ROOTS=[130.81,110,87.31,98]; // C A F G — bright and bouncy
+  function sched(){
+    const m = MOODS[mood]; if(!m) return;
+    const sp = 60/m.bpm/4;
+    while (nextT < ctx.currentTime + .15){
+      const s=step%16, bar=Math.floor(step/16)%4, mel=MEL[m.mel], r=ROOTS[bar];
+      if (s===0||s===8) kick(nextT);
+      if (s===0||s===8) bassN(nextT,r,sp*2.5);
+      if (s===6||s===14) bassN(nextT,r*2,sp*1.5);
+      if (s===11) bassN(nextT,r*1.5,sp*1.2);
+      if (m.clap && (s===4||s===12)) clap(nextT);
+      if (m.shake && s%2===1) shaker(nextT);
+      if (m.tickTock && s%4===0) wood(nextT,.12,mus);
+      const n = mel[step%64];
+      if (n!=null) marimba(nextT, f(n));
+      nextT += sp; step++;
+    }
+  }
+  function setMood(m){
+    if (!ctx || mood===m) return;
+    mood=m; step=0; nextT=ctx.currentTime+.08;
+    if (!timer) timer=setInterval(sched,25);
+  }
+  const fx = {
+    pop(){ const t=ctx.currentTime, o=osc("sine",380,t,.12,.4,sfx,.002); o.frequency.exponentialRampToValueAtTime(1300,t+.08); },
+    blip(){ const t=ctx.currentTime; marimba(t,f(10),.3,sfx); marimba(t+.07,f(12),.3,sfx); },
+    tick(){ wood(ctx.currentTime); },
+    boing(){ const t=ctx.currentTime, o=ctx.createOscillator(), g=ctx.createGain(), l=ctx.createOscillator(), lg=ctx.createGain();
+      o.type="sine"; o.frequency.setValueAtTime(620,t); o.frequency.exponentialRampToValueAtTime(140,t+.45);
+      l.frequency.value=14; lg.gain.value=40; l.connect(lg).connect(o.frequency); env(g,t,.005,.4,.5); o.connect(g).connect(sfx); o.start(t); l.start(t); o.stop(t+.6); l.stop(t+.6); },
+    whistle(){ const t=ctx.currentTime, o=osc("sine",500,t,.7,.25,sfx,.05); o.frequency.exponentialRampToValueAtTime(1900,t+.6); },
+    roll(sec=2.4){ const t=ctx.currentTime; for(let i=0;i<sec*24;i++) nz(t+i/24,"bandpass",2200,.06+.3*i/(sec*24),.05,sfx,.8); fx.whistle(); },
+    tada(){ const t=ctx.currentTime; [5,7,8,10].forEach((d,i)=>marimba(t+i*.08,f(d),.3,sfx)); [10,12,13].forEach(d=>marimba(t+.4,f(d),.25,sfx)); [0,.15,.3].forEach(d=>clap(t+.4+d,.35,sfx)); kick(t+.4,.6,sfx); },
+    womp(){ const t=ctx.currentTime; [196,185,175,165].forEach((fr,i)=>{ const o=ctx.createOscillator(), lp=ctx.createBiquadFilter(), g=ctx.createGain(); o.type="sawtooth"; o.frequency.value=fr; lp.type="lowpass"; lp.frequency.value=900; const d=i===3?.9:.3; env(g,t+i*.33,.03,.2,d); o.connect(lp).connect(g).connect(sfx); o.start(t+i*.33); o.stop(t+i*.33+d+.1); }); },
+    horn(){ const t=ctx.currentTime, o=osc("sawtooth",330,t,.6,.18,sfx,.02); o.frequency.linearRampToValueAtTime(520,t+.15); },
+    applause(){ const t=ctx.currentTime; for(let i=0;i<80;i++) clap(t+Math.random()*2.6,.15+Math.random()*.2,sfx); fx.tada(); fx.horn(); }
+  };
+  return {
+    init, setMood, stop(){ mood=null; },
+    duck(on){ if(mus) try{ mus.gain.setTargetAtTime(on?.12:.5, ctx.currentTime, .25); }catch{} Tracks.duck(on); },
+    silence(on){ if(gate) try{ gate.gain.setTargetAtTime(on?0:1, ctx.currentTime, .3); }catch{} },
+    play(n,...a){ if(!ctx||muted) return; try{ fx[n](...a); }catch{} },
+    toggle(){ muted=!muted; if(master) master.gain.value=muted?0:.7; Tracks.mute(muted); return muted; },
+    get muted(){ return muted; }
+  };
+})();
+
+/* ================= your own music: one file per segment, kept on this device ================= */
+const SLOTS = [["all","كل اللعبة (إذا ما اخترتوا لفقرة)"],["0","اللوبي"],["1","🤪 مين فينا؟"],["2","✍️ كمّل الجملة"],["3","🕵️ مين كاتبها؟"],["4","🔥 فقرة التعويض وأحلى سؤال"],["5","👑 إعلان النتيجة"]];
+const SILENT=(()=>{ try{ const n=800, b=new ArrayBuffer(44+n*2), v=new DataView(b), w=(o,t)=>{ for(let i=0;i<t.length;i++) v.setUint8(o+i,t.charCodeAt(i)); };
+  w(0,"RIFF"); v.setUint32(4,36+n*2,true); w(8,"WAVE"); w(12,"fmt "); v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,1,true);
+  v.setUint32(24,8000,true); v.setUint32(28,16000,true); v.setUint16(32,2,true); v.setUint16(34,16,true); w(36,"data"); v.setUint32(40,n*2,true);
+  return URL.createObjectURL(new Blob([b],{type:"audio/wav"})); }catch{ return ""; } })();
+const Tracks = {
+  db:null, files:{}, urls:{}, a:null, els:null, unlocked:false, blocked:false, slot:null, src:null, vol:.55, ducked:false, muted:false,
+  async open(){
+    if (this.db) return this.db;
+    return new Promise(res=>{ try{ const r=indexedDB.open("mf-music",1); r.onupgradeneeded=()=>r.result.createObjectStore("t"); r.onsuccess=()=>res(this.db=r.result); r.onerror=()=>res(null); }catch{ res(null); } });
+  },
+  async load(){
+    const db=await this.open(); if(!db) return;
+    await new Promise(res=>{ try{ const tx=db.transaction("t"), st=tx.objectStore("t"), rq=st.openCursor();
+      rq.onsuccess=()=>{ const c=rq.result; if(c){ this.files[c.key]=c.value; this.urls[c.key]=URL.createObjectURL(c.value.blob); c.continue(); } else res(); };
+      rq.onerror=()=>res(); }catch{ res(); } });
+  },
+  async put(slot,file){
+    const v={name:file.name, blob:file};
+    this.files[slot]=v; if(this.urls[slot]) URL.revokeObjectURL(this.urls[slot]); this.urls[slot]=URL.createObjectURL(file);
+    const db=await this.open(); if(db) try{ db.transaction("t","readwrite").objectStore("t").put(v,slot); }catch{}
+    this.src=null; this.sync(this.slot);
+  },
+  async del(slot){
+    delete this.files[slot]; if(this.urls[slot]) URL.revokeObjectURL(this.urls[slot]); delete this.urls[slot];
+    const db=await this.open(); if(db) try{ db.transaction("t","readwrite").objectStore("t").delete(slot); }catch{}
+    this.src=null; this.sync(this.slot);
+  },
+  urlFor(slot){ return this.urls[slot] || this.urls.all || null; },
+  target(){ return this.muted?0:(this.ducked?this.vol*.25:this.vol); },
+  fade(el,to,ms,done){ if(!el) return; const from=el.volume, t0=performance.now();
+    const step=()=>{ const k=Math.min(1,(performance.now()-t0)/ms); el.volume=Math.max(0,Math.min(1,from+(to-from)*k)); if(k<1) requestAnimationFrame(step); else done&&done(); }; step(); },
+  ensure(){ if (!this.els){ this.els=[new Audio(),new Audio()]; for (const e of this.els){ e.loop=true; e.preload="auto"; } } },
+  unlock(){                                   // called inside a click: browsers then let these two players start songs later by themselves
+    this.ensure(); if (this.unlocked) return; this.unlocked=true;
+    for (const e of this.els){ if (e.src) continue; e.src=SILENT; e.volume=0;
+      try{ const p=e.play(); p&&p.then(()=>{ if (e.src===SILENT) e.pause(); }).catch(()=>{}); }catch{} }
+  },
+  startEl(el){
+    el.volume=0;
+    const ok=()=>{ this.blocked=false; Music.silence(true); this.fade(el,this.target(),1200); };
+    const no=()=>{ this.blocked=true; Music.silence(false); setTimeout(()=>{ try{ hostRender(); }catch{} },0); };
+    try{ const pr=el.play(); if (pr&&pr.then) pr.then(ok).catch(no); else ok(); }catch{ no(); }
+  },
+  retry(){ if (this.blocked && this.a && !this.pv) this.startEl(this.a); },
+  sync(slot){
+    this.slot=slot;
+    const url=this.urlFor(slot);
+    if (url===this.src){ if (!url) Music.silence(false); return; }
+    this.src=url; this.ensure();
+    const old=this.a; this.a=null;
+    if (old) this.fade(old,0,900,()=>{ if (this.a!==old) old.pause(); });
+    if (!url){ this.blocked=false; Music.silence(false); return; }
+    const el = old===this.els[0] ? this.els[1] : this.els[0];
+    try{ el.pause(); }catch{}
+    el.src=url; el.loop=true; try{ el.currentTime=0; }catch{}
+    this.a=el; this.startEl(el);
+  },
+  duck(on){ this.ducked=on; if(this.a) this.fade(this.a,this.target(),400); },
+  mute(on){ this.muted=on; if(this.a) this.a.volume=this.target(); },
+  setVol(v){ this.vol=v; ls.set("mf.vol",String(v)); if(this.a) this.a.volume=this.target(); },
+  preview(slot){                       // full-length listen from the music panel; press again to stop
+    if (this.pvSlot===slot) return this.stopPreview();
+    const url=this.urls[slot]; if(!url) return;
+    if (this.pv) this.pv.pause(); if (this.a) this.a.pause(); Music.silence(true);
+    const el=new Audio(url); el.volume=this.target(); this.pv=el; this.pvSlot=slot;
+    el.onended=()=>{ this.stopPreview(); this.onPreviewChange&&this.onPreviewChange(); };
+    try{ const pr=el.play(); pr&&pr.catch(()=>{}); }catch{}
+  },
+  stopPreview(){
+    if (this.pv) this.pv.pause(); this.pv=null; this.pvSlot=null;
+    if (this.a) try{ const pr=this.a.play(); pr&&pr.catch(()=>{}); }catch{}
+    Music.silence(!!this.urlFor(this.slot));
+  }
+};
+try{ const v=parseFloat(ls.get("mf.vol")); if(v>=0&&v<=1) Tracks.vol=v; }catch{}
+Tracks.load().then(()=>{ try{ if (H.code){ Tracks.sync(sceneFor(H.st)); hostRender(); } }catch{} });
+
+/* any click or key on the main screen wakes the audio if the browser held it back */
+function gestureKick(){ try{ if (!H.code) return; Music.init(); Tracks.unlock(); Tracks.retry(); }catch{} }
+document.addEventListener("pointerdown", gestureKick, true);
+document.addEventListener("keydown", gestureKick, true);
+function musicPanel(){
+  const close=()=>{ Tracks.stopPreview(); Tracks.onPreviewChange=null; ov.remove(); };
+  const ov=h("div",{class:"qrover",role:"dialog","aria-label":"موسيقى اللعبة",onclick:e=>{ if(e.target===ov) close(); }});
+  const draw=()=>{
+    const rows=SLOTS.map(([slot,label])=>{
+      const f=Tracks.files[slot];
+      const live = Tracks.a && !Tracks.pv && (Tracks.slot===slot || (slot==="all" && !Tracks.urls[Tracks.slot]));
+      const inp=h("input",{type:"file",accept:"audio/*",id:"mfile-"+slot,hidden:true,onchange:async e=>{ const file=e.target.files[0]; if(file){ await Tracks.put(slot,file); draw(); } }});
+      return h("div",{class:"mrow"},
+        h("div",{class:"mlabel"}, h("strong",{},label, live?h("span",{class:"livetag"},"🔊 شغّالة هلّأ"):null), h("span",{class:"muted small"}, f?f.name:(slot==="all"?"ولا ملف: الموسيقى المدمجة":"زي «كل اللعبة»"))),
+        h("div",{class:"mbtns"},
+          inp, h("label",{class:"chip",for:"mfile-"+slot,tabindex:"0",style:"cursor:pointer"}, f?"تغيير":"اختيار ملف"),
+          f ? h("button",{class:"chip",onclick:()=>{ Tracks.preview(slot); draw(); }}, Tracks.pvSlot===slot?"■ إيقاف":"▶ اسمعها") : null,
+          f ? h("button",{class:"chip",onclick:async()=>{ await Tracks.del(slot); draw(); }},"✕") : null));
+    });
+    const vol=h("input",{type:"range",min:"0",max:"1",step:"0.05",id:"mvol",value:String(Tracks.vol),oninput:e=>Tracks.setVol(+e.target.value)});
+    ov.replaceChildren(h("div",{class:"mpanel"},
+      h("h2",{class:"disp",style:"margin:0;color:var(--sun)"},"🎵 موسيقى اللعبة"),
+      h("p",{class:"muted small",style:"margin:0"},"اختاروا ملفات موسيقى من جهازكم (MP3 أو غيره)، واحد لكل اللعبة أو واحد لكل فقرة. الملفات بتنحفظ على هالجهاز للمرات الجاية. اللي ما بتختارولها ملف بتشتغل فيها الموسيقى المدمجة."),
+      h("p",{class:"muted small",style:"margin:0"},"كل أغنية بتشتغل كاملة ولحالها بالمرحلة اللي حطيتوها فيها، وبتعيد من أولها لما تخلص. يعني أغنية «اللوبي» بتسمعوها وإنتو باللوبي، وأغنية كل فقرة بتبلّش مع شاشة الفقرة."),
+      h("p",{class:"muted small",style:"margin:0"},"بدكم موسيقى مجانية؟ ادخلوا Pixabay Music وابحثوا: game show، upbeat ukulele، happy funk، quiz."),
+      ...rows,
+      h("div",{class:"mrow"}, h("label",{class:"lbl",for:"mvol"},"علو الموسيقى"), vol),
+      h("button",{class:"btn",onclick:close},"تمام")));
+  };
+  Tracks.onPreviewChange=draw;
+  draw(); document.body.append(ov);
+}
+
+/* ================= confetti ================= */
+function confetti(){
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const c=document.getElementById("confetti"), x=c.getContext("2d"); c.hidden=false;
+  c.width=innerWidth; c.height=innerHeight;
+  const cols=["#8cc8ff","#ffd685","#86e6c8","#ffa3b1","#eef5ff"];
+  const ps=Array.from({length:150},()=>({x:Math.random()*c.width,y:-20-Math.random()*c.height*.5,vx:(Math.random()-.5)*3,vy:2+Math.random()*4,r:Math.random()*6.28,s:6+Math.random()*8,c:cols[Math.random()*5|0]}));
+  let fr=0; (function loop(){ x.clearRect(0,0,c.width,c.height);
+    for(const p of ps){ p.x+=p.vx; p.y+=p.vy; p.r+=.1; x.save(); x.translate(p.x,p.y); x.rotate(p.r); x.fillStyle=p.c; x.fillRect(-p.s/2,-p.s/4,p.s,p.s/2); x.restore(); }
+    if(++fr<200) requestAnimationFrame(loop); else c.hidden=true; })();
+}
+
+/* ================= home ================= */
+function home(note){
+  app.replaceChildren(h("div",{class:"home"}, h("div",{},
+    h("h1",{class:"disp"},"مين فينا؟", h("small",{},"3 فقرات: مين فينا · كمّل الجملة · فقرة التعويض")),
+    h("p",{class:"muted"},"اثنين بيجاوبوا سرًّا، والكل بيصوّت للأضحك. اللي بيجمع أصوات أكثر بيربح."),
+    h("div",{class:"pick"},
+      h("button",{class:"btn",onclick:startHost},"📺 الشاشة الرئيسية"),
+      h("button",{class:"btn ghost",onclick:()=>joinForm()},"📱 أنا لاعب")),
+    h("p",{class:"hint muted"},"الشاشة الرئيسية بتعرض كود و QR، وكل واحد بيدخل من تلفونه بدون حسابات. بدكم تجربوا لحالكم؟ ضيفوا بوتات من اللوبي."),
+    note ? h("div",{class:"warn",role:"alert"},note) : null
+  )));
+}
+
+/* ================= HOST ================= */
+const H = { peer:null, net:false, netMsg:"", code:"", st:{ph:"lobby"}, P:new Map(),
+  settings:{rounds:1, bots:0}, timeouts:[], iv:null, tok:0, closing:false, onEnd:null,
+  seg:0, rd:0, batch:null, di:-1, votes:{}, vk:0, own:{}, wq:{}, bq:{}, bqOwn:{}, bqList:[], ready:{}, revGuess:{}, whoGuesses:[], whoOpts:[], ri:-1, who:null, whoList:[], wi:-1, wk:0, guess:{}, wAuthor:null };
+function later(ms,fn){ H.timeouts.push(setTimeout(fn,ms)); }
+function at(ms,fn){ const tok=H.tok; later(ms,()=>{ if(H.tok===tok) fn(); }); }
+function clearLater(){ H.timeouts.forEach(clearTimeout); H.timeouts=[]; clearInterval(H.iv); H.iv=null; }
+const newCode = () => String(1000 + (Math.random()*9000|0));
+const online = () => [...H.P.values()].filter(p=>p.on);
+
+function startHost(){
+  Music.init(); Music.setMood("lobby"); Tracks.unlock(); wake();
+  H.code = newCode(); H.st = { ph:"lobby" };
+  openHostPeer(); hostRender();
+}
+function openHostPeer(){
+  if (!netOK()){ H.net=false; H.netMsg="ما قدرنا نحمّل مكتبة الاتصال، فالتلفونات ما رح تقدر تدخل من هون. البوتات شغالة عادي."; return; }
+  try { H.peer?.destroy(); } catch {}
+  let peer;
+  try { peer = new Peer(NS + H.code); } catch { H.net=false; H.netMsg="الاتصال مش متاح بهالمتصفح. البوتات شغالة عادي."; return; }
+  H.peer = peer; H.netMsg = "عم نوصل…";
+  peer.on("open", ()=>{ H.net=true; H.netMsg=""; hostRender(); });
+  peer.on("connection", conn => {
+    conn.on("data", d => onHostMsg(conn, d));
+    conn.on("close", () => onHostClose(conn));
+    conn.on("error", () => onHostClose(conn));
+  });
+  peer.on("disconnected", ()=>{ try{ peer.reconnect(); }catch{} });
+  peer.on("error", e => {
+    if (e.type==="unavailable-id"){ H.code=newCode(); openHostPeer(); hostRender(); return; }
+    if (e.type==="peer-unavailable") return;
+    if (!H.net){ H.netMsg = "ما قدرنا نوصل لسيرفر الاتصال. إذا فاتحين الصفحة من جوّا Claude، الاتصال ممنوع هناك: افتحوا ملف اللعبة من رابطكم الخاص. البوتات شغالة هون عادي."; hostRender(); }
+  });
+}
+
+/* ---- messages from phones ---- */
+function onHostMsg(conn, d){
+  if (!d || typeof d!=="object") return;
+  if (d.t==="hello" && typeof d.pid==="string"){
+    const pid=d.pid.slice(0,24); conn._pid=pid;
+    const name=clean(d.name,16)||"لاعب", av=AVS.includes(d.av)?d.av:"🐳";
+    let p=H.P.get(pid);
+    if (!p){ p={pid,name,av,score:0,on:true,bot:false,conn}; H.P.set(pid,p); Music.play("pop"); }
+    else { p.name=name; p.av=av; p.conn=conn; if(!p.on) Music.play("pop"); p.on=true; }
+    sendTo(p); push(); hostRender(); return;
+  }
+  const p = H.P.get(conn._pid); if (!p) return;
+  handleAction(p, d);
+}
+function handleAction(p, d){
+  const st=H.st;
+  if (d.t==="ans" && st.ph==="answer"){
+    const pr=H.batch?.prompts.find(x=>x.key===d.k);
+    const x=clean(d.x,MAXLEN);
+    if (pr && pr.pair.includes(p.pid) && x && !pr.ans[p.pid]){ pr.ans[p.pid]=x; Music.play("blip"); }
+  } else if (d.t==="vote" && st.ph==="vote" && d.k===H.vk && (d.c==="A"||d.c==="B") && !H.own[p.pid] && !H.votes[p.pid]){
+    H.votes[p.pid]=d.c; Music.play("tick");
+  } else if (d.t==="q" && st.ph==="write"){
+    const x=clean(d.x,QLEN); if (x && !H.wq[p.pid]){ H.wq[p.pid]=x; Music.play("blip"); }
+  } else if (d.t==="ready" && st.ph==="seg"){
+    if (!H.ready[p.pid]){ H.ready[p.pid]=1; Music.play("pop"); }
+  } else if (d.t==="wa" && st.ph==="wans"){
+    const x=clean(d.x,MAXLEN); if (x && !H.who.ans[p.pid]){ H.who.ans[p.pid]=x; Music.play("blip"); }
+  } else if (d.t==="g" && st.ph==="wguess" && d.k===H.wk && p.pid!==H.wAuthor && d.id!==p.pid && st.opts.some(o=>o[0]===d.id) && !H.guess[p.pid]){
+    H.guess[p.pid]=d.id; Music.play("tick");
+  } else if (d.t==="bq" && st.ph==="bestq" && H.bqList.some(q=>q[0]===d.id) && H.bqOwn[p.pid]!==d.id && !H.bq[p.pid]){
+    H.bq[p.pid]=d.id; Music.play("tick");
+  } else return;
+  checkDone(); push(); hostRender();
+}
+function onHostClose(conn){
+  const p=H.P.get(conn._pid); if (!p || p.conn!==conn) return;
+  if (H.st.ph==="lobby") H.P.delete(p.pid); else p.on=false;
+  checkDone(); push(); hostRender();
+}
+function sc(){ return [...H.P.values()].map(p=>[p.pid,p.name,p.av,p.score,p.on?1:0]); }
+function meFor(pid){
+  const st=H.st, me={};
+  if (st.ph==="answer") me.asg=(H.batch?.prompts||[]).filter(x=>x.pair.includes(pid)).map(x=>[x.key,x.q,x.ans[pid]?1:0]);
+  if (st.ph==="vote"){ me.opt=H.own[pid]||null; me.voted=H.votes[pid]||null; }   // opt set = you wrote one of these, you sit this vote out
+  if (st.ph==="write") me.done=!!H.wq[pid];
+  if (st.ph==="bestq"){ me.own=H.bqOwn[pid]||null; me.voted=H.bq[pid]||null; }
+  if (st.ph==="wans") me.done=!!H.who?.ans[pid];
+  if (st.ph==="seg") me.ready=!!H.ready[pid];
+  if (st.ph==="wguess"){ me.author=pid===H.wAuthor; me.voted=H.guess[pid]||null; }
+  if (st.ph==="wrev"){ me.guess=H.revGuess[pid]||null; me.author=pid===H.wAuthor; }
+  return me;
+}
+function sendTo(p){ if (p.conn?.open) try{ p.conn.send({t:"st", st:{...H.st, sc:sc(), me:meFor(p.pid)}}); }catch{} }
+function push(){ for (const p of H.P.values()) if(!p.bot) sendTo(p); }
+
+/* ---- phase engine ---- */
+function setPhase(st, T, onEnd){
+  clearInterval(H.iv); H.iv=null; H.tok++; H.closing=false; H.onEnd=onEnd||null; st.pt=H.tok; H.st=st;
+  if (T){ st.t=T; st.T=T; H.iv=setInterval(tick,1000); }
+  push(); hostRender();
+}
+function tick(){
+  const st=H.st; st.t=Math.max(0,st.t-1);
+  if (st.t<=5 && st.t>0) Music.play("tick");
+  push(); paintTimer();
+  if (st.t<=0){ clearInterval(H.iv); H.iv=null; at(1500, finish); }
+}
+function paintTimer(){
+  const el=app.querySelector(".stage .timer"), st=H.st;
+  if (!el) return hostRender();
+  el.querySelector("span").textContent=st.t; el.style.setProperty("--p",st.T?st.t/st.T:0);
+  el.classList.toggle("hot",st.t<=5); el.setAttribute("aria-label",st.t+" ثانية");
+}
+function finish(){ if (H.closing) return; H.closing=true; clearInterval(H.iv); H.iv=null; const fn=H.onEnd; H.onEnd=null; fn&&fn(); }
+function soon(){ if (!H.closing) at(700, finish); }
+function checkDone(){
+  const st=H.st, on=online();
+  if (st.ph==="answer"){
+    const all=H.batch.prompts.every(x=>x.pair.every(pid=>x.ans[pid] || !H.P.get(pid)?.on));
+    if (all) soon();
+  } else if (st.ph==="vote"){
+    const voters=on.filter(p=>!H.own[p.pid]);
+    st.vc=voters.filter(p=>H.votes[p.pid]).length; st.vt=voters.length;
+    if (voters.every(p=>H.votes[p.pid])) soon();
+  } else if (st.ph==="write"){
+    if (on.every(p=>H.wq[p.pid])) soon();
+  } else if (st.ph==="bestq"){
+    st.vc=Object.keys(H.bq).length; st.vt=on.length;
+    if (on.every(p=>H.bq[p.pid])) soon();
+  } else if (st.ph==="seg"){
+    st.rc=on.filter(p=>H.ready[p.pid]).length; st.rt=on.length;
+    if (on.every(p=>H.ready[p.pid])) soon();
+  } else if (st.ph==="wans"){
+    if (on.every(p=>H.who.ans[p.pid])) soon();
+  } else if (st.ph==="wguess"){
+    const g=on.filter(p=>p.pid!==H.wAuthor); st.vc=g.filter(p=>H.guess[p.pid]).length; st.vt=g.length;
+    if (g.every(p=>H.guess[p.pid])) soon();
+  }
+}
+
+/* ---- bots (so you can watch the game with few people) ---- */
+function syncBots(){
+  for (const [k,p] of H.P) if (p.bot) H.P.delete(k);
+  BOTS.slice(0,H.settings.bots).forEach(([name,av],i)=>H.P.set("bot"+i,{pid:"bot"+i,name,av,score:0,on:true,bot:true}));
+}
+function botsAct(){
+  const st=H.st, bots=online().filter(p=>p.bot);
+  for (const b of bots){
+    if (st.ph==="answer") H.batch.prompts.filter(x=>x.pair.includes(b.pid)).forEach((x,i)=>
+      at(rnd(6,25)*1000*(i+1), ()=>handleAction(b,{t:"ans",k:x.key,x:pick(BOT_ANS)})));
+    if (st.ph==="vote" && !H.own[b.pid]) at(rnd(3,14)*1000, ()=>handleAction(b,{t:"vote",k:H.vk,c:pick(["A","B"])}));
+    if (st.ph==="write") at(rnd(8,40)*1000, ()=>handleAction(b,{t:"q",x:nextPrompt(Math.random()<.5?"q":"s")}));
+    if (st.ph==="seg") at(rnd(2,7)*1000, ()=>handleAction(b,{t:"ready"}));
+    if (st.ph==="wans") at(rnd(6,30)*1000, ()=>handleAction(b,{t:"wa",x:pick(BOT_ANS)}));
+    if (st.ph==="wguess" && b.pid!==H.wAuthor) at(rnd(3,12)*1000, ()=>{ const ok=st.opts.filter(o=>o[0]!==b.pid); handleAction(b,{t:"g",k:H.wk,id:pick(ok)[0]}); });
+    if (st.ph==="bestq") at(rnd(3,14)*1000, ()=>{ const ok=H.bqList.filter(q=>q[0]!==H.bqOwn[b.pid]); if(ok.length) handleAction(b,{t:"bq",id:pick(ok)[0]}); });
+  }
+}
+
+/* ---- fair rounds: everyone answers the same number of times per round ---- */
+function fairPairs(ids){
+  const s=shuffle(ids), n=s.length, out=[];
+  if (n<2) return out;
+  if (n%2===0){ for(let i=0;i<n;i+=2) out.push([s[i],s[i+1]]); }      // each player once
+  else { for(let i=0;i<n;i++) out.push([s[i],s[(i+1)%n]]); }          // odd: each player exactly twice
+  return shuffle(out);
+}
+
+/* ---- game flow ---- */
+function startGame(){
+  if (online().length<3) return;
+  clearLater();
+  for (const p of H.P.values()) p.score=0;
+  H.seg=0; Music.play("tada");
+  nextSegment();
+}
+function nextSegment(){
+  H.seg++;
+  if (H.seg>NSEG) return finalScreen();
+  if (H.seg>=3 && online().length<3) return skipSeg(H.seg);
+  Music.setMood("lobby"); Music.play("whistle");
+  H.ready={};
+  setPhase({ph:"seg", seg:H.seg, rc:0, rt:online().length}, T_INTRO, ()=>{ H.rd=0; if (H.seg===4) startWrite(); else if (H.seg===3) startWho(); else nextRound(); });
+  botsAct();
+}
+function nextRound(){
+  H.rd++;
+  if (H.rd>H.settings.rounds) return nextSegment();
+  const kind=SEGS[H.seg].kind;
+  const prompts=fairPairs(online().map(p=>p.pid)).map((pair,i)=>({key:`${H.seg}.${H.rd}.${i}.${Date.now()%1e6}`, q:nextPrompt(kind), pair, ans:{}, author:null}));
+  H.batch={prompts, mult:MULT[H.seg]};
+  startAnswer();
+}
+function startAnswer(){
+  const per={}; for (const x of H.batch.prompts) for (const pid of x.pair) per[pid]=(per[pid]||0)+1;
+  const most=Math.max(1,...Object.values(per));
+  Music.setMood("answer");
+  setPhase({ph:"answer", seg:H.seg, rd:H.rd, rds:H.seg===4?1:H.settings.rounds, per:most, np:H.batch.prompts.length}, T_ANSWER*most, ()=>{ H.di=-1; nextDuel(); });
+  botsAct();
+}
+function nextDuel(){
+  H.di++;
+  const prompts=H.batch.prompts;
+  if (H.di>=prompts.length) return afterBatch();
+  const x=prompts[H.di], [pa,pb]=x.pair, A=x.ans[pa], B=x.ans[pb], mult=H.batch.mult;
+  const head={seg:H.seg, rd:H.rd, rds:H.seg===4?1:H.settings.rounds, di:H.di, dn:prompts.length, q:x.q};
+  if (!A && !B){ Music.stop(); Music.play("womp"); setPhase({...head, ph:"reveal", res:{skip:true}}); at(4000,nextDuel); return; }
+  if (!A || !B){
+    const w=H.P.get(A?pa:pb), votes=Math.max(1,Math.ceil((online().length-2)/2)), pts=votes*mult;
+    if (w) w.score+=pts;
+    Music.stop(); Music.play("tada");
+    setPhase({...head, ph:"reveal", res:{solo:true, text:A||B, name:w?.name||"", av:w?.av||"", pts}});
+    at(5500,nextDuel); return;
+  }
+  const flip=Math.random()<.5, idA=flip?pb:pa, idB=flip?pa:pb;
+  H.vk++; H.votes={}; H.own={[idA]:"A",[idB]:"B"}; H.cur={idA,idB};
+  Music.setMood("vote");
+  setPhase({...head, ph:"vote", A:x.ans[idA], B:x.ans[idB], vc:0, vt:online().filter(p=>!H.own[p.pid]).length}, T_VOTE, endVote);
+  botsAct();
+}
+function endVote(){
+  const st=H.st, vs=Object.values(H.votes), vA=vs.filter(v=>v==="A").length, vB=vs.length-vA, mult=H.batch.mult;
+  const win=vA>vB?"A":vB>vA?"B":"tie";
+  const pA=H.P.get(H.cur.idA), pB=H.P.get(H.cur.idB);
+  const res={vA,vB,win,pts:{A:vA*mult,B:vB*mult}};
+  const free={A:vA,B:vB};
+  if (win!=="tie"){ const lose=win==="A"?"B":"A"; if (free[win]>=2 && free[lose]===0){ res.sweep=true; res.bonus=mult; res.pts[win]+=mult; } }
+  const who={A:[pA?.name||"",pA?.av||""],B:[pB?.name||"",pB?.av||""]};
+  Music.stop();
+  setPhase({...st, ph:"reveal", rv:0, res, t:0});
+  at(2600,()=>{ H.st.rv=1; Music.play("roll",2.4); push(); hostRender(); });
+  at(5100,()=>{ H.st.rv=2; H.st.res.who=who; if(pA) pA.score+=res.pts.A; if(pB) pB.score+=res.pts.B;
+    Music.play(vA+vB===0?"womp":res.sweep?"applause":"tada"); if(res.sweep) confetti(); push(); hostRender(); });
+  at(10500,nextDuel);
+}
+function afterBatch(){
+  Music.setMood("lobby");
+  setPhase({ph:"score", seg:H.seg, rd:H.rd, rds:H.seg===4?1:H.settings.rounds});
+  at(9000, ()=>{ if (H.seg===4) startBestQ(); else if (H.seg===3) nextSegment(); else nextRound(); });
+}
+function skipSeg(seg){
+  Music.play("womp"); setPhase({ph:"segskip", seg});
+  at(5000, ()=>{ H.seg=seg; nextSegment(); });
+}
+/* segment 3: who wrote it? everyone answers the same prompt once, everyone guesses every answer except their own */
+function startWho(){
+  H.who={q:nextPrompt("w"), ans:{}};
+  Music.setMood("answer");
+  setPhase({ph:"wans", seg:3, q:H.who.q}, T_ANSWER, endWhoAns);
+  botsAct();
+}
+function endWhoAns(){
+  H.whoList=shuffle(online().filter(p=>H.who.ans[p.pid]).map(p=>[p.pid,H.who.ans[p.pid]]));
+  if (H.whoList.length<3) return skipSeg(3);
+  H.whoGuesses=[]; H.whoOpts=[]; H.wi=-1; nextWho();
+}
+/* guessing: no author is revealed until every answer has been guessed, so nobody can work it out by elimination */
+function nextWho(){
+  H.wi++;
+  if (H.wi>=H.whoList.length) return startWhoReveal();
+  const [author,x]=H.whoList[H.wi];
+  H.wk++; H.guess={}; H.wAuthor=author;
+  const opts=online().map(p=>[p.pid,p.name,p.av]);
+  H.whoOpts[H.wi]=opts;
+  Music.setMood("vote");
+  setPhase({ph:"wguess", seg:3, q:H.who.q, x, opts, wi:H.wi, wn:H.whoList.length, wk:H.wk, vc:0, vt:Math.max(0,online().length-1)}, T_GUESS, endWho);
+  botsAct();
+}
+function endWho(){
+  H.whoGuesses[H.wi]=H.guess;
+  Music.play("pop");
+  nextWho();
+}
+function startWhoReveal(){
+  H.ri=-1; H.revGuess={};
+  Music.setMood("lobby"); Music.play("whistle");
+  setPhase({ph:"wrevintro", seg:3, wn:H.whoList.length});
+  at(4000, nextReveal);
+}
+function nextReveal(){
+  H.ri++;
+  if (H.ri>=H.whoList.length){ Music.setMood("lobby"); setPhase({ph:"score", seg:3}); at(9000,nextSegment); return; }
+  const [author,x]=H.whoList[H.ri], guesses=H.whoGuesses[H.ri]||{}, opts=H.whoOpts[H.ri]||[];
+  H.revGuess=guesses; H.wAuthor=author;
+  const a=H.P.get(author), tally={};
+  let right=0, fooled=0;
+  for (const g of Object.values(guesses)){ tally[g]=(tally[g]||0)+1; if (g===author) right++; else fooled++; }
+  Music.duck(true); Music.play("roll",2.2);
+  setPhase({ph:"wrev", seg:3, q:H.who.q, x, wi:H.ri, wn:H.whoList.length, rv:0, tally:opts.map(([pid,name,av])=>[pid,name,av,tally[pid]||0]), res:{right,fooled}});
+  at(2600,()=>{
+    for (const [pid,g] of Object.entries(guesses)) if (g===author){ const p=H.P.get(pid); if(p) p.score+=WHO_RIGHT; }
+    if (a) a.score+=fooled*WHO_FOOL;
+    H.st.rv=1; H.st.res.author=[author,a?.name||"",a?.av||""]; H.st.res.pts=fooled*WHO_FOOL;
+    Music.duck(false); Music.play(right?"tada":"womp"); if(fooled>=2 && right===0) confetti(); push(); hostRender(); });
+  at(8500,nextReveal);
+}
+/* segment 4 */
+function startWrite(){
+  H.wq={};
+  Music.setMood("write");
+  setPhase({ph:"write", seg:4}, T_WRITE, endWrite);
+  botsAct();
+}
+function endWrite(){
+  const order=shuffle(online().map(p=>p.pid)), M=order.length;
+  if (M<3){ setPhase({ph:"segskip",seg:4}); at(5000,finalScreen); return; }
+  const prompts=order.map((pid,i)=>({ key:`4.${i}.${Date.now()%1e6}`, q:H.wq[pid]||nextPrompt(Math.random()<.5?"q":"s"), author:H.wq[pid]?pid:null,
+                                     pair:[order[(i+1)%M], order[(i+2)%M]], ans:{} }));   // each player answers exactly 2, never their own
+  H.batch={prompts:shuffle(prompts), mult:MULT[4]};
+  H.rd=1; startAnswer();
+}
+function startBestQ(){
+  const qs=H.batch.prompts.filter(x=>x.author && H.P.get(x.author));
+  if (qs.length<2) return finalScreen();
+  H.bqList=qs.map((x,i)=>["q"+i, x.q]); H.bq={}; H.bqOwn={}; H.bqAuthor={};
+  qs.forEach((x,i)=>{ H.bqOwn[x.author]="q"+i; H.bqAuthor["q"+i]=x.author; });
+  Music.setMood("vote"); Music.play("whistle");
+  setPhase({ph:"bestq", qs:H.bqList, vc:0, vt:online().length}, T_VOTE, endBestQ);
+  botsAct();
+}
+function endBestQ(){
+  const count={}; for (const id of Object.values(H.bq)) count[id]=(count[id]||0)+1;
+  const res=H.bqList.map(([id,q])=>{ const p=H.P.get(H.bqAuthor[id]), v=count[id]||0; if(p) p.score+=v*BESTQ_PTS; return [q,v,p?.name||"",p?.av||"",v*BESTQ_PTS]; }).sort((a,b)=>b[1]-a[1]);
+  Music.stop(); Music.play("roll",2);
+  setPhase({ph:"bestqr", res, rv:0});
+  at(2200,()=>{ H.st.rv=1; Music.play("tada"); confetti(); push(); hostRender(); });
+  at(11000,finalScreen);
+}
+function finalScreen(){
+  const ranked=sc().sort((a,b)=>b[3]-a[3]), top=ranked.slice(0,3);
+  Music.setMood("lobby"); Music.duck(true);
+  setPhase({ph:"podium", rv:0, top});
+  Music.play("roll",2.6);
+  const step=(rv,fx)=>{ H.st.rv=rv; if(fx) Music.play(fx); push(); hostRender(); };
+  let t=3200;
+  if (top[2]){ at(t,()=>step(1,"tada")); t+=4800; }
+  at(t,()=>step(2,"tada")); t+=4800;
+  at(t,()=>{ step(3); Music.play("roll",3); }); t+=3400;
+  at(t,()=>{ step(4,"applause"); confetti(); }); t+=7500;
+  at(t,()=>{ Music.duck(false); setPhase({ph:"final", top}); confetti(); });
+}
+function kingLine(p){ return p ? [h("span",{class:"kl"},`👑 ${p[2]} ${p[1]}`), h("span",{class:"kl"},"ملك الضحك!")] : "خلصت اللعبة"; }
+function podium(top, rv, animate){
+  const shownAt={3:1,2:2,1:4};
+  const slot=place=>{
+    const p=top[place-1], shown=rv>=shownAt[place], fresh=animate && rv===shownAt[place];
+    return h("div",{class:`pod p${place}`+(fresh?" fresh":"")},
+      h("div",{class:"pwho"}, shown&&p ? [h("div",{class:"av big","aria-hidden":"true"},p[2]), h("div",{class:"nm"},p[1]), h("div",{class:"psc"},p[3].toLocaleString("en"))]
+                                       : h("div",{class:"av big q","aria-hidden":"true"},"؟")),
+      h("div",{class:"blk"}, place===1?"🥇":place===2?"🥈":"🥉"));
+  };
+  return h("div",{class:"podium"}, top[1]?slot(2):null, slot(1), top[2]?slot(3):null);
+}
+function toLobby(){
+  clearLater(); for (const [k,p] of H.P) if(!p.on) H.P.delete(k);
+  for (const p of H.P.values()) p.score=0;
+  H.seg=0; H.rd=0; Music.setMood("lobby"); setPhase({ph:"lobby"});
+}
+const TIMED=["answer","vote","write","bestq","wans","wguess","seg"];
+function skipPhase(){ if (TIMED.includes(H.st.ph)) finish(); }
+
+/* ---- host rendering ---- */
+const seenAv=new Set();
+function avatar(av,name,ok,badge,pid){ const fresh=pid&&!seenAv.has(pid); if(pid) seenAv.add(pid);
+  return h("div",{class:"who"+(ok?" ok":"")+(fresh?" new":"")}, badge?h("span",{class:"tick"},badge):null, h("div",{class:"av","aria-hidden":"true"},av), h("div",{class:"nm"},name)); }
+function timerEl(t,T){ const el=h("div",{class:"timer"+(t<=5?" hot":""),role:"timer","aria-label":t+" ثانية"},h("span",{},t)); el.style.setProperty("--p",T?t/T:0); return el; }
+function board(list, myPid){
+  const sorted=[...list].sort((a,b)=>b[3]-a[3]);
+  return h("div",{class:"board"}, sorted.map((p,i)=>h("div",{class:"rowp"+(i===0&&p[3]>0?" first":"")+(p[4]?"":" off")},
+    h("span",{class:"r"},i+1), h("div",{class:"av","aria-hidden":"true"},p[2]), h("span",{class:"nm"},p[1]+(p[0]===myPid?" (إنت)":"")), h("span",{class:"sc"},p[3].toLocaleString("en")))));
+}
+function qrBox(size=220){
+  const url=joinUrl(H.code);
+  const box=h("div",{class:"joinbox"}, h("div",{class:"qr"}), h("span",{class:"code2"},H.code), h("span",{class:"url"},url));
+  if (window.QRCode){ try{ new QRCode(box.querySelector(".qr"),{text:url,width:size,height:size,colorDark:"#0f1f3b",colorLight:"#f5f9ff",correctLevel:QRCode.CorrectLevel.M}); }catch{} }
+  else box.querySelector(".qr").append(h("span",{class:"small"},"ما قدرنا نرسم الـQR. افتحوا الرابط واكتبوا الكود."));
+  return box;
+}
+function showQR(){
+  const ov=h("div",{class:"qrover",role:"dialog","aria-label":"انضمام للعبة",onclick:e=>{ if(e.target===ov) ov.remove(); }},
+    h("div",{style:"display:flex;flex-direction:column;gap:14px;align-items:center"}, qrBox(280), h("button",{class:"btn",onclick:()=>ov.remove()},"تمام")));
+  document.body.append(ov);
+}
+function waitingFor(list){
+  if (!list.length) return null;
+  return h("div",{class:"waiting"}, h("span",{class:"lbl"},"لسا ما صوّتوا 👀"), h("div",{class:"wl"}, list.map(p=>h("span",{class:"wchip"},p.av," ",p.name))));
+}
+function segLabel(st){
+  if (!st.seg) return null;
+  const s=`${SEGS[st.seg].icon} ${SEGS[st.seg].title}`;
+  return st.rds>1 && st.rd ? `${s} · الجولة ${Math.min(st.rd,st.rds)} من ${st.rds}` : s;
+}
+function sceneFor(st){
+  if (!st || st.ph==="lobby") return "0";
+  if (["podium","final"].includes(st.ph)) return "5";
+  if (["bestq","bestqr"].includes(st.ph)) return "4";
+  return st.seg ? String(st.seg) : "0";
+}
+function setScene(st){ const n=sceneFor(st); if (document.documentElement.dataset.scene!==n) document.documentElement.dataset.scene=n; }
+function hostRender(){
+  const st=H.st, on=online(); setScene(st);
+  if (!Tracks.pv) Tracks.sync(sceneFor(st));
+  const ib=(icon,label,fn,extra)=>h("button",{class:"ibtn",title:label,"aria-label":label,onclick:fn,style:extra||null},icon);
+  const tools=h("div",{class:"tools"},
+    Tracks.blocked ? h("button",{class:"chip",style:"border-color:var(--coral)",onclick:()=>Tracks.retry()},"🔇 اكبس لتشغيل الموسيقى") : null,
+    TIMED.includes(st.ph) && st.ph!=="seg" ? ib("⏭","خلّصنا، كمّل",skipPhase) : null,
+    st.ph!=="lobby" ? ib("📱","QR للانضمام",showQR) : null,
+    ib("🎵","الموسيقى",musicPanel),
+    ib(Music.muted?"🔇":"🔊","الصوت",e=>{ const m=Music.toggle(); e.currentTarget.textContent=m?"🔇":"🔊"; }),
+    st.ph!=="lobby" ? ib("↩","رجوع للّوبي",toLobby) : null);
+  const bar=h("header",{class:"hbar"},
+    h("div",{class:"code"}, h("span",{class:"lbl"},"الكود"), h("b",{},H.code)),
+    segLabel(st) ? h("span",{class:"segchip"},segLabel(st)) : null,
+    tools);
+  let body;
+  if (st.ph==="lobby"){
+    const can=on.length>=3, real=on.filter(p=>!p.bot);
+    body=[
+      h("h1",{class:"disp title"},"مين فينا؟"),
+      h("div",{class:"lobby"},
+        qrBox(),
+        h("div",{class:"lcol"},
+          on.length ? h("div",{class:"lobbyp"}, on.map(p=>avatar(p.av,p.name,true,null,p.pid)))
+                    : h("p",{class:"empty"}, H.net ? "صوّروا الكود وادخلوا 📱" : "ضيفوا بوتات من الإعدادات للتجربة"),
+          h("button",{class:"btn big-btn",disabled:!can,onclick:startGame}, can?"يلّا نبلّش ▶":`بدنا ${3-on.length} كمان`),
+          H.netMsg ? h("div",{class:"warn",role:"status"},H.netMsg) : null,
+          H.net && localOnly() ? h("div",{class:"warn"},"الصفحة مفتوحة من localhost أو كملف، فالتلفونات ما رح توصل. افتحوها من رابط الشبكة أو الاستضافة.") : null)),
+      h("details",{class:"settings"},
+        h("summary",{},"⚙️ إعدادات"),
+        h("div",{class:"row"}, h("span",{class:"lbl"},"جولات بكل فقرة"), h("div",{class:"chips"},
+          ...[1,2,3].map(n=>h("button",{class:"chip","aria-pressed":String(H.settings.rounds===n),onclick:()=>{H.settings.rounds=n;Music.play("pop");H.keepSettings=true;hostRender();}},n)))),
+        h("div",{class:"row"}, h("span",{class:"lbl"},"🤖 بوتات للتجربة"), h("div",{class:"chips"},
+          ...[0,1,2,3,4].map(n=>h("button",{class:"chip","aria-pressed":String(H.settings.bots===n),onclick:()=>{H.settings.bots=n;syncBots();Music.play("boing");H.keepSettings=true;hostRender();}},n)))))
+    ];
+  } else if (st.ph==="seg"){
+    const s=SEGS[st.seg];
+    body=[
+      h("div",{class:"segintro"}, h("span",{class:"icon","aria-hidden":"true"},s.icon), h("div",{class:"num"},`الفقرة ${st.seg} من ${NSEG}`), h("h2",{class:"disp"},s.title)),
+      h("ol",{class:"rules"}, s.rules.map(r=>h("li",{},r))),
+      h("div",{class:"duel"}, timerEl(st.t,st.T), h("span",{class:"kind"},`جاهزين ${st.rc||0}/${st.rt||0}`), h("button",{class:"btn",onclick:skipPhase},"يلّا ▶"))
+    ];
+  } else if (st.ph==="segskip"){
+    body=[h("p",{class:"banner"},`«${SEGS[st.seg].title}» بدها 3 لاعبين على الأقل`), h("p",{class:"muted"},"رح ننتقل للي بعدها.")];
+  } else if (st.ph==="write"){
+    body=[
+      h("h2",{class:"disp qcard"},"اكتبوا سؤال مجنون ✍️"),
+      h("div",{class:"lobbyp"}, on.map(p=>avatar(p.av,p.name,!!H.wq[p.pid],H.wq[p.pid]?"✓":null))),
+      timerEl(st.t,st.T)
+    ];
+  } else if (st.ph==="answer"){
+    const per={}, done={};
+    for (const x of H.batch.prompts) for (const pid of x.pair){ per[pid]=(per[pid]||0)+1; if(x.ans[pid]) done[pid]=(done[pid]||0)+1; }
+    body=[
+      h("h2",{class:"disp qcard"}, "جاوبوا من تلفوناتكم ✍️"),
+      h("div",{class:"lobbyp"}, on.filter(p=>per[p.pid]).map(p=>avatar(p.av,p.name,(done[p.pid]||0)>=per[p.pid],`${done[p.pid]||0}/${per[p.pid]}`))),
+      timerEl(st.t,st.T)
+    ];
+  } else if (st.ph==="vote"){
+    body=[
+      h("h2",{class:"disp qcard qsm"}, st.q),
+      h("div",{class:"answers"}, h("div",{class:"ans"},h("span",{class:"tag"},"A"),st.A), h("div",{class:"ans"},h("span",{class:"tag"},"B"),st.B)),
+      h("div",{class:"duel"}, timerEl(st.t,st.T), h("span",{class:"kind"},`صوّتوا · ${st.vc||0}/${st.vt||0}`)),
+      waitingFor(on.filter(p=>!H.own[p.pid] && !H.votes[p.pid]))
+    ];
+  } else if (st.ph==="wans"){
+    body=[
+      h("h2",{class:"disp qcard"}, st.q),
+      h("div",{class:"lobbyp"}, on.map(p=>avatar(p.av,p.name,!!H.who?.ans[p.pid],H.who?.ans[p.pid]?"✓":null))),
+      timerEl(st.t,st.T)
+    ];
+  } else if (st.ph==="wrevintro"){
+    body=[h("span",{class:"segintro"},h("span",{class:"icon","aria-hidden":"true"},"🕵️")),
+      h("p",{class:"banner"},"خلص التخمين! هلّأ الكشف… 🥁"),
+      ];
+  } else if (st.ph==="wguess"||st.ph==="wrev"){
+    const rev=st.ph==="wrev", r=st.res||{}, max=Math.max(1,...(st.tally||[]).map(x=>x[3]));
+    body=[
+      h("p",{class:"kind"}, `${st.wi+1} من ${st.wn}`),
+      h("h2",{class:"disp qcard qsm"}, st.q),
+      h("div",{class:"answers",style:"grid-template-columns:minmax(0,1fr);width:min(720px,100%)"}, h("div",{class:"ans"+(rev&&st.rv?" win":"")}, st.x)),
+      h("p",{class: rev&&st.rv ? "banner" : "kind", style: rev&&st.rv ? null : "font-size:1.6rem;margin:0"}, rev ? (st.rv ? `كاتبه: ${r.author[2]} ${r.author[1]}` : "مين كاتبه؟ 🥁") : "مين كاتب هالجواب؟ 🕵️"),
+      rev ? h("div",{class:"lobbyp"}, st.tally.map(([pid,name,av,n])=>h("div",{class:"who"+(st.rv&&pid===r.author[0]?" ok":"")},
+              h("span",{class:"tick",style:n?"":"opacity:.4"},n), h("div",{class:"av","aria-hidden":"true"},av), h("div",{class:"nm"},name),
+              h("div",{class:"gbar"},h("i",{style:`width:${n/max*100}%`})))))
+          : null,
+      rev && st.rv ? h("p",{class:"banner"}, r.right?`${r.right} خمّنوها صح (+${WHO_RIGHT} لكل واحد)`:"ولا حدا عرفه! 🕵️", r.fooled?` · ${r.author[1]} ضلّل ${r.fooled} (+${r.pts})`:"") : null,
+      rev ? null : h("div",{class:"duel"}, timerEl(st.t,st.T), h("span",{class:"kind"},`خمّنوا · ${st.vc||0}/${st.vt||0}`)),
+      null   // no "still waiting" names here: leaving the author out of that list would give them away
+    ];
+  } else if (st.ph==="reveal"){
+    const r=st.res;
+    if (r.skip) body=[h("h2",{class:"disp qcard qsm"},st.q), h("p",{class:"banner"},"ولا حدا جاوب 😶"), h("p",{class:"muted"},"ولا نقطة لهالسؤال.")];
+    else if (r.solo) body=[h("h2",{class:"disp qcard qsm"},st.q),
+      h("div",{class:"answers",style:"grid-template-columns:minmax(0,1fr);width:min(640px,100%)"}, h("div",{class:"ans win"}, r.text, h("div",{class:"owner"},r.av," ",r.name," ",h("span",{class:"pts"},"+"+r.pts)))),
+      h("p",{class:"muted"},"الثاني ما لحق يكتب ⏰")];
+    else {
+      const tot=Math.max(1,r.vA+r.vB);
+      const card=(k,txt)=>h("div",{class:"ans"+(st.rv>=1&&r.win!=="tie"?(r.win===k?" win":" lose"):"")},
+        h("span",{class:"tag"},k), txt,
+        h("div",{class:"bar"+(st.rv===0?" anim":"")},h("i",{style:`width:${(k==="A"?r.vA:r.vB)/tot*100}%`})),
+        h("div",{class:"vn"},`${k==="A"?r.vA:r.vB} أصوات`),
+        st.rv>=2 && r.who ? h("div",{class:"owner"}, r.who[k][1]," ",r.who[k][0]," ", h("span",{class:"pts"},"+"+r.pts[k])) : null);
+      body=[
+        h("h2",{class:"disp qcard qsm"},st.q),
+        h("div",{class:"answers"}, card("A",st.A), card("B",st.B)),
+        st.rv===1 ? h("p",{class:"banner"}, r.win==="tie"?"تعادل! مين كتبهم؟":"الجواب الفائز… بس مين كاتبه؟ 🥁") : null,
+        st.rv>=2 ? h("p",{class:"banner"}, r.win==="tie"?"تعادل!": r.sweep?`💥 سحق! كل الأصوات · بونص +${r.bonus}`:"🎉 مبروك!") : null
+      ];
+    }
+  } else if (st.ph==="score"){
+    body=[h("p",{class:"banner"}, st.seg===4?"نتيجة فقرة التعويض":"الترتيب لهلّأ"), board(sc())];
+  } else if (st.ph==="bestq"){
+    body=[
+      h("h2",{class:"disp qcard"},"أحلى سؤال؟ 👑"),
+      h("div",{class:"qlist"}, st.qs.map(([id,q],i)=>h("div",{class:"qitem"},h("span",{class:"n"},(i+1)+"."),q))),
+      h("div",{class:"duel"}, timerEl(st.t,st.T), h("span",{class:"kind"},`صوّتوا · ${st.vc||0}/${st.vt||0}`)),
+      waitingFor(on.filter(p=>!H.bq[p.pid]))
+    ];
+  } else if (st.ph==="bestqr"){
+    body=[
+      h("p",{class:"banner"}, st.rv?"👑 أحلى سؤال":"مين كتب أحلى سؤال؟ 🥁"),
+      h("div",{class:"qlist"}, st.res.map(([q,v,name,av,pts],i)=>h("div",{class:"qitem"+(i===0&&v>0&&st.rv?" top":"")},
+        q, h("div",{class:"vn muted small",style:"color:#4a6290"},`${v} أصوات`),
+        st.rv ? h("div",{class:"by"},av," ",name," ",pts?`+${pts}`:"") : null)))
+    ];
+  } else if (st.ph==="podium"){
+    const t=st.top, msg=["النتيجة النهائية… 🥁","🥉 المركز الثالث","🥈 المركز الثاني","والمركز الأول… 🥁🥁🥁", kingLine(t[0])][st.rv];
+    body=[h("p",{class:"banner",style:"font-size:clamp(2.2rem,5.5vw,4rem)"},msg), podium(t,st.rv,true)];
+  } else if (st.ph==="final"){
+    const top=st.top||sc().sort((a,b)=>b[3]-a[3]).slice(0,3);
+    body=[h("p",{class:"banner",style:"font-size:clamp(2rem,5vw,3.4rem)"}, kingLine(top[0])),
+      podium(top,4,false),
+      board(sc()),
+      h("button",{class:"btn",onclick:toLobby},"نلعب كمان مرة")];
+  }
+  const wasOpen = H.keepSettings || app.querySelector("details.settings")?.open;
+  app.replaceChildren(bar, h("main",{class:"stage"}, body));
+  if (wasOpen){ const d=app.querySelector("details.settings"); if (d) d.open=true; }
+  H.keepSettings=false;
+}
+
+/* ================= PLAYER ================= */
+const P = { out:[], peer:null, conn:null, pid:null, name:"", av:"", code:"", st:null, sentA:{}, sentV:{}, sentQ:false, draft:"", draftKey:"", sig:null, found:false, retry:null };
+function myPid(){ let id=ls.get("mf.pid"); if(!id){ id=Math.random().toString(36).slice(2,12); ls.set("mf.pid",id);} return id; }
+
+function joinForm(err, preset){
+  P.sig=null;
+  let av=ls.get("mf.av"); if(!AVS.includes(av)) av=pick(AVS);
+  const code=h("input",{class:"field",id:"jcode",inputmode:"numeric",maxlength:"4",placeholder:"مثلًا 4821",autocomplete:"off",dir:"ltr"});
+  code.value=preset||P.code||"";
+  const name=h("input",{class:"field",id:"jname",maxlength:"16",placeholder:"اسمك",autocomplete:"off"});
+  name.value=ls.get("mf.name")||"";
+  const grid=h("div",{class:"avs",role:"group","aria-label":"اختار شخصيتك"}, AVS.map(a=>h("button",{type:"button","aria-pressed":String(a===av),"aria-label":a,onclick:e=>{av=a;grid.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(b===e.currentTarget)));}},a)));
+  const form=h("form",{class:"pmain",onsubmit:e=>{e.preventDefault(); const c=code.value.replace(/\D/g,""), n=clean(name.value,16);
+      if(c.length!==4) return joinForm("الكود 4 أرقام، شوفه على الشاشة الرئيسية.", c); if(!n) return joinForm("اكتب اسمك أول.", c);
+      ls.set("mf.name",n); ls.set("mf.av",av); playerJoin(c,n,av);}},
+    h("h1",{class:"disp big"},"ادخل اللعبة"),
+    h("label",{class:"lbl",for:"jcode"},"كود الغرفة"), code,
+    h("label",{class:"lbl",for:"jname"},"اسمك"), name,
+    h("span",{class:"lbl"},"شخصيتك"), grid,
+    err ? h("div",{class:"warn",role:"alert"},err) : null,
+    h("button",{class:"btn",type:"submit"},"دخول"),
+    h("button",{class:"btn ghost",type:"button",onclick:()=>home()},"رجوع"));
+  app.replaceChildren(h("div",{class:"phone"},form));
+  if (code.value && !name.value) name.focus();
+}
+function status(msg, sub){ P.sig=null; app.replaceChildren(h("div",{class:"phone"},h("div",{class:"pmain"},h("p",{class:"big"},msg), sub?h("p",{class:"muted center"},sub):null))); }
+
+function playerJoin(code,name,av){
+  P.code=code; P.name=name; P.av=av; P.pid=myPid(); P.found=false; wake();
+  ls.set("mf.last", JSON.stringify({code, at:Date.now()}));
+  if (!netOK()) return joinForm("ما قدرنا نحمّل مكتبة الاتصال. تأكد إنك فاتح رابط اللعبة الأصلي ومعك إنترنت.", code);
+  status("عم ندوّر على الغرفة…", `الكود ${code}`);
+  try { P.peer?.destroy(); } catch {}
+  P.peer=new Peer();
+  P.peer.on("open", connectHost);
+  P.peer.on("error", e=>{
+    if (e.type==="peer-unavailable"){ if (!P.found) joinForm(`ما لقينا لعبة بالكود ${code}. تأكد من الرقم على الشاشة.`, code); else retryLater(); }
+    else if (!P.found) joinForm("ما قدرنا نتصل. جرّب كمان مرة، ويفضل تكونوا على نفس الواي فاي.", code);
+  });
+  P.peer.on("disconnected", ()=>{ try{ P.peer.reconnect(); }catch{} });
+}
+function connectHost(){
+  const conn=P.peer.connect(NS+P.code,{reliable:true});
+  P.conn=conn;
+  conn.on("open", ()=>{ P.found=true; conn.send({t:"hello",pid:P.pid,name:P.name,av:P.av}); flush(); });
+  conn.on("data", d=>{ if (d && d.t==="st"){ P.st=d.st; P.out=P.out.filter(o=>o.pt===d.st.pt && !confirmed(o.msg,d.st)); playerRender(); } });
+  conn.on("close", ()=>{ if (P.conn===conn) retryLater(); });
+  conn.on("error", ()=>{ if (P.conn===conn) retryLater(); });
+}
+function retryLater(){
+  if (P.retry) return;
+  status("انقطع الاتصال… عم نرجع","لا تسكّر الصفحة");
+  P.retry=setTimeout(()=>{ P.retry=null; if (P.peer && !P.peer.destroyed){ if(P.peer.disconnected) try{P.peer.reconnect();}catch{} connectHost(); } },2000);
+}
+function send(msg){ P.out.push({msg, pt:P.st?.pt}); flush(); }
+function flush(){ if (!P.conn?.open) return; for (const o of P.out) try{ P.conn.send(o.msg); }catch{} }
+function confirmed(m, st){
+  const me=st.me||{};
+  if (m.t==="ans") return !!(me.asg||[]).find(a=>a[0]===m.k)?.[2];
+  if (m.t==="q"||m.t==="wa") return !!me.done;
+  if (m.t==="ready") return !!me.ready;
+  return !!me.voted;      // vote, g, bq
+}
+setInterval(()=>{ if (P.out.length) flush(); }, 2000);
+
+function writeBox(id, maxlen, placeholder, key){
+  if (P.draftKey!==key){ P.draftKey=key; P.draft=""; }
+  const area=h("textarea",{class:"field",id,maxlength:String(maxlen),placeholder});
+  area.value=P.draft;
+  const cnt=h("div",{class:"count muted"},`${area.value.length}/${maxlen}`);
+  area.addEventListener("input",()=>{P.draft=area.value; cnt.textContent=`${area.value.length}/${maxlen}`;});
+  return [area,cnt];
+}
+function playerRender(){
+  const st=P.st, me=st?.me||{};
+  const mine=st?.sc?.find(s=>s[0]===P.pid);
+  let cur=null, idx=0, total=0;
+  if (st?.ph==="answer" && me.asg){ total=me.asg.length; const left=me.asg.filter(a=>!a[2] && !P.sentA[a[0]]); cur=left[0]||null; idx=total-left.length; }
+  const voted = st?.ph==="seg" ? (me.ready||P.sentV["r"+st.pt]) : st?.ph==="vote" ? (me.voted||P.sentV[st.vk]) : st?.ph==="bestq" ? (me.voted||P.sentV["bq"+st.pt]) : st?.ph==="wguess" ? (me.voted||P.sentV["w"+st.wk]) : null;
+  const wrote = (st?.ph==="write"||st?.ph==="wans") && (me.done || P.sentQ===st.pt);
+  if (st && st.t!=null && st.t<=2 && P.draft.trim()){
+    const v=clean(P.draft, st.ph==="write"?QLEN:MAXLEN);
+    if (st.ph==="answer" && cur && P.draftKey===cur[0]){ P.sentA[cur[0]]=1; send({t:"ans",k:cur[0],x:v}); P.draft=""; return playerRender(); }
+    if (st.ph==="wans" && !wrote && P.draftKey==="wans"+st.pt){ P.sentQ=st.pt; send({t:"wa",x:v}); P.draft=""; return playerRender(); }
+    if (st.ph==="write" && !wrote && P.draftKey==="write"+st.pt){ P.sentQ=st.pt; send({t:"q",x:v}); P.draft=""; return playerRender(); }
+  }
+  const sig = st ? [st.ph,st.pt,st.seg,st.rd,st.di,st.vk,st.rv,cur?.[0]||"",voted||"",wrote?1:0,me.opt||"",me.author?1:0,["score","final"].includes(st.ph)?JSON.stringify(st.sc):""].join("|") : "none";
+  if (sig===P.sig && app.querySelector(".phone .ptop")){
+    app.querySelectorAll(".ptimer").forEach(el=>{ el.textContent=st?.t??""; el.classList.toggle("hot",(st?.t??99)<=5); });
+    const pts=app.querySelector(".ptop .pts"); if(pts) pts.textContent=(mine?mine[3]:0).toLocaleString("en");
+    return;
+  }
+  P.sig=sig; setScene(st);
+  const ta=document.querySelector(".phone textarea"); if(ta) P.draft=ta.value;
+  const hadFocus = ta && document.activeElement===ta;
+  const top=h("div",{class:"ptop"}, h("div",{class:"me"}, h("span",{style:"font-size:1.8rem","aria-hidden":"true"},P.av), h("span",{},P.name)),
+    h("span",{class:"pts"}, (mine?mine[3]:0).toLocaleString("en")));
+  const clock = () => h("span",{class:"ptimer"+((st.t??99)<=5?" hot":"")},st.t??"");
+  let body;
+  if (!st) body=[h("p",{class:"big"},"عم نستنّى الشاشة الرئيسية…")];
+  else if (st.ph==="lobby") body=[h("p",{class:"big"},"إنت جوّا! 🎉"), h("p",{class:"muted center"},"استنى لحد ما تبلّش اللعبة على الشاشة الكبيرة.")];
+  else if (st.ph==="seg"){
+    const s=SEGS[st.seg], rd=me.ready||P.sentV["r"+st.pt];
+    body=[h("p",{class:"lbl center"},`${s.icon} الفقرة ${st.seg} من ${NSEG}`), h("p",{class:"big"},s.title),
+      h("ol",{class:"rules"}, s.rules.map(r=>h("li",{},r))),
+      rd ? h("p",{class:"muted center"},"جاهز ✓ بنستنى الباقي…")
+         : h("button",{class:"btn",onclick:()=>{ P.sentV["r"+st.pt]=1; send({t:"ready"}); playerRender(); }},"فهمت، جاهز ✋"),
+      h("p",{class:"center"},clock())];
+  }
+  else if (st.ph==="segskip") body=[h("p",{class:"big"},"منكمّل!"),h("p",{class:"muted center"},"هالفقرة بدها 3 لاعبين على الأقل.")];
+  else if (st.ph==="wans"){
+    if (wrote) body=[h("p",{class:"big"},"وصل جوابك ✓"),h("p",{class:"muted center"},"خلّي وجهك عادي 😐 بعدين الكل رح يخمّن مين كاتبه.")];
+    else {
+      const [area,cnt]=writeBox("pans",MAXLEN,"اكتب جوابك…","wans"+st.pt);
+      body=[ h("div",{class:"ptop"},h("span",{class:"lbl"},"مين كاتبها؟ جاوب سرًّا"),clock()),
+        h("p",{class:"disp pq"},st.q), area, cnt,
+        h("p",{class:"muted small"},"بعدين الكل رح يخمّن مين كاتب كل جواب. ضلّلهم وبتاخد نقاط."),
+        h("button",{class:"btn",onclick:()=>{const v=clean(area.value,MAXLEN); if(v){ P.sentQ=st.pt; send({t:"wa",x:v}); P.draft=""; playerRender(); }}},"ابعت الجواب") ];
+    }
+  }
+  else if (st.ph==="wguess"){
+    if (me.author) body=[h("p",{class:"big"},"هاد جوابك 🤫"),h("p",{class:"muted center"},"ولا كلمة! كل واحد بيخمّن غلط بيعطيك "+WHO_FOOL+" نقطة، والكشف بالآخر."), h("p",{class:"center"},clock())];
+    else if (voted) body=[h("p",{class:"big"},"وصل تخمينك ✓"),h("p",{class:"muted center"},"الكشف بالآخر بعد ما نخلّص كل الأجوبة 🤫")];
+    else body=[ h("div",{class:"ptop"},h("span",{class:"lbl"},"مين كاتب هالجواب؟"),clock()),
+      h("p",{class:"muted"},st.q),
+      h("p",{class:"disp pq"},"«"+st.x+"»"),
+      ...st.opts.filter(o=>o[0]!==P.pid).map(([id,name,av])=>h("button",{class:"vbtn",onclick:()=>{ P.sentV["w"+st.wk]=name; send({t:"g",k:st.wk,id}); playerRender(); }},
+        h("b",{},av), h("span",{},name))) ];
+  }
+  else if (st.ph==="wrevintro") body=[h("p",{class:"big"},"🥁 هلّأ الكشف!"),h("p",{class:"muted center"},"عيونكم عالشاشة الكبيرة")];
+  else if (st.ph==="wrev"){
+    const r=st.res||{};
+    if (!st.rv || !r.author) body=[h("p",{class:"big"},"🥁🥁🥁")];
+    else if (me.author) body=[h("p",{class:"big"}, r.fooled?`ضلّلت ${r.fooled} 😎`:"كشفوك 😅"), h("p",{class:"muted center"}, r.fooled?`+${r.fooled*WHO_FOOL}`:"ولا نقطة هالمرة")];
+    else body=[h("p",{class:"big"}, me.guess===r.author[0]?`صح! +${WHO_RIGHT} 🎯`:"غلط 🙈"), h("p",{class:"muted center"},`كاتبه ${r.author[2]} ${r.author[1]}`)];
+  }
+  else if (st.ph==="write"){
+    if (wrote) body=[h("p",{class:"big"},"وصل سؤالك ✓"),h("p",{class:"muted center"},"غيرك رح يجاوب عليه. استنى الباقي.")];
+    else {
+      const [area,cnt]=writeBox("pq",QLEN,"اكتب سؤال مجنون أو بداية جملة…","write"+st.pt);
+      body=[ h("div",{class:"ptop"},h("span",{class:"lbl"},"فقرة التعويض: اكتب سؤال"),clock()),
+        h("p",{class:"muted"},"اسأل إشي بيطلّع أجوبة مضحكة. ممكن تكتب جملة ناقصة كمان."), area, cnt,
+        h("button",{class:"btn",onclick:()=>{const v=clean(area.value,QLEN); if(v){ P.sentQ=st.pt; send({t:"q",x:v}); playerRender(); }}},"ابعت السؤال") ];
+    }
+  }
+  else if (st.ph==="answer"){
+    if (cur){
+      const [area,cnt]=writeBox("pans",MAXLEN,"اكتب أضحك إشي ببالك…",cur[0]);
+      body=[ h("div",{class:"ptop"},h("span",{class:"lbl"}, total>1?`سؤال ${idx+1} من ${total}`:"دورك! جاوب سرًّا"), clock()),
+        h("p",{class:"disp pq"},cur[1]), area, cnt,
+        h("button",{class:"btn",onclick:()=>{const v=clean(area.value,MAXLEN); if(v){ P.sentA[cur[0]]=1; send({t:"ans",k:cur[0],x:v}); P.draft=""; playerRender(); }}},"ابعت الجواب") ];
+    } else if (total) body=[h("p",{class:"big"},"وصلت أجوبتك ✓"),h("p",{class:"muted center"},"لا تفضح حالك بوجهك. استنى التصويت."), h("p",{class:"center"},clock())];
+    else body=[h("p",{class:"big"},"استنّى شوي"),h("p",{class:"muted center"},"هالجولة ما إلك سؤال. الجولة الجاية إلك.")];
+  }
+  else if (st.ph==="vote"){
+    if (me.opt) body=[h("p",{class:"big"},"جوابك على الشاشة 🤞"),h("p",{class:"muted center"},"إنت والي ضدك ما بتصوّتوا بهالسؤال. الباقي بيقرروا."), h("p",{class:"center"},clock())];
+    else if (voted) body=[h("p",{class:"big"},`صوّتت لـ ${voted} ✓`),h("p",{class:"muted center"},"استنى النتيجة…")];
+    else {
+      const opt=(k,txt)=>h("button",{class:"vbtn",onclick:()=>{ P.sentV[st.vk]=k; send({t:"vote",k:st.vk,c:k}); playerRender(); }},
+        h("b",{},k), h("span",{}, txt));
+      body=[ h("div",{class:"ptop"},h("span",{class:"lbl"},"مين الأضحك؟"),clock()), h("p",{class:"muted"},st.q), opt("A",st.A), opt("B",st.B) ];
+    }
+  }
+  else if (st.ph==="reveal"){
+    const r=st.res||{};
+    let msg="شوف الشاشة! 👀";
+    if (r.skip) msg="ولا حدا جاوب 😶";
+    else if (r.solo) msg=`${r.name} أخذ ${r.pts}`;
+    else if (st.rv>=2 && r.who) msg = r.win==="tie" ? "تعادل!" : `${r.sweep?"💥 سحق! ":""}فاز ${r.who[r.win][1]} ${r.who[r.win][0]}`;
+    else if (st.rv===1) msg="🥁🥁🥁";
+    body=[h("p",{class:"big"},msg)];
+  }
+  else if (st.ph==="bestq"){
+    const vkey="bq"+st.pt;
+    if (voted) body=[h("p",{class:"big"},"وصل صوتك ✓"),h("p",{class:"muted center"},"استنى النتيجة…")];
+    else body=[ h("div",{class:"ptop"},h("span",{class:"lbl"},"أحلى سؤال؟"),clock()),
+      ...st.qs.map(([id,q],i)=>h("button",{class:"vbtn",disabled:me.own===id,onclick:()=>{ P.sentV[vkey]=String(i+1); send({t:"bq",id}); playerRender(); }},
+        h("b",{},i+1), h("span",{}, q, me.own===id ? h("small",{},"هاد سؤالك") : null))) ];
+  }
+  else if (st.ph==="bestqr") body=[h("p",{class:"big"},"شوف الشاشة! 👑")];
+  else if (st.ph==="podium"){
+    const t=st.top||[], me1=(p)=>p&&p[0]===P.pid;
+    const line=(p,label)=> me1(p) ? `${label}: إنت! 🎉` : `${label}: ${p[2]} ${p[1]}`;
+    const msg = st.rv===0 ? "🥁 النتيجة النهائية…" : st.rv===1 ? line(t[2],"🥉 الثالث") : st.rv===2 ? line(t[1],"🥈 الثاني") : st.rv===3 ? "🥁🥁🥁 والأول…" : (me1(t[0])?["👑 إنت",h("br"),"ملك الضحك!"]:[`👑 ${t[0][2]} ${t[0][1]}`,h("br"),"ملك الضحك!"]);
+    body=[h("p",{class:"big"},msg), h("p",{class:"muted center"},"عيونكم عالشاشة الكبيرة!")];
+  }
+  else if (st.ph==="score"||st.ph==="final"){
+    const sorted=[...(st.sc||[])].sort((a,b)=>b[3]-a[3]); const rank=sorted.findIndex(s=>s[0]===P.pid)+1;
+    body=[h("p",{class:"big"}, st.ph==="final" ? (rank===1?["👑 إنت",h("br"),"ملك الضحك!"]:`خلصت! ترتيبك ${rank}`) : `ترتيبك ${rank||"-"} من ${sorted.length}`), board(sorted,P.pid)];
+  }
+  app.replaceChildren(h("div",{class:"phone"}, top, h("main",{class:"pmain"},body)));
+  if (hadFocus) setTimeout(()=>{ const a=document.querySelector(".phone textarea"); if(a){ a.focus(); a.setSelectionRange(a.value.length,a.value.length); } },0);
+}
+
+/* ================= boot ================= */
+const preset=new URLSearchParams(location.search).get("c");
+let lastGame=null; try{ lastGame=JSON.parse(ls.get("mf.last")||"null"); }catch{}
+const recent = lastGame && Date.now()-lastGame.at < 3*3600e3;
+const savedName=ls.get("mf.name"), savedAv=ls.get("mf.av");
+if (preset && /^\d{4}$/.test(preset)){
+  if (recent && lastGame.code===preset && savedName && AVS.includes(savedAv)) playerJoin(preset, savedName, savedAv);   // refreshed mid-game: straight back in
+  else joinForm(null, preset);
+} else home();
+</script>
+
+</body>
+</html>
