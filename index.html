@@ -74,7 +74,25 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 .home h1{font-size:clamp(3rem,10vw,6.5rem);margin:0;color:var(--sun);text-shadow:0 5px 0 var(--ink)}
 .home h1 small{display:block;font-size:.36em;color:var(--sky);margin-top:4px}
 .home .pick{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:28px}
-.home .pick .btn{min-width:240px;padding:20px 26px;font-size:1.25rem}
+.home .pick{gap:14px}
+.cast{display:flex;justify-content:center;gap:clamp(4px,1.5vw,14px);margin-bottom:6px}
+.castm{width:clamp(44px,8vw,78px);height:clamp(44px,8vw,78px);display:inline-block;animation:bob 2.4s ease-in-out infinite;animation-delay:var(--d)}
+.castm .avi{width:100%;height:100%}
+.castm:nth-child(odd){transform:translateY(8px)}
+@keyframes bob{0%,100%{translate:0 0}50%{translate:0 -10px}}
+.steps{margin:12px 0 0;color:var(--muted);font-size:clamp(.88rem,2.6vw,1.02rem);white-space:nowrap;display:flex;flex-wrap:wrap;justify-content:center;gap:4px 10px}
+.steps i{font-style:normal;opacity:.5}
+.pickcard{display:flex;flex-direction:column;align-items:center;gap:6px;width:min(240px,100%);padding:22px 18px 20px;border-radius:24px;
+  background:rgba(255,255,255,.04);border:1.5px solid rgba(140,200,255,.22);color:var(--cream);font-family:inherit;cursor:pointer;
+  transition:transform .18s ease, background .18s ease, border-color .18s ease}
+.pickcard:hover{background:rgba(255,255,255,.08);border-color:rgba(140,200,255,.45);transform:translateY(-3px)}
+.pickcard:active{transform:translateY(0) scale(.98)}
+.pickcard:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
+.pickcard .pcic{font-size:2.6rem;line-height:1}
+.pickcard strong{font-family:var(--display);font-weight:800;font-size:1.35rem;color:var(--sun)}
+.pickcard small{font-size:.88rem;color:var(--muted)}
+.home .pickbtn{display:flex;flex-direction:column;align-items:center;gap:4px}
+.home .pickbtn small{font-size:.85rem;font-weight:600;opacity:.75}
 .home .hint{max-width:48ch;margin:22px auto 0;font-size:.95rem}
 .warn{background:var(--panel);border:2px solid var(--coral);border-radius:14px;padding:12px 16px;margin-top:14px;max-width:60ch;text-align:start;font-size:.95rem}
 
@@ -121,8 +139,10 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 .segintro p{max-width:44ch;margin:8px auto 0;font-size:1.2rem}
 .lobby{display:grid;grid-template-columns:auto minmax(0,1fr);gap:28px;align-items:center;width:min(1000px,100%)}
 .joinbox{background:var(--card);color:var(--ink);border-radius:20px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:8px;max-width:260px}
-.joinbox .qr{width:220px;height:220px;display:grid;place-items:center}
-.joinbox .qr img,.joinbox .qr canvas{width:220px!important;height:220px!important}
+.joinbox .qr{width:170px;height:170px;display:grid;place-items:center}
+.joinbox .qr img,.joinbox .qr canvas{width:170px!important;height:170px!important}
+.joinbox .jtip{font-weight:700;color:var(--ink);font-size:1rem}
+.joinbox .jtip b{font-family:var(--display);letter-spacing:.1em;direction:ltr;display:inline-block}
 .joinbox .code2{font-family:var(--display);font-weight:800;font-size:2rem;letter-spacing:.15em;direction:ltr;color:var(--ink)}
 .qrover{position:fixed;inset:0;z-index:20;background:rgba(15,31,59,.85);display:grid;place-items:center;padding:20px}
 .qrover .joinbox{max-width:340px}
@@ -231,9 +251,17 @@ details.settings .chip{width:44px;height:44px;justify-content:center;padding:0}
 .ptop .pts{font-family:var(--display);font-weight:800;color:var(--sun);font-size:1.4rem;font-variant-numeric:tabular-nums}
 .pmain{flex:1;display:flex;flex-direction:column;gap:14px;justify-content:center}
 .pq{font-size:1.65rem;color:var(--cream);margin:0;line-height:1.35}
-.avs{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
-.avs button{font-size:1.7rem;aspect-ratio:1;max-width:100%;border-radius:12px;border:2px solid var(--line);background:var(--ink)}
-.avs button[aria-pressed="true"]{border-color:var(--sky);background:var(--panel)}
+.avs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.avi{display:inline-block;width:1.25em;height:1.25em;vertical-align:-.3em;line-height:0}
+.avi svg{width:100%;height:100%;display:block}
+.av .avi{width:86%;height:86%;vertical-align:middle}
+.avs .avc{display:block;width:100%;aspect-ratio:1;font-size:0}
+.avs .avc .avi{width:100%;height:100%}
+.avs .avn{display:flex;align-items:center;justify-content:center;min-height:2.4em;font-size:.72rem;font-weight:700;color:var(--muted);margin-top:2px;line-height:1.2;text-align:center;white-space:normal;overflow-wrap:anywhere}
+.avs button[aria-pressed="true"] .avn{color:var(--sun)}
+.avs button{padding:6px 4px 6px;max-width:100%;min-width:0;border-radius:14px;border:2px solid var(--line);background:var(--ink);transition:transform .12s}
+.avs button:active{transform:scale(.9)}
+.avs button[aria-pressed="true"]{border-color:var(--sun);background:var(--panel);transform:scale(1.08)}
 textarea.field{min-height:120px;resize:none}
 .count{font-size:.85rem;text-align:start;font-variant-numeric:tabular-nums}
 .vbtn{width:100%;text-align:start;border:0;border-radius:18px;padding:18px 18px;background:var(--card);color:var(--ink);font-size:1.25rem;font-weight:700;box-shadow:0 5px 0 var(--skydeep);display:flex;gap:12px;align-items:flex-start;overflow-wrap:anywhere}
@@ -666,7 +694,83 @@ const JQ = [
  "شو أول إشي بتعمله إذا ربحت بلعبة؟",
  "شو بتحكي لما حدا يسألك «شو بدك توكل؟»"
 ];
-const AVS = ["🐳","🦁","🐐","🦉","🐸","🍉","🌶️","🧆","🫖","🐓","🦊","🐢"];
+/* 16 original cartoon characters, drawn in SVG so they look the same on every phone and screen */
+const CHARS = [
+  {id:"c1", name:"الفرفوش", color:"#FF9F2E", eyes:"dot",   mouth:"laugh",  acc:"none"},
+  {id:"c2", name:"أبو العرّيف", color:"#5EC8F2", eyes:"big",   mouth:"smile",  acc:"glasses"},
+  {id:"c3", name:"الباشا", color:"#8A5CFF", eyes:"happy", mouth:"smile",  acc:"crown"},
+  {id:"c4", name:"أبو نومة", color:"#C9B6FF", eyes:"sleepy",mouth:"o",      acc:"beanie"},
+  {id:"c5", name:"الزعيم", color:"#3F6BFF", eyes:"none",  mouth:"smirk",  acc:"shades"},
+  {id:"c6", name:"أبو هيصة", color:"#FF6FB5", eyes:"happy", mouth:"laugh",  acc:"party"},
+  {id:"c7", name:"أبو شنب", color:"#B07A4F", eyes:"dot",   mouth:"flat",   acc:"mustache"},
+  {id:"c8", name:"شيف المنسف", color:"#F2545B", eyes:"happy", mouth:"smile",  acc:"chef"},
+  {id:"c9", name:"حبيب الماما", color:"#F3F1E8", eyes:"happy", mouth:"smile",  acc:"halo"},
+  {id:"c10", name:"مش من هون", color:"#A6E34B", eyes:"big",   mouth:"o",      acc:"antenna"},
+  {id:"c11", name:"دي جي الحارة", color:"#D94CE0", eyes:"wink",  mouth:"smile",  acc:"phones"},
+  {id:"c12", name:"الكابتن", color:"#2FA35B", eyes:"dot",   mouth:"smile",  acc:"cap"},
+  {id:"c13", name:"العريس", color:"#B8C2CC", eyes:"big",   mouth:"smile",  acc:"bowtie"},
+  {id:"c14", name:"نبتة الحاكورة", color:"#3FD1B5", eyes:"happy", mouth:"tongue", acc:"sprout"},
+  {id:"c15", name:"أبو مقلب", color:"#FFA98A", eyes:"wink",  mouth:"tongue", acc:"star"},
+  {id:"c16", name:"الرايق", color:"#FFE36E", eyes:"dot",   mouth:"smile",  acc:"flower"},
+];
+function charSVG(c){
+  const ink="#1d2440", shade="rgba(0,0,0,.10)";
+  const eye={
+    dot:   `<circle cx="37" cy="48" r="5.2" fill="${ink}"/><circle cx="63" cy="48" r="5.2" fill="${ink}"/><circle cx="38.8" cy="46.2" r="1.7" fill="#fff"/><circle cx="64.8" cy="46.2" r="1.7" fill="#fff"/>`,
+    big:   `<circle cx="37" cy="47" r="8.5" fill="#fff"/><circle cx="63" cy="47" r="8.5" fill="#fff"/><circle cx="38" cy="48" r="4.6" fill="${ink}"/><circle cx="64" cy="48" r="4.6" fill="${ink}"/><circle cx="39.6" cy="46.3" r="1.5" fill="#fff"/><circle cx="65.6" cy="46.3" r="1.5" fill="#fff"/>`,
+    happy: `<path d="M30.5 50 Q37 42 43.5 50" stroke="${ink}" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M56.5 50 Q63 42 69.5 50" stroke="${ink}" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+    sleepy:`<path d="M30.5 48 Q37 54 43.5 48" stroke="${ink}" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M56.5 48 Q63 54 69.5 48" stroke="${ink}" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+    wink:  `<circle cx="37" cy="48" r="5.2" fill="${ink}"/><circle cx="38.8" cy="46.2" r="1.7" fill="#fff"/><path d="M56.5 49 Q63 43 69.5 49" stroke="${ink}" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+    none:  ``,
+  }[c.eyes];
+  const mouth={
+    smile: `<path d="M40 63 Q50 73 60 63" stroke="${ink}" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+    laugh: `<path d="M37 61 Q50 82 63 61 Z" fill="${ink}"/><path d="M43 69 Q50 76 57 69 Q50 66 43 69Z" fill="#FF7A8A"/>`,
+    o:     `<ellipse cx="50" cy="66" rx="4.5" ry="5.5" fill="${ink}"/>`,
+    smirk: `<path d="M41 66 Q52 71 61 62" stroke="${ink}" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+    flat:  `<path d="M42 66 L58 66" stroke="${ink}" stroke-width="4" stroke-linecap="round"/>`,
+    tongue:`<path d="M40 63 Q50 73 60 63" stroke="${ink}" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M49 68 Q49 77 55 76 Q60 74 57 67Z" fill="#FF7A8A" stroke="${ink}" stroke-width="2"/>`,
+  }[c.mouth];
+  const acc={
+    none:"",
+    glasses:`<g fill="none" stroke="${ink}" stroke-width="3"><circle cx="37" cy="47" r="11"/><circle cx="63" cy="47" r="11"/><path d="M48 46 Q50 43 52 46"/><path d="M26 45 L14 41"/><path d="M74 45 L86 41"/></g>`,
+    shades:`<path d="M24 42 H76 Q77 42 76 45 L72 55 Q70 58 62 58 Q55 58 53 52 L51 47 H49 L47 52 Q45 58 38 58 Q30 58 28 55 L24 45 Q23 42 24 42Z" fill="${ink}"/><path d="M29 45 L33 45" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".6"/><path d="M56 45 L60 45" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".6"/>`,
+    crown:`<path d="M30 20 L36 6 L44 16 L50 3 L56 16 L64 6 L70 20 Z" fill="#FFD24D" stroke="#C9971C" stroke-width="2" stroke-linejoin="round"/><circle cx="50" cy="13" r="2.5" fill="#FF7A8A"/>`,
+    beanie:`<path d="M20 30 Q20 6 50 6 Q80 6 80 30 Z" fill="#5B6CFF"/><rect x="17" y="25" width="66" height="10" rx="5" fill="#3D4BD6"/><circle cx="50" cy="5" r="6" fill="#fff"/>`,
+    party:`<path d="M50 0 L64 26 L36 26 Z" fill="#FFD24D"/><path d="M43 13 L57 13 M39 20 L61 20" stroke="#FF5C8A" stroke-width="3"/><circle cx="50" cy="1" r="4" fill="#FF5C8A"/>`,
+    mustache:`<path d="M50 58 Q42 52 34 57 Q31 60 35 61 Q42 61 50 59 Q58 61 65 61 Q69 60 66 57 Q58 52 50 58Z" fill="#3B2314"/>`,
+    chef:`<path d="M28 24 Q22 10 34 9 Q38 0 50 3 Q62 0 66 9 Q78 10 72 24 Z" fill="#fff" stroke="#d8dce8" stroke-width="2"/><rect x="29" y="20" width="42" height="8" rx="2" fill="#fff" stroke="#d8dce8" stroke-width="2"/>`,
+    halo:`<ellipse cx="50" cy="7" rx="20" ry="5" fill="none" stroke="#FFD24D" stroke-width="4"/>`,
+    antenna:`<path d="M40 14 L33 2 M60 14 L67 2" stroke="${ink}" stroke-width="3" stroke-linecap="round"/><circle cx="33" cy="2" r="4" fill="#FFD24D"/><circle cx="67" cy="2" r="4" fill="#FFD24D"/>`,
+    phones:`<path d="M14 50 Q14 8 50 8 Q86 8 86 50" stroke="${ink}" stroke-width="5" fill="none"/><rect x="6" y="42" width="14" height="22" rx="6" fill="#FFD24D" stroke="${ink}" stroke-width="2"/><rect x="80" y="42" width="14" height="22" rx="6" fill="#FFD24D" stroke="${ink}" stroke-width="2"/>`,
+    cap:`<path d="M20 30 Q20 6 50 6 Q80 6 80 30 Z" fill="#3D7BFF"/><path d="M50 26 Q76 26 92 32 Q78 36 50 32 Z" fill="#2A5ED6"/><circle cx="50" cy="7" r="3" fill="#2A5ED6"/>`,
+    bowtie:`<path d="M50 88 L36 81 L36 95 Z M50 88 L64 81 L64 95 Z" fill="#E0405E"/><circle cx="50" cy="88" r="3.5" fill="#B82E48"/>`,
+    sprout:`<path d="M50 12 L50 2" stroke="#2E8B57" stroke-width="3" stroke-linecap="round"/><path d="M50 4 Q38 -4 34 6 Q44 10 50 4Z" fill="#3CB371"/><path d="M50 4 Q62 -4 66 6 Q56 10 50 4Z" fill="#3CB371"/>`,
+    star:`<path d="M74 14 L77.5 22 L86 22.5 L79.5 28 L81.5 36.5 L74 32 L66.5 36.5 L68.5 28 L62 22.5 L70.5 22 Z" fill="#FFD24D" stroke="#C9971C" stroke-width="1.5" stroke-linejoin="round"/>`,
+    flower:`<g transform="translate(76 22)"><circle r="5" cx="0" cy="-7" fill="#fff"/><circle r="5" cx="7" cy="-2" fill="#fff"/><circle r="5" cx="4" cy="6" fill="#fff"/><circle r="5" cx="-4" cy="6" fill="#fff"/><circle r="5" cx="-7" cy="-2" fill="#fff"/><circle r="4" fill="#FFB547"/></g>`,
+  }[c.acc];
+  return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${c.name}">
+    <ellipse cx="50" cy="96" rx="28" ry="3.5" fill="rgba(0,0,0,.18)"/>
+    <path d="M50 12 C76 12 90 30 90 54 C90 80 72 93 50 93 C28 93 10 80 10 54 C10 30 24 12 50 12Z" fill="${c.color}"/>
+    <path d="M50 93 C28 93 10 80 10 54 C10 66 26 84 50 84 C74 84 90 66 90 54 C90 80 72 93 50 93Z" fill="${shade}"/>
+    <ellipse cx="33" cy="27" rx="10" ry="6" fill="#fff" opacity=".35" transform="rotate(-25 33 27)"/>
+    <ellipse cx="27" cy="61" rx="6" ry="3.5" fill="#FF6F91" opacity=".35"/><ellipse cx="73" cy="61" rx="6" ry="3.5" fill="#FF6F91" opacity=".35"/>
+    ${eye}${mouth}${acc}
+  </svg>`;
+}
+const AVTOK = c => "⟦"+c.id+"⟧";
+const AVS = CHARS.map(AVTOK);
+const CHAR_BY = Object.fromEntries(CHARS.map(c=>[AVTOK(c),c]));
+const svgCache = {};
+function avNode(tok){
+  const c=CHAR_BY[tok]; if (!c) return document.createTextNode(tok);
+  const sp=document.createElement("span"); sp.className="avi"; sp.setAttribute("role","img"); sp.setAttribute("aria-label",c.name);
+  sp.innerHTML = svgCache[tok] || (svgCache[tok]=charSVG(c)); return sp;
+}
+function textWithAvatars(str){
+  if (!str.includes("⟦")) return [document.createTextNode(str)];
+  return str.split(/(⟦c\d+⟧)/).filter(Boolean).map(part=>/^⟦c\d+⟧$/.test(part) ? avNode(part) : document.createTextNode(part));
+}
 const BOTS = [["بوت أبو صالح","🤖"],["بوت أم ناصر","👾"],["بوت المدير","🦾"],["بوت الجار","📟"]];
 const T_ANSWER = 60, T_VOTE = 45, T_WRITE = 120, MAXLEN = 90, QLEN = 120, NS = "mnfn-v3-";
 const MULT = {1:100, 2:100, 4:200}, BESTQ_PTS = 200, T_GUESS = 30, WHO_RIGHT = 100, WHO_FOOL = 50, T_INTRO = 40, T_MQ = 15, T_JVOTE = 30, M_RIGHT = 200, J_PICK = 300, J_VOTE = 100;
@@ -692,7 +796,7 @@ function h(tag, attrs, ...kids){
     else if (k==="style") el.style.cssText=v;
     else el.setAttribute(k, v===true ? "" : v);
   }
-  for (const k of kids.flat(Infinity)){ if (k==null||k===false) continue; el.append(k instanceof Node ? k : document.createTextNode(String(k))); }
+  for (const k of kids.flat(Infinity)){ if (k==null||k===false) continue; if (k instanceof Node) el.append(k); else el.append(...textWithAvatars(String(k))); }
   return el;
 }
 const clean = (s,n)=> String(s||"").replace(/[\u0000-\u001f​-‏‪-‮⁦-⁩]/g," ").trim().slice(0,n);
@@ -954,12 +1058,12 @@ function confetti(){
 /* ================= home ================= */
 function home(note){
   app.replaceChildren(h("div",{class:"home"}, h("div",{},
-    h("h1",{class:"disp"},"مين فينا؟", h("small",{},"3 فقرات: مين فينا · كمّل الجملة · فقرة التعويض")),
-    h("p",{class:"muted"},"اثنين بيجاوبوا سرًّا، والكل بيصوّت للأضحك. اللي بيجمع أصوات أكثر بيربح."),
+    h("div",{class:"cast","aria-hidden":"true"}, shuffle(AVS).slice(0,7).map((a,i)=>h("span",{class:"castm",style:`--d:${i*0.18}s`},a))),
+    h("h1",{class:"disp"},"مين فينا؟", h("small",{},"لعبة ضحك للعيلة والصحاب")),
+    h("p",{class:"steps"},"شاشة للكل",h("i",{},"·"),"تلفون لكل واحد",h("i",{},"·"),"الأضحك بيربح 😂"),
     h("div",{class:"pick"},
-      h("button",{class:"btn",onclick:startHost},"📺 الشاشة الرئيسية"),
-      h("button",{class:"btn ghost",onclick:()=>joinForm()},"📱 أنا لاعب")),
-    h("p",{class:"hint muted"},"الشاشة الرئيسية بتعرض كود و QR، وكل واحد بيدخل من تلفونه بدون حسابات. بدكم تجربوا لحالكم؟ ضيفوا بوتات من اللوبي."),
+      h("button",{class:"pickcard",onclick:startHost}, h("span",{class:"pcic","aria-hidden":"true"},"📺"), h("strong",{},"الشاشة الرئيسية"), h("small",{},"على التلفزيون أو اللابتوب")),
+      h("button",{class:"pickcard",onclick:()=>joinForm()}, h("span",{class:"pcic","aria-hidden":"true"},"📱"), h("strong",{},"أنا لاعب"), h("small",{},"من تلفونك"))),
     note ? h("div",{class:"warn",role:"alert"},note) : null
   )));
 }
@@ -1008,20 +1112,21 @@ function onHostMsg(conn, d){
   if (!d || typeof d!=="object") return;
   if (d.t==="hello" && typeof d.pid==="string"){
     let pid=d.pid.slice(0,24);
-    const name=clean(d.name,16)||"لاعب", av=AVS.includes(d.av)?d.av:"🐳";
+    const name=clean(d.name,16)||"لاعب", av=AVS.includes(d.av)?d.av:AVS[0];
     if (H.kicked.has(pid)){ try{ conn.send({t:"kicked"}); }catch{} setTimeout(()=>{ try{ conn.close(); }catch{} },400); return; }
+    // one seat per name: the same name always lands on the existing seat (and its score), never a second copy
+    const byName=[...H.P.values()].find(x=>!x.bot && normName(x.name)===normName(name));
     let p=H.P.get(pid);
-    if (!p){
-      // same name coming back on a new phone or a fresh browser: give them their old seat (and score) back
-      const twin=[...H.P.values()].find(x=>!x.bot && normName(x.name)===normName(name) && isGone(x));
-      if (twin){ p=twin; pid=twin.pid; try{ conn.send({t:"you",pid}); }catch{} }
-    }
+    if (!p && byName){ p=byName; pid=byName.pid; try{ conn.send({t:"you",pid}); }catch{} }
+    const keepName = p && byName && byName!==p;      // renaming onto someone else's name is not allowed: keep the old name
     conn._pid=pid;
     if (!p){ p={pid,name,av,score:0,on:true,bot:false,conn,seen:Date.now()}; H.P.set(pid,p); Music.play("pop"); }
     else {
-      const old=p.conn; p.name=name; p.av=av; p.conn=conn; p.seen=Date.now();
+      const old=p.conn;
+      if (!keepName) p.name=name; else try{ conn.send({t:"name",name:p.name}); }catch{}
+      p.av=av; p.conn=conn; p.seen=Date.now();
       if (!p.on) Music.play("pop"); p.on=true;
-      if (old && old!==conn) try{ old.close(); }catch{}
+      if (old && old!==conn){ try{ old.send({t:"replaced"}); }catch{} setTimeout(()=>{ try{ old.close(); }catch{} },400); }
     }
     sendTo(p); push(); hostRender(); return;
   }
@@ -1561,9 +1666,9 @@ function board(list, myPid){
   return h("div",{class:"board"}, sorted.map((p,i)=>h("div",{class:"rowp"+((myPid ? p[0]===myPid : i===0&&p[3]>0)?" first":"")+(p[4]?"":" off")},
     h("span",{class:"r"}, i===0&&p[3]>0&&myPid ? "👑" : i+1), h("div",{class:"av","aria-hidden":"true"},p[2]), h("span",{class:"nm"},p[1]+(p[0]===myPid?" (إنت)":"")), h("span",{class:"sc"},p[3].toLocaleString("en")))));
 }
-function qrBox(size=220){
+function qrBox(size=170){
   const url=joinUrl(H.code);
-  const box=h("div",{class:"joinbox"}, h("div",{class:"qr"}), h("span",{class:"code2"},H.code), h("span",{class:"url"},url));
+  const box=h("div",{class:"joinbox"}, h("div",{class:"qr"}), h("span",{class:"jtip"},"📷 صوّروا الكود"), h("span",{class:"jtip small"},"أو ادخلوا الرقم ",h("b",{},H.code)));
   if (window.QRCode){ try{ new QRCode(box.querySelector(".qr"),{text:url,width:size,height:size,colorDark:"#0f1f3b",colorLight:"#f5f9ff",correctLevel:QRCode.CorrectLevel.M}); }catch{} }
   else box.querySelector(".qr").append(h("span",{class:"small"},"ما قدرنا نرسم الـQR. افتحوا الرابط واكتبوا الكود."));
   return box;
@@ -1794,14 +1899,18 @@ function joinForm(err, preset){
   code.value=preset||P.code||"";
   const name=h("input",{class:"field",id:"jname",maxlength:"16",placeholder:"اسمك",autocomplete:"off"});
   name.value=ls.get("mf.name")||"";
-  const grid=h("div",{class:"avs",role:"group","aria-label":"اختار شخصيتك"}, AVS.map(a=>h("button",{type:"button","aria-pressed":String(a===av),"aria-label":a,onclick:e=>{av=a;grid.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(b===e.currentTarget)));}},a)));
+  const grid=h("div",{class:"avs",role:"group","aria-label":"اختار شخصيتك"});
+  const drawAv=()=>grid.replaceChildren(...AVS.map(a=>h("button",{type:"button","aria-pressed":String(a===av),"aria-label":CHAR_BY[a].name,onclick:()=>{ av=a; drawAv(); }},
+      h("span",{class:"avc"},a), h("span",{class:"avn"},CHAR_BY[a].name))));
+  drawAv();
+  const picker=grid;
   const form=h("form",{class:"pmain",onsubmit:e=>{e.preventDefault(); const c=code.value.replace(/\D/g,""), n=clean(name.value,16);
       if(c.length!==4) return joinForm("الكود 4 أرقام، شوفه على الشاشة الرئيسية.", c); if(!n) return joinForm("اكتب اسمك أول.", c);
       ls.set("mf.name",n); ls.set("mf.av",av); playerJoin(c,n,av);}},
     h("h1",{class:"disp big"},"ادخل اللعبة"),
     h("label",{class:"lbl",for:"jcode"},"كود الغرفة"), code,
     h("label",{class:"lbl",for:"jname"},"اسمك"), name,
-    h("span",{class:"lbl"},"شخصيتك"), grid,
+    h("span",{class:"lbl"},"شخصيتك"), picker,
     err ? h("div",{class:"warn",role:"alert"},err) : null,
     h("button",{class:"btn",type:"submit"},"دخول"),
     h("button",{class:"btn ghost",type:"button",onclick:()=>home()},"رجوع"));
@@ -1830,6 +1939,9 @@ function connectHost(){
   P.conn=conn;
   conn.on("open", ()=>{ P.found=true; conn.send({t:"hello",pid:P.pid,name:P.name,av:P.av}); flush(); });
   conn.on("data", d=>{
+    if (P.conn!==conn) return;                      // messages for an older link of this same phone
+    if (d && d.t==="replaced"){ P.kicked=true; clearTimeout(P.retry); P.retry=null; replacedScreen(); return; }
+    if (d && d.t==="name" && typeof d.name==="string"){ P.name=d.name; ls.set("mf.name",d.name); P.sig=null; return; }
     if (d && d.t==="who"){ try{ conn.send({t:"hello",pid:P.pid,name:P.name,av:P.av}); }catch{} return; }
     if (d && d.t==="you" && typeof d.pid==="string"){ P.pid=d.pid; ls.set("mf.pid",d.pid); P.sig=null; return; }
     if (d && d.t==="kicked"){ P.kicked=true; clearTimeout(P.retry); P.retry=null; try{ P.peer?.destroy(); }catch{} kickedScreen(); return; }
@@ -1853,6 +1965,14 @@ function rejoin(){
   P.peer.on("open", connectHost);
   P.peer.on("error", ()=>retryLater());
   P.peer.on("disconnected", ()=>{ try{ P.peer.reconnect(); }catch{} });
+}
+function replacedScreen(){
+  P.sig=null;
+  app.replaceChildren(h("div",{class:"phone"},h("div",{class:"pmain"},
+    h("p",{class:"big"},"📱"), h("p",{class:"big"},`في حدا دخل باسم «${P.name}»`),
+    h("p",{class:"muted center"},"إذا إنت دخلت من جهاز ثاني، كمّل من هناك. إذا مش إنت، ادخل باسم ثاني."),
+    h("button",{class:"btn",onclick:()=>{ P.kicked=false; playerJoin(P.code,P.name,P.av); }},"هاد أنا، رجّعني هون"),
+    h("button",{class:"btn ghost",onclick:()=>{ P.kicked=false; ls.set("mf.name",""); joinForm(null,P.code); }},"ادخل باسم ثاني"))));
 }
 function kickedScreen(){
   P.sig=null;
