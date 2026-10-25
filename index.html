@@ -82,6 +82,12 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 @keyframes bob{0%,100%{translate:0 0}50%{translate:0 -10px}}
 .steps{margin:12px 0 0;color:var(--muted);font-size:clamp(.88rem,2.6vw,1.02rem);white-space:nowrap;display:flex;flex-wrap:wrap;justify-content:center;gap:4px 10px}
 .steps i{font-style:normal;opacity:.5}
+.resume{display:flex;align-items:center;gap:12px;margin:16px auto 0;padding:12px 18px;border-radius:18px;border:1.5px dashed rgba(255,214,133,.5);
+  background:rgba(255,214,133,.06);color:var(--cream);font-family:inherit;cursor:pointer;text-align:start}
+.resume>span:first-child{font-size:1.6rem}
+.resume strong{display:block;color:var(--sun);font-size:1.05rem}
+.resume small{color:var(--muted)}
+.resume:hover{background:rgba(255,214,133,.12)}
 .pickcard{display:flex;flex-direction:column;align-items:center;gap:6px;width:min(240px,100%);padding:22px 18px 20px;border-radius:24px;
   background:rgba(255,255,255,.04);border:1.5px solid rgba(140,200,255,.22);color:var(--cream);font-family:inherit;cursor:pointer;
   transition:transform .18s ease, background .18s ease, border-color .18s ease}
@@ -202,14 +208,27 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 .empty{font-size:1.4rem;color:var(--muted);margin:0}
 .ibtn{width:48px;height:48px;border-radius:50%;border:2px solid var(--line);background:transparent;color:var(--cream);font-size:1.3rem;display:grid;place-items:center;cursor:pointer}
 .ibtn:hover{background:var(--panel)}
-details.settings{width:min(560px,100%);border:2px solid var(--line);border-radius:16px;padding:10px 16px}
-details.settings summary{cursor:pointer;font-weight:700;color:var(--muted);text-align:center;list-style-position:inside}
-details.settings[open]{display:flex;flex-direction:column;gap:12px}
-details.settings[open] summary{margin-bottom:6px}
-details.settings .row{display:grid;grid-template-columns:150px auto;justify-content:center;align-items:center;gap:14px}
-details.settings .row .lbl{text-align:start;font-size:.95rem}
-details.settings .chips{display:flex;gap:8px;justify-content:flex-start}
-details.settings .chip{width:44px;height:44px;justify-content:center;padding:0}
+details.settings{width:min(560px,100%);border:1.5px solid var(--line);border-radius:18px;padding:12px 16px;background:rgba(255,255,255,.03)}
+details.settings summary{cursor:pointer;font-weight:700;color:var(--muted);text-align:center;list-style-position:inside;padding:4px 0}
+details.settings[open]{display:flex;flex-direction:column;gap:18px}
+details.settings[open] summary{color:var(--cream)}
+.sgroup{display:flex;flex-direction:column;gap:10px;text-align:start;padding:14px 0;border-top:1px solid var(--line)}
+.sgroup:first-of-type{border-top:0}
+.stitle{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.stitle span{font-weight:700;font-size:1.02rem;color:var(--cream)}
+.stitle small{color:var(--muted);font-size:.85rem}
+.chips.nums{display:flex;gap:10px;flex-wrap:wrap}
+.chips.nums .chip{width:48px;height:48px;justify-content:center;padding:0;font-size:1.1rem}
+.segopts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.segopt{display:flex;align-items:center;gap:8px;min-width:0;min-height:52px;padding:10px 12px;border-radius:14px;border:1.5px solid var(--line);background:transparent;color:var(--muted);font-family:inherit;font-weight:700;font-size:.95rem;cursor:pointer;text-align:start}
+.segopt .scn{flex:1;min-width:0;line-height:1.3}
+.segopt .sci{font-size:1.15rem}
+.segopt .scc{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:.8rem;border:1.5px solid var(--line);flex:none}
+.segopt[aria-pressed="true"]{border-color:var(--sky);color:var(--cream);background:rgba(140,200,255,.10)}
+.segopt[aria-pressed="true"] .scc{background:var(--sky);border-color:var(--sky);color:var(--ink)}
+.segopt:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+@media (max-width:400px){.segopts{grid-template-columns:1fr}}
+@media (min-width:720px){.segopts{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .podium{display:flex;align-items:flex-end;justify-content:center;gap:clamp(8px,2vw,22px);width:min(760px,100%)}
 .pod{flex:1;max-width:220px;min-width:0;display:flex;flex-direction:column;align-items:center;gap:10px}
 .pod .blk{width:100%;border-radius:18px 18px 0 0;background:var(--panel);border:2px solid var(--line);border-bottom:0;display:grid;place-items:start center;padding-top:12px;font-size:2.4rem}
@@ -282,7 +301,6 @@ textarea.field{min-height:120px;resize:none}
 <script>
 /* ================= question banks (none of these repeat the original examples) ================= */
 const QS = [
- "اخترع اسم لماركة ملابس بتبيع بس بجامات.",
  "لو صار في أولمبياد للكسل، شو الرياضة اللي رح تاخد فيها ذهبية؟",
  "شو أغرب طلب ممكن تطلبه من موظف الدليفري؟",
  "لو كنت شبح لطيف، كيف رح تخوّف الناس؟",
@@ -298,12 +316,10 @@ const QS = [
  "شو أسوأ موهبة ممكن تقدّمها ببرنامج مواهب؟",
  "لو صرت ساحر ليوم واحد، شو أتفه سحر رح تعمله؟",
  "اكتب أسوأ ريفيو لمطعم شاورما.",
- "اخترع اسم لفرقة موسيقية كلها أعمام.",
  "شو أكثر إشي ممل ممكن تعمله بالفضاء؟",
  "اكتب أول جملة بمذكرات قطة.",
  "شو أسوأ هدية تخرّج؟",
  "لو عندك زر بيوقف الزمن، شو أتفه إشي رح تعمله؟",
- "اخترع اسم لدوري كرة قدم للجدّات.",
  "اكتب إعلان توظيف لوظيفة ما حدا بدّه إياها.",
  "شو أغرب سؤال ممكن يسألك إياه سائق التكسي؟",
  "اخترع خدمة اشتراك شهري سخيفة.",
@@ -312,17 +328,13 @@ const QS = [
  "لو صار لازم كل الناس يلبسوا زي موحّد، شو رح يكون؟",
  "شو أكثر جملة بتنحكى بعزايم العيلة؟",
  "شو أسوأ إشي ممكن تحطّه بشنطة السفر بالغلط؟",
- "اخترع اسم لمشروب ساخن جديد للشتوية.",
  "شو أغرب واجب ممكن يعطيه المعلّم للطلاب؟",
  "لو صار عندك روبوت بالبيت، شو أول إشي رح يرفض يعمله؟",
  "اخترع رياضة جديدة بتنلعب بالمطبخ.",
  "اكتب تحذير غريب لازم ينكتب على علبة الحمص.",
- "لو بدك تعمل برنامج طبخ، شو اسمه وشو أول طبخة؟",
  "اكتب رسالة واتساب من قطتك بعد ما تأخرت عليها بالأكل.",
  "اكتب تقييم نجمة وحدة لكوكب الأرض.",
- "شو اسم الحلقة الأخيرة من مسلسل حياتك؟",
  "لو حياتك إعلان تلفزيوني، شو الجملة اللي بتنقال بالآخر بسرعة؟",
- "اخترع اسم لمرض بيصيب الناس بس يوم الأحد الصبح.",
  "لو الطقس عنده مزاج، شو بيعمل لما يزعل منّا؟",
  "اكتب أغرب بند ممكن تلاقيه بعقد إيجار شقة.",
  "اخترع شعار لشركة بتبيع هوا معبّى.",
@@ -332,21 +344,17 @@ const QS = [
  "اكتب عنوان محاضرة جامعية ما حدا رح يحضرها.",
  "اكتب أول تغريدة لسلحفاة اكتشفت الإنترنت.",
  "لو الشبشب بيحكي، شو بيحكي قبل ما تطيّره الماما؟",
- "اخترع اسم لفيلم رعب صار كله بالمطبخ.",
  "شو أغرب وظيفة رح نشوفها بإعلانات بعد مية سنة؟",
  "لو الأكل بيحكي، شو بتحكي المقلوبة لحظة ما تنقلب؟",
- "اخترع اسم لعطر ريحته زي الكعك بالعيد.",
  "شو أذكى عذر ممكن تحكيه لما تغفى بنص الاجتماع؟",
  "لو كان عندك ذيل، شو رح تستخدمه فيه؟",
  "اكتب ملخّص حلقة كرتون بطلها صحن فول.",
  "شو أغرب إشي ممكن ينباع بمكينة بيع أوتوماتيكية؟",
  "لو البيت بيحكي، شو بيحكي لما كلكم تطلعوا؟",
- "اخترع اسم لتطبيق بيذكّرك بإشي ما إله داعي.",
  "شو أسوأ نغمة ممكن تختارها لتلفونك؟",
  "لو المطر صار يستأذن قبل ما ينزل، شو بيحكي؟",
  "اكتب تعليمات تشغيل للريموت كأنه جهاز فضائي.",
  "شو الإشي اللي لو صار رياضة أولمبية، بنربح فيه أكيد؟",
- "اخترع اسم لبطل خارق قوّته الوحيدة إنه بيلاقي الريموت.",
  "شو أغرب إشي ممكن يصير برحلة مدرسية؟",
  "لو كتبت كتاب طبخ للكسالى، شو أول وصفة فيه؟",
  "شو أسوأ اسم لسفينة فضاء؟",
@@ -356,36 +364,106 @@ const QS = [
  "لو كنت معلّم ليوم، شو المادة الجديدة اللي رح تدرّسها؟",
  "اكتب وصف شقة للإيجار بأسلوب مبالغ فيه.",
  "شو أسوأ إشي ممكن يصير لما تنفتح الكاميرا بالغلط باجتماع أونلاين؟",
- "اخترع اسم لكيكة عيد ميلاد غريبة.",
  "شو أحلى عذر ممكن تحكيه لما تتأخر على العزيمة؟",
  "اكتب إعلان تلفزيوني لمكنسة كهربائية شايفة حالها.",
- "لو فتحت محل، شو رح تبيع وشو اسمه؟",
  "شو الإشي اللي لازم يكون إله دليل استخدام بس ما إله؟",
- "اخترع اسم لنادي للناس اللي دايمًا بينسوا.",
  "شو أغرب سؤال ممكن يسأله طفل لأبوه؟",
  "لو صار للمكيّف حساب إنستغرام، شو أول بوست؟",
  "اكتب إعلان لمسابقة ما حدا رح يشارك فيها.",
  "شو أغرب إشي رح ينعرض بالمتحف بعد ألف سنة؟",
  "لو الخروف عرف إن العيد قرّب، شو خطته؟",
- "اخترع اسم لبرنامج مسابقات الحكم فيه قطة.",
  "شو أسوأ مكان ممكن تعمل فيه حفلة مفاجئة؟",
  "اكتب رسالة من الغسالة للجرابات الضايعة.",
  "شو الإشي اللي القطط بتفكّر فيه طول اليوم؟",
- "لو انعمل فيلم عن عيلتك، شو اسمه؟",
- "اخترع اسم لدوا بيعالج الكسل.",
  "شو أغرب إشي ممكن تلاقيه تحت الكنباية؟",
  "لو الكراسي بتحكي، شو بتحكي بآخر يوم مدرسة؟",
  "اكتب أول سطر بخطاب مدرّب خسر فريقه 10-0.",
- "اخترع اسم لإذاعة بتبث للدجاج.",
  "شو أغرب إشي ممكن يصير بطابور الخبز؟",
  "لو للنملة سيرة ذاتية، شو أهم إنجاز فيها؟",
- "اخترع اسم لماركة سيارات بتمشي بس للخلف.",
  "شو أول إشي رح يعمله البطريق لو زار عمّان؟",
  "اكتب نشرة جوية من كوكب بعيد.",
  "اخترع لعبة جديدة للعيد غير العيدية.",
  "شو أحلى اسم لمحل عصير؟",
  "اكتب خبر عاجل عن قطة ربحت الانتخابات بالحارة.",
- "لو صار عندك ميكروفون بيكبّر صوت أفكارك، شو أول جملة بتطلع؟"
+ "لو صار عندك ميكروفون بيكبّر صوت أفكارك، شو أول جملة بتطلع؟",
+ "شو بتحكي الغسالة وهي بتلف أواعيك الوسخة؟",
+ "لو الريموت هرب من البيت، شو كاتب بالرسالة اللي تركها؟",
+ "شو بيحكي الكرسي بعد ما يقعد عليه خالك؟",
+ "لو كيس الخبز بيحكي، شو بيقول لما تفتحه من الطرف الغلط؟",
+ "شو بيحكي المنبّه لما تكبس «غفوة» للمرة الخامسة؟",
+ "لو الثلاجة حطّت ستوري، شو بتكتب؟",
+ "شو بيحكي الشبشب لصاحبه بعد ما ضاع الفردة الثانية؟",
+ "لو صحن الحمص عمل شكوى، ضد مين رح تكون؟",
+ "شو بتحكي الكاسة لما تنكب عالأرض؟",
+ "لو الدرج بيحكي، شو بيحكي لما تطلعه وإنت تعبان؟",
+ "شو بيحكي الشاحن لما تنساه بالحيطة شهر؟",
+ "لو المخدة بتحكي، شو أسرار بتعرفها عنك؟",
+ "شو بتحكي المكنسة الكهربائية لما تشفط جرابة؟",
+ "لو باب الثلاجة بيحكي، شو بيقول لما تفتحه عشر مرات ومش عارف شو بدك؟",
+ "شو بيحكي الكعك لما يشوف علبة المعمول جنبه؟",
+ "لو البطانية بتحكي، شو بتقول بأول يوم شتا؟",
+ "شو بيحكي الفرن لما تنسى الكيكة جوّاه؟",
+ "لو التلفون بيحكي، شو أكثر جملة بيحكيها عنك لأصحابه التلفونات؟",
+ "شو بيحكي كاسة الشاي لما تبرد وما حدا يشربها؟",
+ "لو المصعد بيحكي، شو بيقول للي بيكبس الزر ألف مرة؟",
+ "شو بتحكي المراية لما تصحى الصبح؟",
+ "لو صحن الرز بيحكي، شو بيحكي لما ياخدوا منه آخر ملعقة؟",
+ "شو بيحكي الغاز لما يخلص بنص الطبخة؟",
+ "لو الدشّ بيحكي، شو أغنية بيسمعها منك كل يوم؟",
+ "شو بيحكي الكيبورد لما تكتب بسرعة وإنت معصّب؟",
+ "لو الشنطة المدرسية بتحكي، شو لاقية بقاعها من أول السنة؟",
+ "شو بتحكي الكنباية لما يقعد عليها خمسة مرة وحدة؟",
+ "لو الإبريق بيحكي، شو بيقول لما ينسوه عالنار؟",
+ "لو صحيت لقيت حالك بحجم نملة، أول إشي بتعمله؟",
+ "لو الكبار صاروا يروحوا عالمدرسة بدل الولاد، شو أول درس؟",
+ "لو الديك صار مذيع أخبار الصبح، شو أول خبر؟",
+ "لو صار ممنوع تحكي بالعيلة يوم كامل، كيف بتطلب الملح؟",
+ "لو كل مرة بتكذب بتطلعلك ريشة، كم ريشة عندك هلّأ؟",
+ "لو القطط صار عندها وزارة، شو أول قرار؟",
+ "لو الزمن رجع لورا يوم واحد بس، شو رح تصلّح؟",
+ "لو صرت مخفي ليوم واحد، شو أتفه إشي رح تعمله؟",
+ "لو الشتا صار ينزل عصير، أي نكهة بدك؟",
+ "لو كل بيت إله نشيد وطني، شو نشيد بيتكم؟",
+ "لو صحيت والكل بيحكي بالقافية، شو أول جملة بتحكيها؟",
+ "لو الأكل صار يختار مين ياكله، مين رح يجوع أول؟",
+ "لو صار عندك ذيل، وين بتخبيه بالعزيمة؟",
+ "لو الدجاج صار يطير لبعيد، وين رح يسافر؟",
+ "لو كان في يوم بالسنة ممنوع فيه النوم، شو بتعمل فيه؟",
+ "لو صار الحكي يكلّف فلوس، شو أغلى جملة بتحكيها؟",
+ "لو صار عندك روبوت بيشبهك، شو أول إشي بيعمله غلط؟",
+ "لو الحيوانات عملت مسابقة جمال، مين بيربح وليش؟",
+ "لو صرت بحجم عملاق، كيف بتشرب الشاي؟",
+ "لو الشمس أخذت إجازة يوم، شو بيصير بالأردن؟",
+ "لو الطيور صارت تعطي مخالفات، شو أول مخالفة إلك؟",
+ "لو كل الناس صارت تمشي لورا، شو أول مشكلة رح تصير؟",
+ "لو صحيت وصرت أصغر واحد بالعيلة، شو أول طلب بتطلبه؟",
+ "لو الغيم صار يحكي، شو بيحكي لما يمرق فوق عمّان؟",
+ "لو صار في سباق للسلاحف بالأولمبياد، مين المعلّق؟",
+ "لو كان عندك زر بيرجّع آخر كلمة حكيتها، أي كلمة بترجّعها؟",
+ "لو كل إشي بتلمسه بيصير حلو، شو أول إشي بتلمسه؟",
+ "لو صار في كوكب للكسالى، شو قوانينه؟",
+ "اشرح كيف بتسوق الدرّاجة لواحد من القرون الوسطى.",
+ "اكتب وصفة طبخ لأكلة ما إلها أي معنى.",
+ "احكي قصة حياتك بثلاث كلمات.",
+ "اخترع رقصة جديدة، وكيف بتنرقص؟",
+ "اشرح لجدّك شو يعني «واي فاي» بجملة وحدة.",
+ "اكتب نصيحة للبطريق قبل ما يزور الصحرا.",
+ "اشرح ليش الجرابات بتضيع بالغسالة، بطريقة علمية.",
+ "اكتب أول جملة لو صرت مدرّب تنمية بشرية للقطط.",
+ "اشرح كيف بتعمل ساندويشة بس بطريقة دراما.",
+ "اكتب خبر عاجل عن حبة بطاطا هربت من الطنجرة.",
+ "احكي نكتة ما إلها نهاية.",
+ "اشرح لكائن فضائي ليش بنحط البصل بكل إشي.",
+ "اكتب دعاية لماي عادية بس كأنها اختراع خارق.",
+ "اشرح قوانين لعبة «الغميضة» لروبوت.",
+ "اكتب وصف لغرفتك كأنها فندق سبع نجوم.",
+ "احكي كيف بتصحى الصبح كأنها مباراة كرة قدم.",
+ "اكتب اعتذار رسمي من الذبانة اللي ضلت تزن جنب أذنك.",
+ "اشرح ليش لازم يكون في عطلة يوم الأربعاء كمان.",
+ "اكتب تقرير شرطة عن آخر قطعة كيك اختفت.",
+ "اشرح كيف بتفتح علبة مخلل صعبة كأنها عملية جراحية.",
+ "اكتب رسالة حب من البطاطا للكاتشب.",
+ "احكي قصة الأرنب والسلحفاة بس السلحفاة معها دراجة نارية."
 ];
 const SS = [
  "أكثر إشي بيضحكني بالعيد هو ______",
@@ -397,7 +475,6 @@ const SS = [
  "أنا مش كسلان، أنا بس ______",
  "أسوأ إشي ممكن تلاقيه بغرفة الفندق هو ______",
  "آخر إشي بحكيه قبل ما أنام هو ______",
- "لو بدي أكتب كتاب، رح يكون اسمه ______",
  "عرفت إن الرحلة رح تكون كارثة لما ______",
  "أحلى إشي بأيام المدرسة كان ______",
  "كل ما أنزل عالسوق برجع ومعي ______",
@@ -449,11 +526,46 @@ const SS = [
  "أغرب هدية ممكن تجيبها لصاحبك هي ______",
  "عرفت إن الصبح إجا بسرعة لما ______",
  "أكثر إشي بيعصبني بالطابور هو ______",
- "لو صار عندي مطعم بالفضاء، اسمه رح يكون ______",
  "عرفت إن الكيكة ما زبطت لما ______",
  "أحسن طريقة تصحّي فيها أخوك الصغير هي ______",
  "عرفت إن البرنامج التلفزيوني طوّل لما ______",
- "أغرب إشي بيعمله الناس بالمصعد هو ______"
+ "أغرب إشي بيعمله الناس بالمصعد هو ______",
+ "عرفت إن العزيمة رح تطوّل لما ستّي ______",
+ "أكثر إشي بيفرحني بيوم الجمعة هو ______",
+ "عرفت إن الدرس ممل لما حتى المعلّم ______",
+ "أسرع طريقة تخلّي أبوك يعصّب هي ______",
+ "لو الماما فتحت تلفوني، أول إشي رح تلاقيه ______",
+ "عرفت إن الكهربا قاطعة بس الكل ______",
+ "أغرب حلم حلمته كان إني ______",
+ "عرفت إن المسلسل خلص لما ______",
+ "أحسن جملة بتنقذك من الواجب هي ______",
+ "لو صحيت ولقيت حالي مدير البنك، أول قرار ______",
+ "عرفت إن الأكل طيب لما الكل ______",
+ "أكثر صوت بيضحكني بالبيت هو ______",
+ "عرفت إني نمت كثير لما ______",
+ "الإشي الوحيد اللي بخاف منه أكثر من الامتحان هو ______",
+ "عرفت إن الضيوف مش رح يروّحوا لما ______",
+ "لو كنت سوبرمان، أول إشي كنت رح أنقذه هو ______",
+ "أكثر إشي بنتخانق عليه بالبيت هو ______",
+ "عرفت إني كبرت لما صرت أحب ______",
+ "أحلى إشي بالرحلة كان لما ______",
+ "عرفت إن الطابور طويل لما ______",
+ "سر نجاحي بالحياة هو ______",
+ "أحسن عذر لما تتأخر عالمدرسة هو ______",
+ "عرفت إن الولد ذكي لما ______",
+ "لو حكيت للقطة سري، رح ______",
+ "عرفت إن الجو برد لما ستّي ______",
+ "أغرب إشي شفته بالعرس كان ______",
+ "لو الحياة إلها زر «إعادة»، كنت رح أرجع لـ ______",
+ "عرفت إن الأكل مالح لما ______",
+ "أكثر إشي بحكيه لما أصحى هو ______",
+ "عرفت إن المكيّف خربان لما ______",
+ "أهم قانون بقعدات العيلة هو ______",
+ "لو كان عندي ساحر خاص، أول طلب ______",
+ "عرفت إن الشاي تقيل زيادة لما ______",
+ "أكثر إشي بفتقده من أيام الطفولة هو ______",
+ "عرفت إن الحفلة نجحت لما ______",
+ "الإشي اللي بيخليني أنط من مكاني هو ______"
 ];
 /* "who wrote it?": personal prompts, so the answer says something about who wrote it */
 const WS = [
@@ -486,9 +598,48 @@ const WS = [
  "لو بتقدر تتعلّم أي مهارة بيوم واحد، شو بتختار؟",
  "شو أول إشي بتطلبه بالمطعم دايمًا؟",
  "شو أكثر تطبيق بتفتحه على تلفونك؟",
- "لو كتبت كتاب عن حياتك، شو اسمه؟",
  "شو أحلى مكان رحت عليه بحياتك؟",
- "شو أكثر إشي بتحبه بالعيد؟"
+ "شو أكثر إشي بتحبه بالعيد؟",
+ "شو أغرب إشي عملته وإنت لحالك بالبيت؟",
+ "شو الإشي اللي بتعمله وبتفكّر إنه ما حدا بيلاحظه؟",
+ "شو أكثر إشي بتستحي إنك بتحبه؟",
+ "شو أهبل سبب زعلت منه بحياتك؟",
+ "شو الكذبة اللي حكيتها وإنت صغير وصدّقوها لهلّأ؟",
+ "شو أول إشي بتعمله لما تلاقي حالك لحالك بالبيت؟",
+ "شو الأكلة اللي ممكن تاكلها الساعة 3 الفجر؟",
+ "شو أغرب عادة عندك قبل النوم؟",
+ "شو أكثر إشي بتخاف منه وإنت كبير؟",
+ "شو الأغنية اللي بتغنيها بالسر؟",
+ "شو أكثر إشي بتأجّله من سنين؟",
+ "شو اللقب اللي كانوا يحكولك إياه وإنت صغير؟",
+ "شو أغرب إشي اشتريته وما استعملته؟",
+ "شو الإشي اللي ما بتعرف تعمله وكلهم بيفكروا إنك بتعرفه؟",
+ "شو أحلى مقلب عملته بحدا؟",
+ "شو أكثر إشي بتحكيه لما تكون معصّب؟",
+ "لو تقدر تتخلص من عادة وحدة عندك، شو بتكون؟",
+ "شو أكثر كلمة بتحكيها بالغلط؟",
+ "شو الموقف اللي لسا بيضحكك لما تتذكره؟",
+ "شو أغرب حلم حلمته؟",
+ "شو أول إشي بتشتريه لما تقبض؟",
+ "شو المكان اللي بتهرب إله لما بدك تهدا؟",
+ "شو أكثر إشي بتحبه بشهر رمضان؟",
+ "شو أسوأ قصة شعر عملتها بحياتك؟",
+ "شو الإشي اللي بتعمله أحسن من أي حدا بالعيلة؟",
+ "شو أول ذكرى بتتذكرها من صغرك؟",
+ "شو الأكلة اللي بتطلبها كل مرة بنفس المطعم؟",
+ "شو أكثر إشي بيضيّع وقتك بالتلفون؟",
+ "شو آخر مرة ضحكت فيها لدرجة بكيت؟",
+ "لو عندك يوم بدون أي مسؤوليات، شو بتعمل فيه؟",
+ "شو الإشي اللي بتعمله لما ما بدك ترد على حدا؟",
+ "شو أغرب سؤال سألته لجوجل؟",
+ "شو أكثر إشي بتحبه بالعيلة؟",
+ "شو أحلى هدية عطيتها لحدا؟",
+ "شو الموهبة اللي بتتمنى لو عندك إياها من صغرك؟",
+ "شو أكثر إشي بتفتقده لما تسافر؟",
+ "شو الجملة اللي بتحكيها لما تتأخر؟",
+ "شو أغرب إشي بتحطه عالأكل؟",
+ "شو أكثر إشي بتحبه بالشتا؟",
+ "شو أصعب قرار أخذته بيوم كامل؟"
 ];
 /* templates: a near-endless supply of fresh prompts */
 const PERS = ["خالك","جاركم أبو محمد","مديرك","سائق التكسي","أستاذ الرياضيات","الحلاق","سيدك","بياع الفلافل","ابن عمك","حارس العمارة","مذيع الأخبار","أخوك الصغير","صاحب الدكانة","طبيب الأسنان","مدرّب المنتخب"];
@@ -503,7 +654,6 @@ const QT = [
  ()=>`لو ${pick(THINGS)} بيحكي، شو أول شكوى رح يقدّمها؟`,
  ()=>`اكتب عنوان خبر عاجل عن ${pick(PERS)} ${pick(PLACES)}.`,
  ()=>`شو السر اللي ${pick(PERS)} مخبّيه عن الكل؟`,
- ()=>`لو ${pick(PERS)} صار عنده برنامج تلفزيوني، شو اسمه؟`,
  ()=>`لو ${pick(THINGS)} قرّر يستقيل، شو رح يكتب بالاستقالة؟`,
  ()=>`اكتب رسالة واتساب من ${pick(THINGS)} لصاحب البيت.`,
  ()=>`اكتب تقييم نجمة وحدة لـ${pick(PERS)} بعد ما شفته ${pick(PLACES)}.`,
@@ -632,6 +782,46 @@ const MQ = [
  ["بتحب تسوق بالليل؟",["🌃","آه"],["🙅","لأ"]],
  ["بتاكل وإنت واقف بالمطبخ؟",["🍽️","آه"],["🙅","لأ"]],
  ["بتحفظ أرقام التلفونات؟",["🔢","آه"],["🙅","لأ"]],
+ ["تعيش أسبوع بدون حمص ولا بدون نت؟", ["🥣", "بدون حمص"], ["📶", "بدون نت"]],
+ ["تكون أطول واحد بالعيلة ولا أذكى واحد؟", ["📏", "الأطول"], ["🧠", "الأذكى"]],
+ ["تحضر عرس كله دبكة ولا كله خطابات؟", ["💃", "دبكة"], ["🎤", "خطابات"]],
+ ["كنافة بالجبنة ولا بالقشطة؟", ["🧀", "جبنة"], ["🥛", "قشطة"]],
+ ["زعتر ولا جبنة عالمنقوشة؟", ["🌿", "زعتر"], ["🧀", "جبنة"]],
+ ["مقلوبة دجاج ولا باذنجان؟", ["🍗", "دجاج"], ["🍆", "باذنجان"]],
+ ["شاورما لحمة ولا دجاج؟", ["🥩", "لحمة"], ["🍗", "دجاج"]],
+ ["بطاطا مقلية ولا مشوية؟", ["🍟", "مقلية"], ["🥔", "مشوية"]],
+ ["بوظة شوكولاتة ولا فانيلا؟", ["🍫", "شوكولاتة"], ["🍦", "فانيلا"]],
+ ["فطور بالبيت ولا بالمطعم؟", ["🏠", "بالبيت"], ["🍳", "بالمطعم"]],
+ ["تسوق ولا تكون الراكب؟", ["🚗", "أسوق"], ["💺", "راكب"]],
+ ["قعدة بالحديقة ولا بالمول؟", ["🌳", "الحديقة"], ["🛍️", "المول"]],
+ ["تلعب ورق ولا تتفرج على فيلم؟", ["🃏", "ورق"], ["🎬", "فيلم"]],
+ ["تحكي مع حدا وجهًا لوجه ولا بالمسجات؟", ["🗣️", "وجهًا لوجه"], ["💬", "مسجات"]],
+ ["تصحى على منبّه ولا على صوت الماما؟", ["⏰", "منبّه"], ["🗣️", "الماما"]],
+ ["تنام والشباك مفتوح ولا مسكّر؟", ["🪟", "مفتوح"], ["🔒", "مسكّر"]],
+ ["بتحب البيت مرتّب ولا «مرتّب على طريقتك»؟", ["✨", "مرتّب"], ["🌀", "على طريقتي"]],
+ ["تلبس جرابات بالبيت ولا حافي؟", ["🧦", "جرابات"], ["🦶", "حافي"]],
+ ["الحمّام الصبح ولا المسا؟", ["🌅", "الصبح"], ["🌙", "المسا"]],
+ ["تجرّب لعبة جديدة ولا تلعب اللعبة اللي بتعرفها؟", ["🆕", "جديدة"], ["🔁", "اللي بعرفها"]],
+ ["بتحب تكون أول واحد بالطابور ولا آخر واحد؟", ["🥇", "أول"], ["🐢", "آخر"]],
+ ["بتحب الحفلات الكبيرة ولا القعدات الصغيرة؟", ["🎉", "الكبيرة"], ["🫖", "الصغيرة"]],
+ ["تسافر بالقطار ولا بالسفينة؟", ["🚆", "قطار"], ["🚢", "سفينة"]],
+ ["تزور الثلج ولا الصحرا؟", ["❄️", "الثلج"], ["🏜️", "الصحرا"]],
+ ["تعيش بقلعة ولا بيخت؟", ["🏰", "قلعة"], ["🛥️", "يخت"]],
+ ["تحكي كل إشي بالغناء ولا كل إشي بالرقص؟", ["🎤", "غناء"], ["💃", "رقص"]],
+ ["يكون عندك ديناصور أليف ولا تنين صغير؟", ["🦖", "ديناصور"], ["🐉", "تنين"]],
+ ["تقدر تتنفس تحت الماي ولا تركض بسرعة الصوت؟", ["🐟", "تحت الماي"], ["⚡", "سرعة"]],
+ ["تعرف كل لغات العالم ولا كل آلات الموسيقى؟", ["🌍", "اللغات"], ["🎻", "الموسيقى"]],
+ ["تاكل حلو بس ولا مالح بس طول حياتك؟", ["🍬", "حلو"], ["🥨", "مالح"]],
+ ["تعيش بالمستقبل ولا بزمن ستّك؟", ["🚀", "المستقبل"], ["📻", "زمن ستّي"]],
+ ["يكون صوتك زي البطة ولا مشيتك زي البطريق؟", ["🦆", "صوت بطة"], ["🐧", "مشية بطريق"]],
+ ["تنسى اسمك كل يوم ولا تنسى وين ساكن؟", ["🏷️", "اسمي"], ["🏠", "وين ساكن"]],
+ ["بتحب الهدايا المفاجأة ولا تختار هديتك؟", ["🎁", "مفاجأة"], ["📝", "أختارها"]],
+ ["بتغيّر نغمة تلفونك ولا بتخليها زي ما هي؟", ["🔔", "بغيّرها"], ["🔕", "زي ما هي"]],
+ ["بتاكل الفواكه مقطّعة ولا كاملة؟", ["🔪", "مقطّعة"], ["🍎", "كاملة"]],
+ ["بترتّب شنطتك من قبل بيوم ولا آخر دقيقة؟", ["🧳", "قبل بيوم"], ["⏰", "آخر دقيقة"]],
+ ["بتحب تسمع القصة كاملة ولا الخلاصة؟", ["📖", "كاملة"], ["✂️", "الخلاصة"]],
+ ["بتكتب قائمة مشتريات ولا بتتذكر براسك؟", ["📝", "قائمة"], ["🧠", "براسي"]],
+ ["بتحب تكون اللي بيحكي النكتة ولا اللي بيضحك عليها؟", ["🎤", "بحكيها"], ["😂", "بضحك"]]
 ];
 /* "answer as them": personal questions you answer the way that person would */
 const JQ = [
@@ -692,7 +882,37 @@ const JQ = [
  "شو الإشي اللي ما بتشاركه مع حدا؟",
  "شو بتحكي لما حدا ياخد آخر قطعة؟",
  "شو أول إشي بتعمله إذا ربحت بلعبة؟",
- "شو بتحكي لما حدا يسألك «شو بدك توكل؟»"
+ "شو بتحكي لما حدا يسألك «شو بدك توكل؟»",
+ "شو بيعمل لما يكون لحاله بالبيت؟",
+ "شو الأكلة اللي بيطلبها الساعة 3 الفجر؟",
+ "شو بيحكي لما حدا يوقّف عليه بالسيارة؟",
+ "شو أول إشي بيعمله لما يصحى متأخر؟",
+ "شو الجملة اللي بيحكيها لما يخسر لعبة؟",
+ "لو صار مشهور، شو رح يكون السبب؟",
+ "شو بيعمل لما يشوف أكل ببلاش؟",
+ "شو أغرب إشي ممكن تلاقيه بشنطته؟",
+ "شو بيحكي لما حدا يطلب منه خدمة؟",
+ "شو أول إشي بيعمله لما يوصل عالعزيمة؟",
+ "شو بيعمل لما يضيع تلفونه؟",
+ "شو أكثر إيموجي بيستعمله؟",
+ "شو بيحكي لما تكون الحرارة 40؟",
+ "شو بيعمل لما يكون عنده امتحان بكرة؟",
+ "شو الأغنية اللي بيغنيها وهو مبسوط؟",
+ "شو أول إشي بيطلبه من المطعم؟",
+ "شو بيعمل بأول يوم من الإجازة؟",
+ "شو بيحكي لما حدا ياكل من صحنه؟",
+ "شو أكثر إشي بيشتكي منه؟",
+ "شو بيعمل لما يكون زهقان؟",
+ "شو بيحكي لما يصحى من النوم؟",
+ "لو ربح رحلة، وين بيروح؟",
+ "شو بيعمل لما حدا يحكيله نكتة بايخة؟",
+ "شو أول إشي بيعمله لما يقطع النت؟",
+ "شو بيحكي لما يشوف صورته وهو صغير؟",
+ "شو الإشي اللي ما بيقدر يستغني عنه؟",
+ "شو بيعمل لما يكون مستعجل الصبح؟",
+ "شو بيحكي لما يخلص الأكل بالعزيمة؟",
+ "شو بيطبخ إذا طلبوا منه يطبخ للعيلة؟",
+ "شو بيعمل لما يسمع أغنية بيحبها؟"
 ];
 /* 16 original cartoon characters, drawn in SVG so they look the same on every phone and screen */
 const CHARS = [
@@ -775,7 +995,8 @@ const BOTS = [["بوت أبو صالح","🤖"],["بوت أم ناصر","👾"],
 const T_ANSWER = 60, T_VOTE = 45, T_WRITE = 120, MAXLEN = 90, QLEN = 120, NS = "mnfn-v3-";
 const MULT = {1:100, 2:100, 4:200}, BESTQ_PTS = 200, T_GUESS = 30, WHO_RIGHT = 100, WHO_FOOL = 50, T_INTRO = 40, T_MQ = 15, T_JVOTE = 30, M_RIGHT = 200, J_PICK = 300, J_VOTE = 100;
 const ORDER = [1, 2, 7, 3, 8, 4];                 // play order of segments (ids stay stable for music & colours)
-const NSEG = ORDER.length, segNum = id => ORDER.indexOf(id)+1;
+const activeOrder = () => ORDER.filter(id => (H.settings.segs||ORDER).includes(id));
+const SEG_MIN = {1:4, 2:4, 7:3, 3:5, 8:5, 4:7};            // rough minutes per round, for the time estimate
 const SEGS = {
   1:{icon:"🤪", title:"مين فينا؟", rules:["كل اثنين بيوصلهم نفس السؤال على تلفوناتهم.","كل واحد بيكتب أضحك جواب خلال دقيقة، سرًّا.","الباقي بيصوّتوا للأضحك. كل صوت = 100 نقطة."], desc:"سؤال مجنون، اثنين بيجاوبوا، والكل بيصوّت. كل صوت = 100 نقطة.", kind:"q"},
   2:{icon:"✍️", title:"كمّل الجملة", rules:["بتوصلكم بداية جملة فيها فراغ ______.","كمّلوها بأغرب أو أضحك طريقة خلال دقيقة.","الباقي بيصوّتوا. كل صوت = 100 نقطة."], desc:"بداية جملة وإنتو بتكمّلوها بأضحك طريقة. كل صوت = 100 نقطة.", kind:"s"},
@@ -1064,13 +1285,17 @@ function home(note){
     h("div",{class:"pick"},
       h("button",{class:"pickcard",onclick:startHost}, h("span",{class:"pcic","aria-hidden":"true"},"📺"), h("strong",{},"الشاشة الرئيسية"), h("small",{},"على التلفزيون أو اللابتوب")),
       h("button",{class:"pickcard",onclick:()=>joinForm()}, h("span",{class:"pcic","aria-hidden":"true"},"📱"), h("strong",{},"أنا لاعب"), h("small",{},"من تلفونك"))),
+    (()=>{ const sv=loadSave(); if (!sv) return null;
+      const humans=sv.P.length, seg=SEGS[sv.seg];
+      return h("button",{class:"resume",onclick:resumeGame}, h("span",{"aria-hidden":"true"},"🔄"),
+        h("span",{}, h("strong",{},"كمّلوا اللعبة اللي وقفت"), h("small",{}, `${humans} لاعبين${seg?" · "+seg.icon+" "+seg.title:""} · الكود ${sv.code}`))); })(),
     note ? h("div",{class:"warn",role:"alert"},note) : null
   )));
 }
 
 /* ================= HOST ================= */
 const H = { kicked:new Set(), panelDraw:null, peer:null, net:false, netMsg:"", code:"", st:{ph:"lobby"}, P:new Map(),
-  settings:{rounds:1, bots:0}, timeouts:[], iv:null, tok:0, closing:false, onEnd:null,
+  settings:{rounds:1, bots:0, segs:(()=>{ try{ const v=JSON.parse(ls.get("mf.segs")||"null"); if (Array.isArray(v) && v.length) return v.filter(x=>ORDER.includes(x)); }catch{} return [...ORDER]; })()}, timeouts:[], iv:null, tok:0, closing:false, onEnd:null,
   seg:0, si:-1, rd:0, batch:null, mk:0, mAsk:{}, mAns:{}, mList:[], mguess:{}, msub:null, jk:0, jpick:null, jvotes:{}, jown:{}, jtarget:null, di:-1, votes:{}, vk:0, own:{}, wq:{}, bq:{}, bqOwn:{}, bqList:[], ready:{}, revGuess:{}, whoGuesses:[], whoOpts:[], ri:-1, who:null, whoList:[], wi:-1, wk:0, guess:{}, wAuthor:null };
 function later(ms,fn){ H.timeouts.push(setTimeout(fn,ms)); }
 function at(ms,fn){ const tok=H.tok; later(ms,()=>{ if(H.tok===tok) fn(); }); }
@@ -1079,6 +1304,7 @@ const newCode = () => String(1000 + (Math.random()*9000|0));
 const online = () => [...H.P.values()].filter(p=>p.on);
 
 function startHost(){
+  clearSave();
   Music.init(); Music.setMood("lobby"); Tracks.unlock(); wake();
   H.code = newCode(); H.st = { ph:"lobby" };
   Tracks.loadSite().then(()=>{ Tracks.src=undefined; try{ hostRender(); }catch{} });
@@ -1090,7 +1316,7 @@ function openHostPeer(){
   let peer;
   try { peer = new Peer(NS + H.code); } catch { H.net=false; H.netMsg="الاتصال مش متاح بهالمتصفح. البوتات شغالة عادي."; return; }
   H.peer = peer; H.netMsg = "عم نوصل…";
-  peer.on("open", ()=>{ H.net=true; H.netMsg=""; hostRender(); });
+  peer.on("open", ()=>{ H.net=true; if (!/تغيّر/.test(H.netMsg)) H.netMsg=""; H.resuming=false; hostRender(); });
   peer.on("connection", conn => {
     conn.on("data", d => onHostMsg(conn, d));
     conn.on("close", () => onHostClose(conn));
@@ -1098,7 +1324,10 @@ function openHostPeer(){
   });
   peer.on("disconnected", ()=>{ try{ peer.reconnect(); }catch{} });
   peer.on("error", e => {
-    if (e.type==="unavailable-id"){ H.code=newCode(); openHostPeer(); hostRender(); return; }
+    if (e.type==="unavailable-id"){
+      if (H.resuming && (H.claimTries=(H.claimTries||0)+1) <= 12){ H.netMsg="عم نرجّع نفس الكود… لحظات"; hostRender(); setTimeout(openHostPeer, 2500); return; }
+      if (H.resuming) H.netMsg="ما قدرنا نرجّع نفس الكود، فتغيّر. خلّوا الكل يصوّر الكود الجديد من زر 📱";
+      H.code=newCode(); openHostPeer(); hostRender(); return; }
     if (e.type==="peer-unavailable") return;
     if (!H.net){ H.netMsg = "ما قدرنا نوصل لسيرفر الاتصال. إذا فاتحين الصفحة من جوّا Claude، الاتصال ممنوع هناك: افتحوا ملف اللعبة من رابطكم الخاص. البوتات شغالة هون عادي."; hostRender(); }
   });
@@ -1174,13 +1403,14 @@ function playersPanel(){
   };
   H.panelDraw=draw; draw(); document.body.append(ov);
 }
+function countLen(p,x){ if (!H.stats||!x) return; const S=H.stats; S.len[p.pid]=(S.len[p.pid]||0)+x.length; S.cnt[p.pid]=(S.cnt[p.pid]||0)+1; }
 function countAuto(p,d){ if (d.auto && H.stats) H.stats.auto[p.pid]=(H.stats.auto[p.pid]||0)+1; }
 function handleAction(p, d){
   const st=H.st;
   if (d.t==="ans" && st.ph==="answer"){
     const pr=H.batch?.prompts.find(x=>x.key===d.k);
     const x=clean(d.x,MAXLEN);
-    if (pr && pr.pair.includes(p.pid) && x && !pr.ans[p.pid]){ pr.ans[p.pid]=x; Music.play("blip"); countAuto(p,d); }
+    if (pr && pr.pair.includes(p.pid) && x && !pr.ans[p.pid]){ pr.ans[p.pid]=x; Music.play("blip"); countAuto(p,d); countLen(p,x); }
   } else if (d.t==="vote" && st.ph==="vote" && d.k===H.vk && (d.c==="A"||d.c==="B") && !H.own[p.pid] && !H.votes[p.pid]){
     H.votes[p.pid]=d.c; Music.play("tick");
   } else if (d.t==="q" && st.ph==="write"){
@@ -1196,13 +1426,13 @@ function handleAction(p, d){
   } else if (d.t==="ready" && st.ph==="seg"){
     if (!H.ready[p.pid]){ H.ready[p.pid]=1; Music.play("pop"); }
   } else if (d.t==="wa" && st.ph==="wans"){
-    const x=clean(d.x,MAXLEN); if (x && !H.who.ans[p.pid]){ H.who.ans[p.pid]=x; Music.play("blip"); countAuto(p,d); }
+    const x=clean(d.x,MAXLEN); if (x && !H.who.ans[p.pid]){ H.who.ans[p.pid]=x; Music.play("blip"); countAuto(p,d); countLen(p,x); }
   } else if (d.t==="g" && st.ph==="wguess" && d.k===H.wk && p.pid!==H.wAuthor && d.id!==p.pid && st.opts.some(o=>o[0]===d.id) && !H.guess[p.pid]){
     H.guess[p.pid]=d.id; Music.play("tick");
   } else if (d.t==="bq" && st.ph==="bestq" && H.bqList.some(q=>q[0]===d.id) && H.bqOwn[p.pid]!==d.id && !H.bq[p.pid]){
     H.bq[p.pid]=d.id; Music.play("tick");
   } else return;
-  checkDone(); push(); hostRender();
+  saveSoon(); checkDone(); push(); hostRender();
 }
 function onHostClose(conn){
   const p=H.P.get(conn._pid); if (!p || p.conn!==conn) return;
@@ -1233,7 +1463,51 @@ function push(){ for (const p of H.P.values()) if(!p.bot) sendTo(p); }
 function setPhase(st, T, onEnd){
   clearInterval(H.iv); H.iv=null; H.tok++; H.closing=false; H.onEnd=onEnd||null; st.pt=H.tok; H.st=st;
   if (T){ st.t=T; st.T=T; H.iv=setInterval(tick,1000); }
+  if (RESUME[st.ph]) saveGame();
+  else if (["lobby","final"].includes(st.ph)) clearSave();
   push(); hostRender();
+}
+/* ---- keep the game safe if the main screen reloads or closes by mistake ----
+   We save at every phase where players give input (and after each input). Resuming restarts that phase:
+   scores are rolled back to its start too, so nothing is counted twice. */
+const SAVE_KEY="mf.game", SAVE_FIELDS=["seg","si","rd","order","batch","di","votes","vk","own","cur","wq","bq","bqOwn","bqList","bqAuthor",
+  "who","whoList","whoGuesses","whoOpts","wi","ri","wk","guess","wAuthor","revGuess","ready","mAsk","mAns","mList","mi","mk","mguess","msub",
+  "jk","jpick","jvotes","jown","jtarget","stats","allQs"];
+const RESUME = {
+  seg: ()=>introDone, answer: ()=>()=>{ H.di=-1; H.seg===8 ? nextJ() : nextDuel(); }, vote: ()=>endVote, write: ()=>endWrite,
+  bestq: ()=>endBestQ, wans: ()=>endWhoAns, wguess: ()=>endWho, mself: ()=>endMSelf, mq: ()=>endMaj, jvote: ()=>endJ,
+};
+let saveTimer=null;
+function saveGame(){
+  if (!H.code || !RESUME[H.st?.ph]) return;
+  try{
+    const snap={v:1, at:Date.now(), code:H.code, st:H.st, settings:H.settings, kicked:[...H.kicked],
+      P:[...H.P.values()].map(p=>({pid:p.pid,name:p.name,av:p.av,score:p.score,bot:!!p.bot}))};
+    for (const k of SAVE_FIELDS) snap[k]=H[k];
+    ls.set(SAVE_KEY, JSON.stringify(snap));
+  }catch{}
+}
+function saveSoon(){ clearTimeout(saveTimer); saveTimer=setTimeout(saveGame,400); }
+function clearSave(){ try{ localStorage.removeItem(SAVE_KEY); }catch{} }
+function loadSave(){
+  try{ const s=JSON.parse(ls.get(SAVE_KEY)||"null"); if (s && s.v===1 && Date.now()-s.at < 6*3600e3 && RESUME[s.st?.ph]) return s; }catch{}
+  return null;
+}
+function resumeGame(){
+  const snap=loadSave(); if (!snap) return startHost();
+  Music.init(); Tracks.unlock(); wake();
+  clearLater();
+  for (const k of SAVE_FIELDS) H[k]=snap[k];
+  H.settings={...H.settings, ...snap.settings};
+  H.kicked=new Set(snap.kicked||[]);
+  H.P=new Map(snap.P.map(p=>[p.pid,{...p, on:!!p.bot, conn:null, seen:0}]));
+  H.code=snap.code; H.resuming=true; H.claimTries=0;
+  Tracks.loadSite().then(()=>{ Tracks.src=undefined; try{ hostRender(); }catch{} });
+  openHostPeer();
+  const st={...snap.st}, T = st.ph==="seg" ? T_INTRO : Math.max(30, (st.t||0)+15);
+  Music.setMood(st.ph==="seg" ? "lobby" : ["vote","mq","jvote","wguess","bestq"].includes(st.ph) ? "vote" : st.ph==="write" ? "write" : "answer");
+  setPhase(st, T, RESUME[st.ph]());
+  botsAct(); checkDone();
 }
 function tick(){
   const st=H.st; st.t=Math.max(0,st.t-1);
@@ -1320,20 +1594,27 @@ function startGame(){
   if (online().length<3) return;
   clearLater();
   for (const p of H.P.values()) p.score=0;
-  H.stats={votes:{}, sweeps:{}, right:{}, fooled:{}, auto:{}, seg4start:null};
-  H.seg=0; H.si=-1; Music.play("tada");
+  H.stats={votes:{}, sweeps:{}, right:{}, fooled:{}, auto:{}, seg4start:null, len:{}, cnt:{}, mGuessN:{}, mRight:{}};
+  H.seg=0; H.si=-1; H.order=activeOrder(); Music.play("tada");
   nextSegment();
 }
 function nextSegment(){
+  const order=H.order||activeOrder();
   H.si=(H.si??-1)+1;
-  if (H.si>=ORDER.length) return finalScreen();
-  H.seg=ORDER[H.si];
+  if (H.si>=order.length) return finalScreen();
+  H.seg=order[H.si];
   if ([3,4,7,8].includes(H.seg) && online().length<3) return skipSeg(H.seg);
   Music.setMood("lobby"); Music.play("whistle");
   H.ready={};
-  setPhase({ph:"seg", seg:H.seg, rc:0, rt:online().length}, T_INTRO, ()=>{ H.rd=0; ({4:startWrite, 3:startWho, 7:startMaj, 8:startJawab}[H.seg] || nextRound)(); });
+  setPhase({ph:"seg", seg:H.seg, segi:H.si+1, segn:order.length, rc:0, rt:online().length}, T_INTRO, introDone);
   botsAct();
 }
+function introDone(){
+  if ([1,2].includes(H.seg)){ H.rd=0; return nextRound(); }
+  H.rd=1; ({4:startWrite, 3:startWho, 7:startMaj, 8:startJawab}[H.seg])();
+}
+/* one more round of the same segment if the settings ask for it */
+function moreRounds(restart){ if (H.rd < H.settings.rounds){ H.rd++; restart(); return true; } return false; }
 function nextRound(){
   H.rd++;
   if (H.rd>H.settings.rounds) return nextSegment();
@@ -1387,11 +1668,16 @@ function endVote(){
     Music.play(vA+vB===0?"womp":res.sweep?"applause":"tada"); if(res.sweep) confetti(); push(); hostRender(); });
   at(10500,nextDuel);
 }
-const rdsFor = seg => [1,2].includes(seg) ? H.settings.rounds : 1;
+const rdsFor = seg => H.settings.rounds;
 function afterBatch(){
   Music.setMood("lobby");
   setPhase({ph:"score", seg:H.seg, rd:H.rd, rds:rdsFor(H.seg)});
-  at(9000, ()=>{ if (H.seg===4) startBestQ(); else if ([1,2].includes(H.seg)) nextRound(); else nextSegment(); });
+  at(9000, ()=>{
+    if ([1,2].includes(H.seg)) return nextRound();
+    if (H.seg===4){ if (!moreRounds(startWrite)) startBestQ(); return; }
+    if (H.seg===8){ if (!moreRounds(startJawab)) nextSegment(); return; }
+    nextSegment();
+  });
 }
 function skipSeg(seg){
   Music.play("womp"); setPhase({ph:"segskip", seg});
@@ -1418,7 +1704,7 @@ function endMSelf(){
 }
 function nextMaj(){
   H.mi++;
-  if (H.mi>=H.mList.length){ Music.setMood("lobby"); setPhase({ph:"score", seg:7}); at(9000,nextSegment); return; }
+  if (H.mi>=H.mList.length){ Music.setMood("lobby"); setPhase({ph:"score", seg:7, rd:H.rd, rds:rdsFor(7)}); at(9000,()=>{ if (!moreRounds(startMaj)) nextSegment(); }); return; }
   const x=H.mList[H.mi], s=H.P.get(x.pid);
   H.mk++; H.mguess={}; H.msub=x.pid;
   Music.setMood("vote");
@@ -1433,6 +1719,7 @@ function endMaj(){
   setPhase({...st, ph:"mr", rv:0, cA, cB, t:0});
   at(2100,()=>{
     for (const pid of right){ const p=H.P.get(pid); if(p) p.score+=M_RIGHT; }
+    if (H.stats){ const S=H.stats, n=Object.keys(H.mguess).length; if (n){ S.mGuessN[x.pid]=(S.mGuessN[x.pid]||0)+n; S.mRight[x.pid]=(S.mRight[x.pid]||0)+right.length; } }
     H.st.rv=1; H.st.real=x.c; H.st.pts=M_RIGHT;
     H.st.right=right.map(pid=>{ const p=H.P.get(pid); return [pid,p?.name||"",p?.av||""]; });
     Music.play(right.length?"tada":"womp"); push(); hostRender(); });
@@ -1448,7 +1735,7 @@ function startJawab(){
     return { key:`8.${i}.${stamp}`, q, target:pid, label:`🎭 جاوب كأنك ${t.av} ${t.name}:\n${q}`, pair:[order[(i+1)%M], order[(i+2)%M]], ans:{} };
   });
   H.batch={prompts:shuffle(prompts), mult:J_VOTE};
-  H.rd=1; startAnswer();
+  startAnswer();
 }
 function nextJ(){
   H.di++;
@@ -1518,7 +1805,7 @@ function startWhoReveal(){
 }
 function nextReveal(){
   H.ri++;
-  if (H.ri>=H.whoList.length){ Music.setMood("lobby"); setPhase({ph:"score", seg:3}); at(9000,nextSegment); return; }
+  if (H.ri>=H.whoList.length){ Music.setMood("lobby"); setPhase({ph:"score", seg:3, rd:H.rd, rds:rdsFor(3)}); at(9000,()=>{ if (!moreRounds(startWho)) nextSegment(); }); return; }
   const [author,x]=H.whoList[H.ri], guesses=H.whoGuesses[H.ri]||{}, opts=H.whoOpts[H.ri]||[];
   H.revGuess=guesses; H.wAuthor=author;
   const a=H.P.get(author), tally={};
@@ -1537,14 +1824,14 @@ function nextReveal(){
 /* segment 4 */
 function startWrite(){
   H.wq={};
-  if (H.stats) H.stats.seg4start=Object.fromEntries([...H.P.values()].map(p=>[p.pid,p.score]));
+  if (H.rd<=1){ H.allQs=[]; if (H.stats) H.stats.seg4start=Object.fromEntries([...H.P.values()].map(p=>[p.pid,p.score])); }
   Music.setMood("write");
   setPhase({ph:"write", seg:4}, T_WRITE, endWrite);
   botsAct();
 }
 function endWrite(){
   const order=shuffle(online().map(p=>p.pid)), M=order.length;
-  if (M<3){ setPhase({ph:"segskip",seg:4}); at(5000,finalScreen); return; }
+  if (M<3) return skipSeg(4);
   const stamp=Date.now()%1e6, writers=order.filter(pid=>H.wq[pid]);
   let prompts;
   if (writers.length===M){
@@ -1563,10 +1850,11 @@ function endWrite(){
     prompts=order.map((pid,i)=>({ key:`4.${i}.${stamp}`, q:nextPrompt(Math.random()<.5?"q":"s"), author:null, pair:[order[(i+1)%M], order[(i+2)%M]], ans:{} }));
   }
   H.batch={prompts:shuffle(prompts), mult:MULT[4]};
-  H.rd=1; startAnswer();
+  H.allQs=(H.allQs||[]).concat(prompts.filter(x=>x.author));
+  startAnswer();
 }
 function startBestQ(){
-  const qs=H.batch.prompts.filter(x=>x.author && H.P.get(x.author));
+  const qs=(H.allQs||[]).filter(x=>x.author && H.P.get(x.author));
   if (qs.length<2) return finalScreen();
   H.bqList=qs.map((x,i)=>["q"+i, x.q]); H.bq={}; H.bqOwn={}; H.bqAuthor={};
   qs.forEach((x,i)=>{ H.bqOwn[x.author]="q"+i; H.bqAuthor["q"+i]=x.author; });
@@ -1591,20 +1879,27 @@ const AWARDS = [
   {key:"right",  icon:"🕵️", title:"قارئ الأفكار",  why:n=>"عرف "+cnt(n,"كاتب واحد","كاتبين","كتّاب","كاتب")+" صح"},
   {key:"fooled", icon:"🥸", title:"أخطر مخادع",    why:n=>"ضلّل الناس "+cnt(n,"مرة","مرتين","مرات","مرة")},
   {key:"seg4",   icon:"🔥", title:"ملك التعويض",   why:n=>`جاب ${n} نقطة بالتعويض`},
+  {key:"long",   icon:"📜", title:"الفيلسوف",      why:n=>`معدّل جوابه ${n} حرف`},
+  {key:"myst",   icon:"🃏", title:"الغامض",        dir:"min", why:n=>n===0?"ولا حدا عرف شو اختار":`بس ${Math.round(n*100)}% حزروه صح`},
   {key:"auto",   icon:"🐢", title:"السلحفاة",      why:n=>n===1?"جواب انبعت لحاله آخر ثانية":cnt(n,"","جوابين","أجوبة","جواب")+" انبعتوا لحالهم آخر ثانية"},
 ];
 function computeAwards(){
   const S=H.stats; if (!S) return [];
-  const seg4={};
+  const seg4={}, long={}, myst={};
   if (S.seg4start) for (const p of H.P.values()) seg4[p.pid]=p.score-(S.seg4start[p.pid]||0);
-  const src={votes:S.votes, sweeps:S.sweeps, right:S.right, fooled:S.fooled, seg4, auto:S.auto};
+  for (const [pid,c] of Object.entries(S.cnt||{})) if (c>=2) long[pid]=Math.round((S.len[pid]||0)/c);
+  for (const [pid,n] of Object.entries(S.mGuessN||{})) if (n>0) myst[pid]=(S.mRight[pid]||0)/n;
+  const src={votes:S.votes, sweeps:S.sweeps, right:S.right, fooled:S.fooled, seg4, long, myst, auto:S.auto};
   const out=[];
   for (const a of AWARDS){
-    const m=src[a.key]||{}, best=Math.max(0,...Object.values(m));
-    if (best<=0) continue;                                   // nobody earned it: skip the award
-    const winners=Object.entries(m).filter(([,v])=>v===best).map(([pid])=>H.P.get(pid)).filter(Boolean);
-    if (!winners.length) continue;
-    if (winners.length>=3 && winners.length>=online().length) continue;   // everyone tied: nobody stands out
+    const m=Object.fromEntries(Object.entries(src[a.key]||{}).filter(([pid])=>H.P.get(pid)));
+    const vals=Object.values(m); if (!vals.length) continue;
+    const best = a.dir==="min" ? Math.min(...vals) : Math.max(...vals);
+    if (a.dir==="min" ? best>0.5 : best<=0) continue;        // nobody really earned it: skip the award
+    let winners=Object.entries(m).filter(([,v])=>v===best).map(([pid])=>H.P.get(pid));
+    if (winners.length>1){                                     // tie: the higher total score takes it
+      const top=Math.max(...winners.map(p=>p.score)); winners=winners.filter(p=>p.score===top);
+    }
     out.push({icon:a.icon, title:a.title, why:a.why(best), who:winners.map(p=>[p.pid,p.name,p.av])});
   }
   return out;
@@ -1648,7 +1943,7 @@ function podium(top, rv, animate){
   return h("div",{class:"podium"}, top[1]?slot(2):null, slot(1), top[2]?slot(3):null);
 }
 function toLobby(){
-  clearLater(); H.kicked.clear(); for (const [k,p] of H.P) if(!p.on) H.P.delete(k);
+  clearLater(); clearSave(); H.kicked.clear(); for (const [k,p] of H.P) if(!p.on) H.P.delete(k);
   for (const p of H.P.values()) p.score=0;
   H.seg=0; H.rd=0; Music.setMood("lobby"); setPhase({ph:"lobby"});
 }
@@ -1678,7 +1973,8 @@ function showQR(){
     h("div",{style:"display:flex;flex-direction:column;gap:14px;align-items:center"}, qrBox(280), h("button",{class:"btn",onclick:()=>ov.remove()},"تمام")));
   document.body.append(ov);
 }
-function waitingFor(list){
+function waitingFor(list){ return null; }   // names are hidden, the count next to the timer is enough
+function waitingForNames(list){
   if (!list.length) return null;
   return h("div",{class:"waiting"}, h("span",{class:"lbl"},"لسا ما صوّتوا 👀"), h("div",{class:"wl"}, list.map(p=>h("span",{class:"wchip"},p.av," ",p.name))));
 }
@@ -1726,15 +2022,28 @@ function hostRender(){
           H.net && localOnly() ? h("div",{class:"warn"},"الصفحة مفتوحة من localhost أو كملف، فالتلفونات ما رح توصل. افتحوها من رابط الشبكة أو الاستضافة.") : null)),
       h("details",{class:"settings"},
         h("summary",{},"⚙️ إعدادات"),
-        h("div",{class:"row"}, h("span",{class:"lbl"},"جولات بكل فقرة"), h("div",{class:"chips"},
-          ...[1,2,3].map(n=>h("button",{class:"chip","aria-pressed":String(H.settings.rounds===n),onclick:()=>{H.settings.rounds=n;Music.play("pop");H.keepSettings=true;hostRender();}},n)))),
-        h("div",{class:"row"}, h("span",{class:"lbl"},"🤖 بوتات للتجربة"), h("div",{class:"chips"},
-          ...[0,1,2,3,4].map(n=>h("button",{class:"chip","aria-pressed":String(H.settings.bots===n),onclick:()=>{H.settings.bots=n;syncBots();Music.play("boing");H.keepSettings=true;hostRender();}},n)))))
+        h("div",{class:"sgroup"},
+          h("div",{class:"stitle"}, h("span",{},"🔁 عدد الجولات"), h("small",{},"لكل فقرة")),
+          h("div",{class:"chips nums"},
+            ...[1,2,3].map(n=>h("button",{class:"chip","aria-pressed":String(H.settings.rounds===n),onclick:()=>{H.settings.rounds=n;Music.play("pop");H.keepSettings=true;hostRender();}},n)))),
+        h("div",{class:"sgroup"},
+          h("div",{class:"stitle"}, h("span",{},"🎲 الفقرات"), h("small",{},`⏱️ حوالي ${activeOrder().reduce((t,id)=>t+SEG_MIN[id],0)*H.settings.rounds+3} دقيقة`)),
+          h("div",{class:"segopts"},
+            ...ORDER.map(id=>{ const on=H.settings.segs.includes(id);
+              return h("button",{class:"segopt","aria-pressed":String(on),onclick:()=>{
+                const cur=H.settings.segs; if (on && cur.length===1) return;           // at least one segment
+                H.settings.segs = on ? cur.filter(x=>x!==id) : ORDER.filter(x=>cur.includes(x)||x===id);
+                ls.set("mf.segs",JSON.stringify(H.settings.segs)); Music.play("pop"); H.keepSettings=true; hostRender(); }},
+                h("span",{class:"sci","aria-hidden":"true"},SEGS[id].icon), h("span",{class:"scn"},SEGS[id].title), h("span",{class:"scc","aria-hidden":"true"}, on?"✓":"")); }))),
+        h("div",{class:"sgroup"},
+          h("div",{class:"stitle"}, h("span",{},"🤖 بوتات للتجربة"), h("small",{},"لاعبين وهميين")),
+          h("div",{class:"chips nums"},
+            ...[0,1,2,3,4].map(n=>h("button",{class:"chip","aria-pressed":String(H.settings.bots===n),onclick:()=>{H.settings.bots=n;syncBots();Music.play("boing");H.keepSettings=true;hostRender();}},n)))))
     ];
   } else if (st.ph==="seg"){
     const s=SEGS[st.seg];
     body=[
-      h("div",{class:"segintro"}, h("span",{class:"icon","aria-hidden":"true"},s.icon), h("div",{class:"num"},`الفقرة ${segNum(st.seg)} من ${NSEG}`), h("h2",{class:"disp"},s.title)),
+      h("div",{class:"segintro"}, h("span",{class:"icon","aria-hidden":"true"},s.icon), h("div",{class:"num"},`الفقرة ${st.segi} من ${st.segn}`), h("h2",{class:"disp"},s.title)),
       h("ol",{class:"rules"}, s.rules.map(r=>h("li",{},r))),
       h("div",{class:"duel"}, timerEl(st.t,st.T), h("span",{class:"kind"},`جاهزين ${st.rc||0}/${st.rt||0}`), h("button",{class:"btn",onclick:skipPhase},"يلّا ▶"))
     ];
@@ -1858,7 +2167,7 @@ function hostRender(){
       h("div",{class:"answers"}, card("A",st.A), card("B",st.B)),
       rev ? (st.rv===1&&!st.pick ? h("p",{class:"banner"},`${st.tn[0]} ما اختار 🤷`) : null)
           : h("div",{class:"duel"}, timerEl(st.t,st.T),
-              h("span",{class:"kind"}, `${st.picked?"🎯 "+st.tn[0]+" اختار ✓":"🎯 "+st.tn[0]+" بيختار…"} · 😂 ${st.vc||0}/${st.vt||0}`))
+              h("span",{class:"kind"}, `${st.picked?"🎯 "+st.tn[0]+" اختار ✓":"🎯 "+st.tn[0]+" بيختار…"}${st.vt?` · 😂 ${st.vc||0}/${st.vt}`:""}`))
     ];
   } else if (st.ph==="awards"){
     const a=st.list[st.rv];
@@ -2040,7 +2349,7 @@ function playerRender(){
   else if (st.ph==="lobby") body=[h("p",{class:"big"},"إنت جوّا! 🎉"), h("p",{class:"muted center"},"استنى لحد ما تبلّش اللعبة على الشاشة الكبيرة.")];
   else if (st.ph==="seg"){
     const s=SEGS[st.seg], rd=me.ready||P.sentV["r"+st.pt];
-    body=[h("p",{class:"lbl center"},`${s.icon} الفقرة ${segNum(st.seg)} من ${NSEG}`), h("p",{class:"big"},s.title),
+    body=[h("p",{class:"lbl center"},`${s.icon} الفقرة ${st.segi} من ${st.segn}`), h("p",{class:"big"},s.title),
       h("ol",{class:"rules"}, s.rules.map(r=>h("li",{},r))),
       rd ? h("p",{class:"muted center"},"جاهز ✓ بنستنى الباقي…")
          : h("button",{class:"btn",onclick:()=>{ P.sentV["r"+st.pt]=1; send({t:"ready"}); playerRender(); }},"فهمت، جاهز ✋"),
@@ -2084,7 +2393,7 @@ function playerRender(){
   }
   else if (st.ph==="answer"){
     if (cur){
-      const [area,cnt]=writeBox("pans",MAXLEN,"اكتب أضحك إشي ببالك…",cur[0]);
+      const [area,cnt]=writeBox("pans",MAXLEN, st.seg===8 ? "جاوب زي ما هو بيجاوب…" : "اكتب أضحك إشي ببالك…", cur[0]);
       body=[ h("div",{class:"ptop"},h("span",{class:"lbl"}, total>1?`سؤال ${idx+1} من ${total}`:"دورك! جاوب سرًّا"), clock()),
         h("p",{class:"disp pq"},cur[1]), area, cnt,
         h("button",{class:"btn",onclick:()=>{const v=clean(area.value,MAXLEN); if(v){ P.sentA[cur[0]]=1; send({t:"ans",k:cur[0],x:v}); P.draft=""; playerRender(); }}},"ابعت الجواب") ];
@@ -2119,7 +2428,8 @@ function playerRender(){
   else if (st.ph==="bestqr") body=[h("p",{class:"big"},"شوف الشاشة! 👑")];
   else if (st.ph==="mself"){
     const btn=([ic,lb],fn)=>h("button",{class:"vbtn mbtn",onclick:fn},h("span",{class:"mic","aria-hidden":"true"},ic),h("span",{},lb));
-    if (!mcur) body=[h("p",{class:"big"},"وصل ✓"),h("p",{class:"muted center"},"بعدين الكل رح يحزر شو اخترت 🤫"),h("p",{class:"center"},clock())];
+    if (!mcur) body = mtot ? [h("p",{class:"big"},"وصل ✓"),h("p",{class:"muted center"},"بعدين الكل رح يحزر شو اخترت 🤫"),h("p",{class:"center"},clock())]
+                           : [h("p",{class:"big"},"استنى شوي"),h("p",{class:"muted center"},"هالجولة ما إلك سؤال، بس رح تحزر عن الباقي 🔮")];
     else body=[h("div",{class:"ptop"},h("span",{class:"lbl"}, mtot>1?`🤫 عن حالك · ${midx+1} من ${mtot}`:"🤫 جاوب عن حالك"),clock()),
       h("p",{class:"disp pq"},mcur[1]),
       ...["A","B"].map(k=>btn(k==="A"?mcur[2]:mcur[3],()=>{ P.ms[mcur[0]]=k; send({t:"ms",k:mcur[0],c:k}); P.sig=null; playerRender(); }))];
