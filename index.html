@@ -136,10 +136,11 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 .ans .vn{font-family:var(--display);font-weight:700;font-size:1.1rem;margin-top:6px;color:#4a6290}
 .ans.win{transform:scale(1.05) rotate(-1deg);box-shadow:0 0 0 6px var(--sun),0 9px 0 var(--skydeep)}
 .ans.lose{opacity:.5;transform:scale(.95)}
-.ans .owner{margin:16px auto 0;width:fit-content;max-width:100%;display:flex;align-items:center;gap:10px;justify-content:center;flex-wrap:wrap;padding:6px 20px 6px 14px;border-radius:999px;background:var(--ink);color:var(--sun);font-family:var(--display);font-weight:800;font-size:clamp(1.6rem,2.8vw,2.2rem);line-height:1.3;box-shadow:0 4px 0 rgba(15,31,59,.25);animation:drop .6s cubic-bezier(.3,1.6,.5,1)}
-.ans .owner .avi{width:1.5em;height:1.5em}
+.ans .owner,.qitem .owner{margin:16px auto 0;width:fit-content;max-width:100%;display:flex;align-items:center;gap:10px;justify-content:center;flex-wrap:wrap;padding:6px 20px 6px 14px;border-radius:999px;background:var(--ink);color:var(--sun);font-family:var(--display);font-weight:800;font-size:clamp(1.6rem,2.8vw,2.2rem);line-height:1.3;box-shadow:0 4px 0 rgba(15,31,59,.25);animation:drop .6s cubic-bezier(.3,1.6,.5,1)}
+.ans .owner .avi,.qitem .owner .avi{width:1.5em;height:1.5em}
+.qitem .owner{font-size:1.35rem;margin:10px 0 0;padding:4px 16px 4px 12px}
 .ans .pts{color:#1f8a6b}
-.ans .owner .pts{color:var(--mint);font-size:.8em}
+.ans .owner .pts,.qitem .owner .pts{color:var(--mint);font-size:.8em}
 @keyframes drop{from{transform:translateY(-30px) scale(.4);opacity:0}}
 .banner{font-family:var(--display);font-weight:800;font-size:clamp(1.9rem,4.6vw,3.2rem);color:var(--sun);animation:drop .6s cubic-bezier(.3,1.6,.5,1);margin:0}
 .segintro .num{font-family:var(--display);font-weight:800;color:var(--sky);font-size:1.6rem}
@@ -192,6 +193,11 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 .mres .wl{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
 .wchip.big{font-size:1.2rem;padding:4px 16px;background:var(--mint);color:var(--ink);border-color:var(--mint)}
 .subj{display:flex;align-items:center;gap:14px}
+.asbox{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:var(--coral);color:var(--ink);text-align:start;box-shadow:0 4px 0 rgba(0,0,0,.18);animation:drop .6s cubic-bezier(.3,1.6,.5,1)}
+.asbox .asav{width:56px;height:56px;flex:none;display:grid;place-items:center;border-radius:50%;background:rgba(255,255,255,.55);font-size:2rem}
+.asbox .asav .avi{width:86%;height:86%}
+.asbox small{display:block;font-size:.95rem;font-weight:700;opacity:.85}
+.asbox b{display:block;font-family:var(--display);font-size:1.6rem;line-height:1.2}
 .subj .nm{font-family:var(--display);font-weight:800;font-size:clamp(1.6rem,3.4vw,2.4rem);color:var(--sun)}
 .jpick{margin-top:10px;font-family:var(--display);font-weight:800;font-size:1.2rem;color:#c2410c;animation:drop .6s cubic-bezier(.3,1.6,.5,1)}
 .phone .mbtn{display:flex;align-items:center;gap:14px;justify-content:flex-start}
@@ -1004,7 +1010,7 @@ const SEGS = {
   2:{icon:"✍️", title:"كمّل الجملة", rules:["بتوصلكم بداية جملة فيها فراغ ______.","كمّلوها بأغرب أو أضحك طريقة خلال دقيقة.","الباقي بيصوّتوا. كل صوت = 100 نقطة."], desc:"بداية جملة وإنتو بتكمّلوها بأضحك طريقة. كل صوت = 100 نقطة.", kind:"s"},
   3:{icon:"🕵️", title:"مين كاتبها؟", rules:["الكل بيجاوب على نفس السؤال خلال دقيقة.","بتنعرض الأجوبة بدون أسماء، وإنتو بتخمّنوا مين كاتب كل جواب.","تخمين صح = 100 نقطة، وكل واحد بتضلّله بجوابك = 50."], desc:"الكل بيجاوب على نفس السؤال، وبعدين بنخمّن مين كاتب كل جواب. تخمين صح = 100، وكل واحد بتضلّله = 50.", kind:"g"},
   7:{icon:"🔮", title:"شو بيختار؟", rules:["كل واحد بيوصله سؤال مختلف بخيارين، وبيجاوب عن حاله سرًّا.","بعدين بيطلع سؤال كل واحد على الشاشة، والكل بيحزر شو اختار.","حزرت صح = 200 نقطة."], desc:"", kind:"m"},
-  8:{icon:"🎭", title:"جاوب عنه", rules:["كل واحد بيوصله سؤالين عن ناس من اللعبة.","جاوب كأنك هو، بأسلوبه وطريقته.","صاحب السؤال بيختار الأشبه فيه (+300)، والباقي بيصوّتوا للأضحك (+100)."], desc:"", kind:"j"},
+  8:{icon:"🎭", title:"جاوب عنه", rules:["كل واحد بيوصله سؤالين عن ناس من اللعبة.","جاوب كأنك هو، بأسلوبه وطريقته.","صاحب السؤال بيختار الجواب الأقرب إله، واللي كتبه بياخذ 300 نقطة."], desc:"", kind:"j"},
   4:{icon:"🔥", title:"فقرة التعويض", rules:["كل واحد بيكتب سؤال مجنون خلال دقيقتين.","أسئلتكم بتروح لناس ثانيين يجاوبوا عليها، دقيقة لكل سؤال.","كل صوت = 200 نقطة، وبالآخر بنصوّت لأحلى سؤال."], desc:"إنتو بتكتبوا الأسئلة، وغيركم بيجاوب عليها. كل صوت = 200 نقطة!", kind:"w"}
 };
 
@@ -1423,7 +1429,7 @@ function handleAction(p, d){
     H.mguess[p.pid]=d.c; Music.play("tick");
   } else if (d.t==="jp" && st.ph==="jvote" && d.k===H.jk && p.pid===H.jtarget && ["A","B"].includes(d.c) && !H.jpick){
     H.jpick=d.c; Music.play("blip");
-  } else if (d.t==="jv" && st.ph==="jvote" && d.k===H.jk && ["A","B"].includes(d.c) && !H.jown[p.pid] && p.pid!==H.jtarget && !H.jvotes[p.pid]){
+  } else if (false && d.t==="jv" && d.k===H.jk && ["A","B"].includes(d.c) && !H.jown[p.pid] && p.pid!==H.jtarget && !H.jvotes[p.pid]){
     H.jvotes[p.pid]=d.c; Music.play("tick");
   } else if (d.t==="ready" && st.ph==="seg"){
     if (!H.ready[p.pid]){ H.ready[p.pid]=1; Music.play("pop"); }
@@ -1444,7 +1450,7 @@ function onHostClose(conn){
 function sc(){ return [...H.P.values()].map(p=>[p.pid,p.name,p.av,p.score,p.on?1:0]); }
 function meFor(pid){
   const st=H.st, me={};
-  if (st.ph==="answer") me.asg=(H.batch?.prompts||[]).filter(x=>x.pair.includes(pid)).map(x=>[x.key,x.label||x.q,x.ans[pid]?1:0]);
+  if (st.ph==="answer") me.asg=(H.batch?.prompts||[]).filter(x=>x.pair.includes(pid)).map(x=>{ const t=x.target&&H.P.get(x.target); return [x.key,x.label||x.q,x.ans[pid]?1:0, t?[t.name,t.av,x.q]:null]; });
   if (st.ph==="vote"){ me.opt=H.own[pid]||null; me.voted=H.votes[pid]||null; }   // opt set = you wrote one of these, you sit this vote out
   if (st.ph==="write") me.done=!!H.wq[pid];
   if (st.ph==="bestq"){ me.own=H.bqOwn[pid]||null; me.voted=H.bq[pid]||null; }
@@ -1547,7 +1553,7 @@ function checkDone(){
   } else if (st.ph==="jvote"){
     const v=jVoters(), t=H.P.get(H.jtarget);
     st.vc=v.filter(p=>H.jvotes[p.pid]).length; st.vt=v.length; st.picked=!!H.jpick;
-    if ((H.jpick || !t?.on) && v.every(p=>H.jvotes[p.pid])) soon();
+    if (H.jpick || !t?.on) soon();
   } else if (st.ph==="seg"){
     st.rc=on.filter(p=>H.ready[p.pid]).length; st.rt=on.length;
     if (on.every(p=>H.ready[p.pid])) soon();
@@ -1574,7 +1580,6 @@ function botsAct(){
     if (st.ph==="mself") (H.mAsk[b.pid]||[]).forEach((x,i)=>at(rnd(2,8)*1000*(i+1), ()=>handleAction(b,{t:"ms",k:x.key,c:pick(["A","B"])})));
     if (st.ph==="mq" && b.pid!==H.msub) at(rnd(2,10)*1000, ()=>handleAction(b,{t:"mq",k:H.mk,c:pick(["A","B"])}));
     if (st.ph==="jvote" && b.pid===H.jtarget) at(rnd(4,14)*1000, ()=>handleAction(b,{t:"jp",k:H.jk,c:pick(["A","B"])}));
-    if (st.ph==="jvote" && !H.jown[b.pid] && b.pid!==H.jtarget) at(rnd(3,12)*1000, ()=>handleAction(b,{t:"jv",k:H.jk,c:pick(["A","B"])}));
     if (st.ph==="seg") at(rnd(2,7)*1000, ()=>handleAction(b,{t:"ready"}));
     if (st.ph==="wans") at(rnd(6,30)*1000, ()=>handleAction(b,{t:"wa",x:pick(BOT_ANS),auto:Math.random()<.3?1:0}));
     if (st.ph==="wguess" && b.pid!==H.wAuthor) at(rnd(3,12)*1000, ()=>{ const ok=st.opts.filter(o=>o[0]!==b.pid); handleAction(b,{t:"g",k:H.wk,id:pick(ok)[0]}); });
@@ -1719,13 +1724,14 @@ function endMaj(){
   const right=Object.entries(H.mguess).filter(([,c])=>c===x.c).map(([pid])=>pid);
   Music.stop(); Music.play("roll",1.8);
   setPhase({...st, ph:"mr", rv:0, cA, cB, t:0});
-  at(2100,()=>{
+  at(2100,()=>{ H.st.rv=1; H.st.real=x.c; Music.play("pop"); push(); hostRender(); });   // first: what they actually picked
+  at(4300,()=>{                                                                          // then: who guessed it
     for (const pid of right){ const p=H.P.get(pid); if(p) p.score+=M_RIGHT; }
     if (H.stats){ const S=H.stats, n=Object.keys(H.mguess).length; if (n){ S.mGuessN[x.pid]=(S.mGuessN[x.pid]||0)+n; S.mRight[x.pid]=(S.mRight[x.pid]||0)+right.length; } }
-    H.st.rv=1; H.st.real=x.c; H.st.pts=M_RIGHT;
+    H.st.rv=2; H.st.pts=M_RIGHT;
     H.st.right=right.map(pid=>{ const p=H.P.get(pid); return [pid,p?.name||"",p?.av||""]; });
     Music.play(right.length?"tada":"womp"); push(); hostRender(); });
-  at(7200,nextMaj);
+  at(9300,nextMaj);
 }
 /* segment 8: answer as them. every player is written about by two others, and picks the one most like them */
 function startJawab(){
@@ -1758,11 +1764,11 @@ function nextJ(){
   setPhase({...head, ph:"jvote", jk:H.jk, A:x.ans[idA], B:x.ans[idB], vc:0, vt:jVoters().length}, T_JVOTE, endJ);
   botsAct();
 }
-const jVoters = () => online().filter(p=>!H.jown[p.pid] && p.pid!==H.jtarget);
+const jVoters = () => [];   // only the person the question is about picks; nobody else votes here
 function endJ(){
   const st=H.st, vs=Object.values(H.jvotes), vA=vs.filter(v=>v==="A").length, vB=vs.length-vA;
   const pick=H.jpick, pA=H.P.get(H.cur.idA), pB=H.P.get(H.cur.idB);
-  const pts={A:vA*J_VOTE+(pick==="A"?J_PICK:0), B:vB*J_VOTE+(pick==="B"?J_PICK:0)};
+  const pts={A:pick==="A"?J_PICK:0, B:pick==="B"?J_PICK:0};
   const who={A:[pA?.name||"",pA?.av||""],B:[pB?.name||"",pB?.av||""]};
   Music.stop();
   setPhase({...st, ph:"jrev", rv:0, vA, vB, pick, pts, t:0});
@@ -2087,8 +2093,8 @@ function hostRender(){
     body=[
       h("p",{class:"kind"}, `${st.wi+1} من ${st.wn}`),
       h("h2",{class:"disp qcard qsm"}, st.q),
-      h("div",{class:"answers",style:"grid-template-columns:minmax(0,1fr);width:min(720px,100%)"}, h("div",{class:"ans"+(rev&&st.rv?" win":"")}, st.x)),
-      h("p",{class: rev&&st.rv ? "banner" : "kind", style: rev&&st.rv ? null : "font-size:1.6rem;margin:0"}, rev ? (st.rv ? `كاتبه: ${r.author[2]} ${r.author[1]}` : "مين كاتبه؟ 🥁") : "مين كاتب هالجواب؟ 🕵️"),
+      h("div",{class:"answers",style:"grid-template-columns:minmax(0,1fr);width:min(720px,100%)"}, h("div",{class:"ans"+(rev&&st.rv?" win":"")}, st.x, rev&&st.rv ? h("div",{class:"owner"},"✍️ ",r.author[2]," ",r.author[1]) : null)),
+      rev&&st.rv ? null : h("p",{class:"kind",style:"font-size:1.6rem;margin:0"}, rev ? "مين كاتبه؟ 🥁" : "مين كاتب هالجواب؟ 🕵️"),
       rev ? h("div",{class:"lobbyp"}, st.tally.map(([pid,name,av,n])=>h("div",{class:"who"+(st.rv&&pid===r.author[0]?" ok":"")},
               h("span",{class:"tick",style:n?"":"opacity:.4"},n), h("div",{class:"av","aria-hidden":"true"},av), h("div",{class:"nm"},name),
               h("div",{class:"gbar"},h("i",{style:`width:${n/max*100}%`})))))
@@ -2131,7 +2137,7 @@ function hostRender(){
       h("p",{class:"banner"}, st.rv?"👑 أحلى سؤال":"مين كتب أحلى سؤال؟ 🥁"),
       h("div",{class:"qlist"}, st.res.map(([q,v,name,av,pts],i)=>h("div",{class:"qitem"+(i===0&&v>0&&st.rv?" top":"")},
         q, h("div",{class:"vn muted small",style:"color:#4a6290"},votesTxt(v)),
-        st.rv ? h("div",{class:"by"},av," ",name," ",pts?`+${pts}`:"") : null)))
+        st.rv ? h("div",{class:"owner"},av," ",name," ",pts?h("span",{class:"pts"},`+${pts}`):null) : null)))
     ];
   } else if (st.ph==="mself"){
     const done=p=>(H.mAsk[p.pid]||[]).filter(x=>H.mAns[x.key]).length, tot=p=>(H.mAsk[p.pid]||[]).length;
@@ -2145,31 +2151,30 @@ function hostRender(){
     const rev=st.ph==="mr", tot=Math.max(1,(st.cA||0)+(st.cB||0)), shown=rev&&st.rv;
     const opt=(k,[ic,lb],n)=>h("div",{class:"mopt"+(shown&&st.real===k?" win":"")+(shown&&st.real!==k?" lose":"")},
       h("span",{class:"mic","aria-hidden":"true"},ic), h("span",{class:"mlb"},lb),
-      rev ? [h("div",{class:"bar anim"},h("i",{style:`width:${n/tot*100}%`})), h("div",{class:"vn"},`حزروا: ${votesTxt(n)}`)] : null,
+      shown ? [h("div",{class:"bar anim"},h("i",{style:`width:${n/tot*100}%`})), h("div",{class:"vn"}, n ? (n===1?"واحد توقّع هاد":`${n===2?"اثنين":n} توقّعوا هاد`) : "ولا حدا توقّع هاد")] : null,
       shown&&st.real===k ? h("div",{class:"jpick"},`✅ ${st.sn[0]} اختار هاد`) : null);
     body=[
       h("div",{class:"subj"}, h("div",{class:"av","aria-hidden":"true"},st.sn[1]), h("span",{class:"nm"},`${st.sn[0]} شو اختار؟`), h("span",{class:"kind"},`${st.i+1}/${st.n}`)),
       h("h2",{class:"disp qcard qsm"}, st.q),
       h("div",{class:"mopts"}, opt("A",st.a,st.cA), opt("B",st.b,st.cB)),
-      rev ? (shown ? h("div",{class:"mres"}, h("p",{class:"banner"}, st.right.length ? `عرفوه! +${st.pts}` : "ولا حدا عرفه 😅"),
-                      st.right.length ? h("div",{class:"wl"}, st.right.map(([pid,name,av])=>h("span",{class:"wchip big"},av," ",name))) : null) : h("p",{class:"banner"},"🥁"))
-          : h("div",{class:"duel"}, timerEl(st.t,st.T), h("span",{class:"kind"},`احزروا · ${st.vc||0}/${st.vt||0}`)),
+      rev ? (st.rv>=2 ? h("div",{class:"mres"}, h("p",{class:"banner"}, st.right.length ? `عرفوه! +${st.pts}` : "ولا حدا عرفه 😅"),
+                      st.right.length ? h("div",{class:"wl"}, st.right.map(([pid,name,av])=>h("span",{class:"wchip big"},av," ",name))) : null) : shown ? h("p",{class:"banner"},`${st.sn[0]} اختار: ${(st.real==="A"?st.a:st.b)[1]}! مين عرفه؟ 🥁`) : h("p",{class:"banner"},"🥁"))
+          : h("div",{class:"duel"}, timerEl(st.t,st.T), h("span",{class:"kind"},`✋ جاوب ${st.vc||0} من ${st.vt||0}`)),
       rev ? null : waitingFor(on.filter(p=>p.pid!==H.msub && !H.mguess[p.pid]))
     ];
   } else if (st.ph==="jvote" || st.ph==="jrev"){
     const rev=st.ph==="jrev", tot=Math.max(1,(st.vA||0)+(st.vB||0));
     const card=(k,txt)=>h("div",{class:"ans"+(rev&&st.rv>=1&&st.pick===k?" win":"")},
       h("span",{class:"tag"},k), txt,
-      rev ? [h("div",{class:"bar anim"},h("i",{style:`width:${(k==="A"?st.vA:st.vB)/tot*100}%`})), h("div",{class:"vn"},"😂 "+votesTxt(k==="A"?st.vA:st.vB))] : null,
       rev&&st.rv>=1&&st.pick===k ? h("div",{class:"jpick"},`🎯 ${st.tn[0]} اختار هاد`) : null,
-      rev&&st.rv>=2&&st.who ? h("div",{class:"owner"}, st.who[k][1]," ",st.who[k][0]," ", h("span",{class:"pts"},"+"+st.pts[k])) : null);
+      rev&&st.rv>=2&&st.who ? h("div",{class:"owner"}, st.who[k][1]," ",st.who[k][0]," ", st.pts[k]?h("span",{class:"pts"},"+"+st.pts[k]):null) : null);
     body=[
       h("p",{class:"kind"},`🎭 عن ${st.tn[1]} ${st.tn[0]}`),
       h("h2",{class:"disp qcard qsm"}, st.q),
       h("div",{class:"answers"}, card("A",st.A), card("B",st.B)),
       rev ? (st.rv===1&&!st.pick ? h("p",{class:"banner"},`${st.tn[0]} ما اختار 🤷`) : null)
           : h("div",{class:"duel"}, timerEl(st.t,st.T),
-              h("span",{class:"kind"}, `${st.picked?"🎯 "+st.tn[0]+" اختار ✓":"🎯 "+st.tn[0]+" بيختار…"}${st.vt?` · 😂 ${st.vc||0}/${st.vt}`:""}`))
+              h("span",{class:"kind"}, st.picked?`🎯 ${st.tn[0]} اختار ✓`:`🎯 ${st.tn[0]} عم يختار الجواب الأقرب إله…`))
     ];
   } else if (st.ph==="awards"){
     const a=st.list[st.rv];
@@ -2398,7 +2403,8 @@ function playerRender(){
     if (cur){
       const [area,cnt]=writeBox("pans",MAXLEN, st.seg===8 ? "جاوب زي ما هو بيجاوب…" : "اكتب أضحك إشي ببالك…", cur[0]);
       body=[ h("div",{class:"ptop"},h("span",{class:"lbl"}, total>1?`سؤال ${idx+1} من ${total}`:"دورك! جاوب سرًّا"), clock()),
-        h("p",{class:"disp pq"},cur[1]), area, cnt,
+        cur[3] ? h("div",{class:"asbox"}, h("div",{class:"asav","aria-hidden":"true"},cur[3][1]), h("div",{}, h("small",{},"🎭 هالسؤال مش عنك! جاوب كأنك"), h("b",{},cur[3][0]))) : null,
+        h("p",{class:"disp pq"},cur[3]?cur[3][2]:cur[1]), area, cnt,
         h("button",{class:"btn",onclick:()=>{const v=clean(area.value,MAXLEN); if(v){ P.sentA[cur[0]]=1; send({t:"ans",k:cur[0],x:v}); P.draft=""; playerRender(); }}},"ابعت الجواب") ];
     } else if (total) body=[h("p",{class:"big"},"وصلت أجوبتك ✓"),h("p",{class:"muted center"},"لا تفضح حالك بوجهك. استنى التصويت."), h("p",{class:"center"},clock())];
     else body=[h("p",{class:"big"},"استنّى شوي"),h("p",{class:"muted center"},"هالجولة ما إلك سؤال. الجولة الجاية إلك.")];
@@ -2446,13 +2452,14 @@ function playerRender(){
   }
   else if (st.ph==="mr"){
     const mine=st.right?.some(r=>r[0]===P.pid);
-    body = !st.rv ? [h("p",{class:"big"},"🥁")]
+    body = (st.rv||0)<2 ? [h("p",{class:"big"},"🥁")]
          : me.sub ? [h("p",{class:"big"}, st.right.length ? `${st.right.length} عرفوك 😄` : "ولا حدا عرفك 😎")]
          : [h("p",{class:"big"}, mine ? `صح! +${st.pts} 🎯` : "غلط 🙈"), h("p",{class:"muted center"},"شوف الشاشة 👀")];
   }
   else if (st.ph==="jvote"){
     const key="j"+st.pt, voted=me.voted||P.sentV[key];
     if (me.role==="w") body=[h("p",{class:"big"},"جوابك على الشاشة 🤞"),h("p",{class:"muted center"},`استنى نشوف إذا ${st.tn[0]} رح يختاره`),h("p",{class:"center"},clock())];
+    else if (me.role!=="t") body=[h("p",{class:"big"},"👀"),h("p",{class:"muted center"},`${st.tn[0]} عم يختار الجواب الأقرب إله. شوف الشاشة!`),h("p",{class:"center"},clock())];
     else if (voted) body=[h("p",{class:"big"},`اخترت ${voted} ✓`),h("p",{class:"muted center"},"استنى النتيجة…")];
     else {
       const t=me.role==="t", opt=k=>h("button",{class:"vbtn",onclick:()=>{ P.sentV[key]=k; send({t:t?"jp":"jv",k:st.jk,c:k}); playerRender(); }},h("b",{},k),h("span",{},k==="A"?st.A:st.B));
