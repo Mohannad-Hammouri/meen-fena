@@ -38,14 +38,15 @@
 html,body{height:100%}
 body{
   margin:0;background-color:var(--bg);color:var(--cream);font-family:var(--body);font-size:16px;line-height:1.6;direction:rtl;
+  transition:--bg 1.4s ease, --g1 1.4s ease, --g2 1.4s ease, --g3 1.4s ease, background-color 1.4s ease;
+}
+/* the glow sits on its own fixed layer: it is painted once, not again every time something on the page moves */
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;will-change:transform;transform:translateZ(0);
   background-image:
     radial-gradient(70% 55% at 50% -15%, var(--g1), transparent 70%),
     radial-gradient(45% 40% at 0% 100%, var(--g2), transparent 70%),
-    radial-gradient(45% 40% at 100% 100%, var(--g3), transparent 70%);
-  background-attachment:fixed;
-  transition:--bg 1.4s ease, --g1 1.4s ease, --g2 1.4s ease, --g3 1.4s ease, background-color 1.4s ease;
-}
-:root[data-scene="3"] body{background-image:
+    radial-gradient(45% 40% at 100% 100%, var(--g3), transparent 70%)}
+:root[data-scene="3"] body::before{background-image:
     radial-gradient(38% 60% at 50% -10%, var(--g1), transparent 75%),
     radial-gradient(45% 40% at 0% 100%, var(--g2), transparent 70%),
     radial-gradient(45% 40% at 100% 100%, var(--g3), transparent 70%)}
@@ -117,7 +118,13 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 .timer::before{content:"";position:absolute;inset:10px;border-radius:50%;background:var(--stage)}
 .timer span{position:relative;font-variant-numeric:tabular-nums}
 .timer.hot{background:conic-gradient(var(--coral) calc(var(--p)*360deg), var(--panel) 0)}
-.timer.hot span{color:var(--coral);animation:pulse .5s infinite alternate}
+.timer{transition:transform .3s}
+.timer.hot{transform:scale(1.22)}
+.timer.hot span{color:var(--coral)}
+.timer span.pop{animation:tickpop .6s cubic-bezier(.3,1.6,.5,1)}
+@keyframes tickpop{0%{transform:scale(1.7)}100%{transform:scale(1)}}
+.ptimer{display:inline-block}
+.ptimer.pop{animation:tickpop .6s cubic-bezier(.3,1.6,.5,1)}
 @keyframes pulse{to{transform:scale(1.12)}}
 .duel{display:flex;gap:22px;flex-wrap:wrap;justify-content:center;align-items:center;width:100%}
 .who{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:96px;position:relative}
@@ -136,8 +143,29 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 .ans .vn{font-family:var(--display);font-weight:700;font-size:1.1rem;margin-top:6px;color:#4a6290}
 .ans.win{transform:scale(1.05) rotate(-1deg);box-shadow:0 0 0 6px var(--sun),0 9px 0 var(--skydeep)}
 .ans.lose{opacity:.5;transform:scale(.95)}
-.ans .owner,.qitem .owner{margin:16px auto 0;width:fit-content;max-width:100%;display:flex;align-items:center;gap:10px;justify-content:center;flex-wrap:wrap;padding:6px 20px 6px 14px;border-radius:999px;background:var(--ink);color:var(--sun);font-family:var(--display);font-weight:800;font-size:clamp(1.6rem,2.8vw,2.2rem);line-height:1.3;box-shadow:0 4px 0 rgba(15,31,59,.25);animation:drop .6s cubic-bezier(.3,1.6,.5,1)}
-.ans .owner .avi,.qitem .owner .avi{width:1.5em;height:1.5em}
+.answers.n3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.answers.n3 .ans,.answers.n4 .ans{font-size:clamp(1.2rem,2.2vw,1.8rem);padding:22px 18px 14px}
+.answers.n3,.answers.n4{gap:18px}
+.stage:has(.answers.n3),.stage:has(.answers.n4){gap:14px;padding-block:10px}
+.stage:has(.answers.n3) .qcard,.stage:has(.answers.n4) .qcard{font-size:clamp(1.6rem,3.6vw,2.6rem)}
+.answers.n3 .owner,.answers.n4 .owner{font-size:clamp(1.15rem,1.9vw,1.55rem);margin-top:10px;padding:4px 16px 4px 12px}
+.answers.n3 .bar,.answers.n4 .bar{margin-top:10px}
+.answers.n3 .vn,.answers.n4 .vn{font-size:.95rem;margin-top:2px}
+@media (max-width:900px){.answers.n3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.ans .acc{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 8px;margin:0 0 8px;font-family:var(--display);font-size:.78em;color:var(--skydeep);line-height:1.2}
+.ans .acc .avi{width:1.7em;height:1.7em}
+.ans .acc small{flex-basis:100%;font-size:.62em;color:#4a6290;font-family:var(--body)}
+.kind.same{font-size:clamp(1.2rem,2.4vw,1.7rem);color:var(--mint);margin:0}
+.owner.hop .avi{animation:hop .6s ease 3}
+@keyframes hop{0%,100%{transform:translateY(0)}45%{transform:translateY(-9px) rotate(-8deg)}}
+.thinker{display:flex;flex-direction:column;align-items:center;gap:4px}
+.thinker .av.big{width:clamp(84px,9vw,120px);height:clamp(84px,9vw,120px)}
+.thinker .qcard{margin-top:2px}
+.answers.bubbles{margin-top:10px}
+.ans.bubble{border-radius:34px}
+.ans.bubble::before{content:"";position:absolute;top:-11px;left:50%;width:22px;height:22px;background:var(--card);transform:translateX(-50%) rotate(45deg);border-radius:4px}
+.statrow .owner,.ans .owner,.qitem .owner{margin:16px auto 0;width:fit-content;max-width:100%;display:flex;align-items:center;gap:10px;justify-content:center;flex-wrap:wrap;padding:6px 20px 6px 14px;border-radius:999px;background:var(--ink);color:var(--sun);font-family:var(--display);font-weight:800;font-size:clamp(1.6rem,2.8vw,2.2rem);line-height:1.3;box-shadow:0 4px 0 rgba(15,31,59,.25);animation:drop .6s cubic-bezier(.3,1.6,.5,1)}
+.statrow .owner .avi,.ans .owner .avi,.qitem .owner .avi{width:1.5em;height:1.5em}
 .qitem .owner{font-size:1.35rem;margin:10px 0 0;padding:4px 16px 4px 12px}
 .ans .pts{color:#1f8a6b}
 .ans .owner .pts,.qitem .owner .pts{color:var(--mint);font-size:.8em}
@@ -164,6 +192,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 .settings{display:flex;flex-direction:column;gap:12px;align-items:center}
 .settings .row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center}
 .board{width:min(640px,100%);display:flex;flex-direction:column;gap:10px}
+@media (min-width:900px){.stage .board.many{display:grid;grid-template-columns:1fr 1fr;width:min(1100px,100%)}}
 .rowp{display:grid;grid-template-columns:44px 56px minmax(0,1fr) auto;align-items:center;gap:12px;background:var(--panel);border-radius:16px;padding:10px 16px;text-align:start}
 .rowp .r{font-family:var(--display);font-weight:800;font-size:1.5rem;color:var(--muted)}
 .rowp .av{width:50px;height:50px;font-size:1.8rem;border-width:2px}
@@ -193,6 +222,35 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 .mres .wl{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
 .wchip.big{font-size:1.2rem;padding:4px 16px;background:var(--mint);color:var(--ink);border-color:var(--mint)}
 .subj{display:flex;align-items:center;gap:14px}
+.av.faces{position:relative}
+.av.faces>span{position:absolute;inset:0;display:grid;place-items:center}
+.av.faces .f1{animation:faceA 2.4s steps(1) infinite}
+.av.faces .f2{animation:faceA 2.4s steps(1) infinite reverse}
+@keyframes faceA{0%{opacity:1}50%{opacity:0}}
+.lineup{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 18px;padding:8px 22px 6px;border-radius:22px;background:repeating-linear-gradient(to bottom,rgba(255,255,255,.06) 0 2px,transparent 2px 26px)}
+.sus{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:84px;transition:opacity .5s}
+.sus .accn{min-height:1.5em;font-family:var(--display);font-weight:800;color:var(--coral);font-size:1.15rem}
+.sus .nm{font-weight:700}
+.sus .av{transition:transform .5s,box-shadow .5s,border-color .5s}
+.lineup.scan .sus .av{animation:scan 1.5s ease-in-out infinite;animation-delay:calc(var(--i)*.18s)}
+@keyframes scan{0%,60%,100%{box-shadow:none}30%{box-shadow:0 0 0 6px rgba(255,214,133,.6);border-color:var(--sun)}}
+.sus.caught .av{border-color:var(--sun);transform:scale(1.18);box-shadow:0 0 0 7px rgba(255,214,133,.45),0 0 44px 12px rgba(255,214,133,.3)}
+.sus.off{opacity:.4}
+.toast{align-self:center;padding:10px 20px;border-radius:999px;background:var(--sun);color:var(--ink);font-family:var(--display);font-weight:800;font-size:clamp(1.1rem,2.2vw,1.5rem);animation:drop .6s cubic-bezier(.3,1.6,.5,1)}
+.toast .avi{width:1.5em;height:1.5em}
+.lobby .lobbyp .who .av{animation:bob 2.6s ease-in-out infinite}
+.lobby .lobbyp .who:nth-child(2n) .av{animation-delay:-.9s}
+.lobby .lobbyp .who:nth-child(3n) .av{animation-delay:-1.7s}
+.stats{display:flex;flex-direction:column;gap:14px;width:min(860px,100%)}
+.statrow{display:flex;align-items:center;gap:16px;padding:14px 20px;border-radius:22px;background:var(--panel);border:2px solid var(--line);text-align:start;animation:drop .6s cubic-bezier(.3,1.6,.5,1)}
+.statrow .sic{font-size:2.4rem;line-height:1}
+.statrow .stx{flex:1;display:flex;flex-direction:column;min-width:0}
+.statrow .stt{font-family:var(--display);font-weight:800;font-size:clamp(1.2rem,2.4vw,1.7rem);color:var(--sun)}
+.statrow .stl{color:var(--cream);font-size:clamp(1rem,1.9vw,1.3rem);overflow-wrap:anywhere}
+.statrow .owner{margin:0;font-size:clamp(1.1rem,2vw,1.5rem)}
+.cm{display:flex;flex-direction:column;align-items:center;gap:6px}
+.cmline{font-family:var(--display);font-weight:700;font-size:clamp(1.1rem,2.2vw,1.5rem);color:var(--cream)}
+.cmline .avi{width:1.4em;height:1.4em}
 .asbox{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:var(--coral);color:var(--ink);text-align:start;box-shadow:0 4px 0 rgba(0,0,0,.18);animation:drop .6s cubic-bezier(.3,1.6,.5,1)}
 .asbox .asav{width:56px;height:56px;flex:none;display:grid;place-items:center;border-radius:50%;background:rgba(255,255,255,.55);font-size:2rem}
 .asbox .asav .avi{width:86%;height:86%}
@@ -277,6 +335,19 @@ details.settings[open] summary{color:var(--cream)}
 .ptop .me span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ptop .pts{font-family:var(--display);font-weight:800;color:var(--sun);font-size:1.4rem;font-variant-numeric:tabular-nums}
 .pmain{flex:1;display:flex;flex-direction:column;gap:14px;justify-content:center}
+.doline{margin:-6px 0 0;padding:8px 14px;border-radius:14px;font-weight:700;font-size:1.02rem;line-height:1.35;text-align:center}
+.doline.act{background:var(--sun);color:var(--ink)}
+.doline.look{background:rgba(140,200,255,.16);color:var(--sky)}
+.doline.wait{background:rgba(255,255,255,.06);color:var(--muted)}
+.ptiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px}
+.ptile{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border-radius:16px;border:2px solid var(--line);background:transparent;color:var(--cream);font-family:inherit;font-weight:700;font-size:.85rem;min-width:0}
+.ptile .tav{font-size:2rem;line-height:1;width:48px;height:48px;display:grid;place-items:center}
+.ptile .tav .avi{width:100%;height:100%}
+.ptile .tnm{max-width:100%;overflow-wrap:anywhere;line-height:1.2;text-align:center}
+.ptile[aria-pressed="true"]{border-color:var(--sun);background:rgba(255,214,133,.14);color:var(--sun)}
+.ptile:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.vbtn .vacc{display:block;font-family:var(--display);color:var(--skydeep);font-size:.9rem;margin-bottom:2px}
+.vbtn .vacc .avi{width:1.4em;height:1.4em}
 .pq{font-size:1.65rem;color:var(--cream);margin:0;line-height:1.35}
 .avs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .avi{display:inline-block;width:1.25em;height:1.25em;vertical-align:-.3em;line-height:0}
@@ -295,6 +366,9 @@ textarea.field{min-height:120px;resize:none}
 .vbtn b{font-family:var(--display);font-weight:800;color:var(--skydeep);font-size:1.4rem;line-height:1.1}
 .vbtn:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
 .vbtn small{display:block;color:#4a6290;font-weight:600}
+.sugg{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.sugg .lbl{margin:0}
+.vbtn.sbtn{padding:12px 14px;font-size:1rem;box-shadow:0 3px 0 var(--skydeep)}
 .big{font-family:var(--display);font-weight:800;font-size:2.1rem;color:var(--sun);text-align:center;margin:0}
 .center{text-align:center}
 .ptimer{font-family:var(--display);font-weight:800;font-size:1.6rem;color:var(--sky);font-variant-numeric:tabular-nums}
@@ -474,106 +548,281 @@ const QS = [
  "احكي قصة الأرنب والسلحفاة بس السلحفاة معها دراجة نارية."
 ];
 const SS = [
- "أكثر إشي بيضحكني بالعيد هو ______",
- "عرفت إن الفيلم سيء لما ______",
- "لو كان عندي قوة خارقة، كانت رح تكون ______",
- "أغرب إشي عملته وأنا نعسان هو ______",
- "سر الخلطة السرية تبعت ستي هو ______",
- "عرفت إن الطبخة خربت لما ______",
- "أنا مش كسلان، أنا بس ______",
- "أسوأ إشي ممكن تلاقيه بغرفة الفندق هو ______",
- "آخر إشي بحكيه قبل ما أنام هو ______",
- "عرفت إن الرحلة رح تكون كارثة لما ______",
- "أحلى إشي بأيام المدرسة كان ______",
- "كل ما أنزل عالسوق برجع ومعي ______",
- "أكبر إنجاز بحياتي لهلأ هو ______",
- "لو خطفوني الفضائيين، أول إشي رح أحكيلهم ______",
- "أسوأ وقت ممكن يرن فيه تلفونك هو ______",
- "إذا شفت جارنا بالبيجاما بالشارع، معناها ______",
- "السبب الحقيقي إني ما بردّ عالتلفون هو ______",
- "لو صحيت لقيت حالي بطل فيلم، رح يكون فيلم ______",
- "الإشي الوحيد اللي ما بشاركه مع حدا هو ______",
- "لما المدير يقول «تعال لعندي شوي»، أول إشي بفكر فيه ______",
- "عرفت إن الواي فاي ضعيف لما ______",
- "أنا بقدر أعيش بدون أي إشي إلا ______",
- "أول إشي بعمله لو ربحت مليون هو ______",
+ "أمي لما تلاقي غرفتي مرتّبة بتفكّر إني ______",
+ "أكثر جملة بسمعها بالعزايم: «______»",
+ "سر طبخة ستّي اللي ما بتحكيه لحدا هو ______",
+ "أول إشي بعمله لما يقطع النت: ______",
+ "لو الثلاجة بتحكي، كانت رح تشتكي من ______",
+ "الإشي الوحيد اللي بيخلي أبوي يترك الريموت هو ______",
  "عرفت إن الضيوف رح يطوّلوا لما ______",
- "أغرب إشي لقيته بجيبة بنطلوني هو ______",
- "لو صرت رئيس بلدية ليوم، أول قرار رح يكون ______",
- "عرفت إن العطلة خلصت لما ______",
- "أكثر صوت بيرعبني بالليل هو ______",
- "أسوأ إشي ممكن تكتشفه بأول يوم بالشقة الجديدة هو ______",
- "لو التلفون صار يحكي الحقيقة، أول إشي رح يفضحه عني ______",
- "لو فتحت مطعم، الطبق الرئيسي رح يكون ______",
- "عرفت إن العرس رح يكون غريب لما ______",
- "لو الحياة لعبة فيديو، أول مرحلة فيها كانت ______",
- "أول إشي بعمله لما يقطع النت هو ______",
- "لو صحيت وأنا قطة، أول إشي رح أعمله هو ______",
- "عرفت إني كبرت لما ______",
- "الماما بتعرف إني عامل إشي غلط لما ______",
- "عرفت إن الكابتن جديد لما ______",
- "أكثر إشي بستناه بالعيد هو ______",
- "لو كان للبيت قانون واحد، رح يكون ______",
- "عرفت إن القطة بتخطط لإشي لما ______",
- "أحلى أكلة طلعت معي بالغلط كانت ______",
- "لو رجعت بالزمن، أول إشي رح أحكيه لحالي وأنا صغير ______",
- "أكبر لغز بحياتي هو ______",
- "عرفت إن الجو حر زيادة لما ______",
- "الإشي اللي لازم يتعلّموه بالمدارس هو ______",
- "لو صار عندي روبوت، أول إشي رح أعلّمه هو ______",
- "عرفت إن الحلاق مش مركّز لما ______",
- "أسرع إشي بيخلص بالبيت هو ______",
- "لو صار للأكل مسابقة جمال، الفائز رح يكون ______",
- "أحلى صوت بالدنيا هو صوت ______",
- "عرفت إني صرت مشهور بالحارة لما ______",
- "سيدي بيعمل كل يوم نفس الإشي: ______",
- "أصعب قرار باخده كل يوم هو ______",
- "لو عشت يوم كامل بدون تلفون، رح أقضيه ______",
- "عرفت إن الأكل مالح زيادة لما ______",
- "لو صرت حيوان ليوم واحد، رح أختار أكون ______",
- "أغرب هدية ممكن تجيبها لصاحبك هي ______",
- "عرفت إن الصبح إجا بسرعة لما ______",
- "أكثر إشي بيعصبني بالطابور هو ______",
- "عرفت إن الكيكة ما زبطت لما ______",
- "أحسن طريقة تصحّي فيها أخوك الصغير هي ______",
- "عرفت إن البرنامج التلفزيوني طوّل لما ______",
- "أغرب إشي بيعمله الناس بالمصعد هو ______",
- "عرفت إن العزيمة رح تطوّل لما ستّي ______",
- "أكثر إشي بيفرحني بيوم الجمعة هو ______",
- "عرفت إن الدرس ممل لما حتى المعلّم ______",
- "أسرع طريقة تخلّي أبوك يعصّب هي ______",
- "لو الماما فتحت تلفوني، أول إشي رح تلاقيه ______",
- "عرفت إن الكهربا قاطعة بس الكل ______",
- "أغرب حلم حلمته كان إني ______",
- "عرفت إن المسلسل خلص لما ______",
- "أحسن جملة بتنقذك من الواجب هي ______",
- "لو صحيت ولقيت حالي مدير البنك، أول قرار ______",
- "عرفت إن الأكل طيب لما الكل ______",
- "أكثر صوت بيضحكني بالبيت هو ______",
- "عرفت إني نمت كثير لما ______",
- "الإشي الوحيد اللي بخاف منه أكثر من الامتحان هو ______",
- "عرفت إن الضيوف مش رح يروّحوا لما ______",
- "لو كنت سوبرمان، أول إشي كنت رح أنقذه هو ______",
- "أكثر إشي بنتخانق عليه بالبيت هو ______",
- "عرفت إني كبرت لما صرت أحب ______",
- "أحلى إشي بالرحلة كان لما ______",
- "عرفت إن الطابور طويل لما ______",
- "سر نجاحي بالحياة هو ______",
- "أحسن عذر لما تتأخر عالمدرسة هو ______",
- "عرفت إن الولد ذكي لما ______",
- "لو حكيت للقطة سري، رح ______",
- "عرفت إن الجو برد لما ستّي ______",
- "أغرب إشي شفته بالعرس كان ______",
- "لو الحياة إلها زر «إعادة»، كنت رح أرجع لـ ______",
- "عرفت إن الأكل مالح لما ______",
- "أكثر إشي بحكيه لما أصحى هو ______",
- "عرفت إن المكيّف خربان لما ______",
- "أهم قانون بقعدات العيلة هو ______",
- "لو كان عندي ساحر خاص، أول طلب ______",
- "عرفت إن الشاي تقيل زيادة لما ______",
- "أكثر إشي بفتقده من أيام الطفولة هو ______",
- "عرفت إن الحفلة نجحت لما ______",
- "الإشي اللي بيخليني أنط من مكاني هو ______"
+ "أكبر كذبة بحكيها كل يوم: «______»",
+ "قروب العيلة عالواتساب كله ______",
+ "لما حدا يقول «خمس دقايق وبكون عندك» معناها ______",
+ "أخطر إشي ممكن تعمله بالعزومة هو ______",
+ "لو صرت وزير المنسف، أول قرار رح يكون ______",
+ "السبب الحقيقي إني تأخرت هو ______",
+ "أول إشي بيعمله الأردني لما تشتي: ______",
+ "رسالة صوتية سبع دقايق من خالتي كلها عن ______",
+ "أنا مش عصبي، أنا بس ______",
+ "أمي بتعرف إني جوعان من ______",
+ "أسوأ هدية إجتني بحياتي كانت ______",
+ "لو الجيران بيسمعوا شو بصير عنّا بالبيت، رح يفكّروا إننا ______",
+ "أكثر إشي بيضيع بالبيت: ______",
+ "ستّي بتعالج أي إشي بـ ______",
+ "عرفت إني كبرت لما صرت أنبسط لما ______",
+ "سيارة أبوي فيها دايمًا ______",
+ "أغرب إشي لقيته بشنطة أمي: ______",
+ "لما المعلّم يقول «في امتحان مفاجئ»، أول إشي بفكّر فيه ______",
+ "أحسن عذر لما تنسى عيد ميلاد حدا: ______",
+ "الواي فاي عنّا بيقطع بس لما ______",
+ "أول إشي بعمله بالعيد بعد ما آخذ العيدية: ______",
+ "لو في بطولة عالمية بـ ______، أنا البطل أكيد",
+ "أول ما أغسل السيارة بيصير ______",
+ "لما الماما تقول «اسأل أبوك» معناها ______",
+ "أكثر إشي بنتخانق عليه عالسفرة: ______",
+ "التلفون لما يوصل 3٪ بيحس إنه ______",
+ "جارنا كل يوم الساعة 6 الصبح بيكون عم ______",
+ "لو القطط بتحكي، أول إشي رح تفضحه عنّا: ______",
+ "أطول مكالمة بحياتي كانت عن ______",
+ "شنطة السفر عندي دايمًا فيها ______ زيادة",
+ "أول إشي بحكيه لما أشوف الفاتورة: «______»",
+ "الإشي الوحيد اللي بيقوّمني من التخت الصبح هو ______",
+ "بكل عرس أردني في واحد دايمًا ______",
+ "الأكلة الوحيدة اللي بقدر أطبخها بدون ما أحرق المطبخ: ______",
+ "آخر إشي بحثت عنه عالتلفون كان «______»",
+ "لو بدّي أعمل بودكاست، رح يكون عن ______",
+ "الإشي اللي بخاف منه أكثر من الامتحان: ______",
+ "لو فتحت مطعم، الطبق المشهور فيه رح يكون ______",
+ "أسوأ وقت ممكن يرن فيه تلفونك هو ______",
+ "لو جاني جني بثلاث أمنيات، الثالثة رح تكون ______",
+ "أصعب سؤال بيسألوني ياه بالعزايم: «______»",
+ "لما يكون أخوك الصغير ساكت، معناها ______",
+ "سر الفوز بطاولة الزهر هو ______",
+ "أكثر صوت بيرعبني بالبيت: ______",
+ "لما يقولوا «تعالوا نتصوّر»، أنا دايمًا ______",
+ "الإشي اللي لازم يعلّموه بالمدارس بدل الرياضيات: ______",
+ "بالمول، أبوي دايمًا بيكون ______",
+ "الرجيم عندي بيخرب دايمًا بسبب ______",
+ "لو صحيت ولقيت حالي ستّي ليوم، أول إشي رح أعمله: ______",
+ "عرفت إن المطعم مش طيب لما ______",
+ "تحت الكنباية عنّا في ______",
+ "لو في كاميرا مخفية بدارنا، أكثر لقطة رح تنتشر: ______",
+ "لما ينقطع الماي، أول واحد بيعرف هو ______",
+ "أكبر إنجاز عملته هالأسبوع: ______",
+ "بالرحلات المدرسية كان دايمًا في واحد ______",
+ "سواق التاكسي بعمّان بيعرف كل إشي إلا ______",
+ "لو صار عندي روبوت، أول شغلة رح أعطيه ياها: ______",
+ "الإشي اللي ما بيخلص ببيتنا: ______",
+ "أكثر إشي بستحي منه بتلفوني: ______",
+ "أبوي لما يضيع بالطريق بيقول «______»",
+ "قبل ما يوصلوا الضيوف بخمس دقايق، البيت كله ______",
+ "لو الحياة إلها زر «تراجع»، أول مرة رح أستعمله لـ ______",
+ "بالسوق، أمي بتفاصل حتى على ______",
+ "الجملة اللي بتسكّر أي نقاش بالبيت: «______»",
+ "لو عملوا فيلم عن حياتي، أول مشهد رح يكون ______",
+ "أحلى إشي بيوم الجمعة: ______",
+ "لما أشوف بوفيه مفتوح بصير ______",
+ "الماما لما تكتب بالقروب بتكتب ______",
+ "أول إشي بعمله لما أرجع من السفر: ______",
+ "لو الكنباية بتحكي، كانت رح تحكي ______",
+ "الإشي اللي بيخليني أطلع من الحمّام بسرعة: ______",
+ "عرفت إن الطبخة رح تكون كارثة لما ______",
+ "أغرب إشي بيعمله الناس بالمصعد: ______",
+ "لما حدا يقول «في عندي خبر»، بفكّر فورًا إنه ______",
+ "أكثر إشي بيعصّبني بالطابور: ______",
+ "سر الكنافة الطيبة الحقيقي هو ______",
+ "لو صار عندي ساعة زيادة باليوم، رح أقضيها ______"
+];
+/* «كمّل الجملة» with a real player inside: {P} becomes one of the players */
+const SN = [
+ "لو {P} صار وزير، أول قرار رح ياخذه: ______",
+ "{P} دايمًا بيحكي «______»",
+ "السر اللي {P} مخبّيه عن الكل: ______",
+ "لو {P} فتح مطعم، الطبق المشهور فيه رح يكون ______",
+ "آخر مرة {P} اختفى من العزومة كان عم ______",
+ "تلفون {P} مليان صور ______",
+ "لو {P} صار مذيع أخبار، أول خبر عاجل رح يكون: ______",
+ "{P} بيقدر يعيش بدون أي إشي إلا ______",
+ "أول إشي بيعمله {P} لما يصحى: ______",
+ "لو {P} شارك ببرنامج مواهب، موهبته رح تكون ______",
+ "{P} لما يعصّب بيصير ______",
+ "الأغنية اللي بيغنيها {P} بالحمّام: ______",
+ "لو {P} كان أكلة، كان رح يكون ______",
+ "{P} بالعرس دايمًا ______",
+ "أكبر كذبة حكاها {P}: «______»",
+ "لما {P} يطبخ، المطبخ بيصير ______",
+ "لو {P} صار سوبر هيرو، قوته الخارقة رح تكون ______",
+ "{P} بيصرف كل مصاريه على ______",
+ "لو {P} كتب كتاب، رح يكون عن ______",
+ "{P} بالسيارة دايمًا بيشغّل ______",
+ "لو {P} صار مدير المدرسة، أول قانون: ______",
+ "{P} بيتأخر دايمًا لأنه ______",
+ "لو شفنا {P} بعد 20 سنة، رح يكون ______",
+ "الإشي اللي بيخوّف {P} أكثر من أي إشي: ______",
+ "{P} لما يشوف بوفيه مفتوح بيصير ______",
+ "رسالة {P} الصوتية الجاية رح تكون عن ______",
+ "{P} بيضحك على كل نكتة إلا ______",
+ "لو {P} صار حيوان ليوم، رح يكون ______",
+ "{P} لما يضيع بالطريق بيقول «______»",
+ "أحسن هدية ممكن تجيبها لـ{P}: ______",
+ "لو {P} صار شيف مشهور، طبقه السري: ______",
+ "بالعيد، أول إشي بيعمله {P}: ______",
+ "لو {P} عمل قناة يوتيوب، رح تكون عن ______",
+ "{P} بيطوّل بالحمّام لأنه ______",
+ "الكلمة اللي بتعصّب {P}: «______»",
+ "لو {P} ربح مليون، أول إشي رح يشتريه: ______",
+ "{P} بيقدر يحكي ساعة كاملة عن ______",
+ "لو {P} سافر عالفضاء، أول إشي رح ياخذه معه: ______",
+ "{P} أيام الامتحانات كان دايمًا ______",
+ "لما يكون {P} ساكت، معناها ______",
+ "لو {P} صار شرطي مرور، أول مخالفة رح يكتبها: ______",
+ "{P} وهو نايم بيحكي عن ______",
+ "لو {P} كان تطبيق عالتلفون، رح يكون ______",
+ "{P} بيرد على أي سؤال بـ «______»",
+ "أكثر إشي بيحبه {P} بالشتوية: ______",
+ "لو {P} نظّم رحلة، رح ناخذ معنا ______",
+ "{P} بيعرف كل إشي عن ______",
+ "لو صار عند {P} محل فلافل، شعاره رح يكون «______»",
+ "{P} بيستنى العيد بس عشان ______",
+ "لو {P} صار مشهور عالتيك توك، رح يعمل فيديوهات عن ______",
+ "لو {P} صار مدير بنك، أول قرض رح يعطيه لـ ______",
+ "{P} بيفتح الثلاجة كل شوي لأنه ______",
+ "لو {P} اشتغل سوّاق تاكسي، رح يحكي مع الركّاب عن ______",
+ "{P} أول ما يدخل العزومة بيدوّر على ______",
+ "لو {P} صار جار إلنا، كل يوم رح يدق الباب عشان ______",
+ "أكثر إشي بيعصّب {P} الصبح: ______",
+ "{P} بيضيّع كل إشي إلا ______",
+ "لو {P} صار نجم سينما، أول فيلم إله رح يكون عن ______",
+ "{P} بالطيارة دايمًا بيكون ______",
+ "لو {P} دخل برنامج طبخ، رح يطبخ ______",
+ "{P} لما ينقطع النت بيصير ______",
+ "لو {P} صار معلّم، الواجب تبعه رح يكون ______",
+ "لو {P} صار رئيس الحارة، أول قرار: ______",
+ "{P} بيقضي الويكند كله عم ______",
+ "لو {P} كتب رسالة لحاله وهو صغير، رح يحكيله: «______»",
+ "{P} بالمطعم دايمًا بيطلب ______",
+ "لو {P} اختفى يوم كامل، أكيد هو عم ______",
+ "{P} عنده موهبة سرية: ______",
+ "لو {P} صار عنده روبوت، أول إشي رح يخليه يعمله: ______",
+ "{P} بالصور دايمًا بيعمل ______",
+ "لو {P} صار مذيع الطقس، رح يحكي: «______»",
+ "{P} بيقدر يقنع أي حدا إنه ______",
+ "لو {P} فتح محل، رح يبيع ______",
+ "{P} لما يجوع بيصير ______",
+ "لو {P} صار عمدة عمّان، أول إشي رح يغيّره: ______",
+ "{P} بيحكي «بكرة بعملها» عن ______ من سنة",
+ "لو {P} صار عنده قوة يعيد يوم واحد، رح يعيد يوم ______",
+ "{P} أكثر إشي بيخاف ينكشف عنه: ______",
+ "لو {P} صار بطل كرتون، اسم الحلقة الأولى: «______»"
+];
+/* «مين فينا؟»: pick one of the players and say why */
+const MF = [
+ "مين فينا أول واحد بينام بالسهرة؟",
+ "مين فينا بيحكي «خمس دقايق وبكون عندك» وهو لسا بالتخت؟",
+ "مين فينا أول واحد بيختفي لما ييجي وقت الجلي؟",
+ "مين فينا لو ضاع بعمّان بيتصل بأمه قبل ما يفتح الخريطة؟",
+ "مين فينا بيصوّر الأكل قبل ما ياكله حتى لو كان فلافل؟",
+ "مين فينا ممكن ينسى عيد ميلاده؟",
+ "مين فينا بيعرف كل أخبار العيلة قبل الكل؟",
+ "مين فينا لو صار مشهور رح ينسانا أول أسبوع؟",
+ "مين فينا بيقدر يقنع أي حدا بأي إشي؟",
+ "مين فينا بيفتح الثلاجة كل عشر دقايق وبسكّرها بدون ما ياخذ إشي؟",
+ "مين فينا بيضحك على نكتته قبل ما يخلّصها؟",
+ "مين فينا ممكن يتوه بالمول؟",
+ "مين فينا رح يربح لو في مسابقة أكل منسف؟",
+ "مين فينا بيبعث رسائل صوتية طولها خمس دقايق؟",
+ "مين فينا أول واحد بيقوم يدبك بالعرس؟",
+ "مين فينا بيحكي مع حاله بصوت عالي؟",
+ "مين فينا لو انقطع النت يوم رح يعيش أزمة؟",
+ "مين فينا أشطر واحد بالمفاصلة بالسوق؟",
+ "مين فينا رح يصير مليونير وما رح يعزمنا؟",
+ "مين فينا بيضيّع مفاتيحه كل يوم؟",
+ "مين فينا بيقدر يعيش يوم كامل على الشيبس بس؟",
+ "مين فينا أكثر واحد بيتأخر عالمواعيد؟",
+ "مين فينا لو صار رئيس وزراء أول قرار رح يكون عطلة أسبوع؟",
+ "مين فينا بيعيّط بأفلام الكرتون؟",
+ "مين فينا بيحفظ كل الأغاني بس بالغلط؟",
+ "مين فينا ممكن يبدّل تلفونه بصحن كنافة؟",
+ "مين فينا بيحب يعطي نصايح وهو أول واحد ما بيطبّقها؟",
+ "مين فينا لو دخل المطبخ لحاله لازم نجهّز طفاية الحريق؟",
+ "مين فينا بيسأل «شو في أكل؟» أول ما يفوت عالبيت؟",
+ "مين فينا بيقعد ساعة يختار شو يحضر وبعدين بينام؟",
+ "مين فينا رح يعيش أطول وقت بفيلم زومبي؟",
+ "مين فينا أول واحد بيروح فيها بفيلم رعب؟",
+ "مين فينا بيدبّر حاله بأي مصيبة؟",
+ "مين فينا بيضل يقول «آخر لقمة» وبياكل عشرة كمان؟",
+ "مين فينا بيتصاحب مع أي حدا بالطابور؟",
+ "مين فينا أهدى واحد وقت المصايب؟",
+ "مين فينا بيقرأ الرسالة وما بيرد إلا بعد ثلاث أيام؟",
+ "مين فينا بيطلع من أي مشكلة بالحكي؟",
+ "مين فينا لو صار أستاذ رح يعطي كل الطلاب علامة كاملة؟",
+ "مين فينا لو صار أستاذ رح يعطي امتحان كل يوم؟",
+ "مين فينا بيغني بالسيارة بأعلى صوت؟",
+ "مين فينا بيشتري أشياء ما بيحتاجها بس لأنها عليها عرض؟",
+ "مين فينا بيقعد بالحمّام نص ساعة مع التلفون؟",
+ "مين فينا آخر واحد بيفهم النكتة؟",
+ "مين فينا بيضحك بأغلط وقت ممكن؟",
+ "مين فينا ممكن يعمل حفلة عيد ميلاد لقطته؟",
+ "مين فينا لو ربح مليون رح يصرفهم بأسبوع؟",
+ "مين فينا لو ربح مليون رح يخبّيهم تحت البلاطة؟",
+ "مين فينا بيتصوّر بالمكان أكثر ما بيستمتع فيه؟",
+ "مين فينا بيحكي «ما بحب الحلو» وبياكل نص الكيكة؟",
+ "مين فينا أكثر واحد بيخاف من الصراصير؟",
+ "مين فينا بيخطط للرحلة شهر وبيلغيها آخر يوم؟",
+ "مين فينا ممكن ينام وهو واقف؟",
+ "مين فينا بيعرف أسماء كل الجيران وقصصهم؟",
+ "مين فينا بيطلع منه مذيع أخبار؟",
+ "مين فينا بيحكي «من بكرة رجيم» كل يوم؟",
+ "مين فينا بيزعل أكثر واحد إذا خسر بطاولة الزهر؟",
+ "مين فينا بيقدر يحكي ربع ساعة بدون ما ياخذ نفس؟",
+ "مين فينا لو انحبس بالمصعد بيطلع منه ومعه صحاب جدد؟",
+ "مين فينا بيتصل «بس بسلّم» وبيطوّل ساعة؟",
+ "مين فينا بيقعد بالزاوية بالعزايم وبيراقب الكل؟",
+ "مين فينا رح يكون أحلى جد أو جدة؟",
+ "مين فينا بيصلّح أي إشي بالبيت بشريطة لاصقة؟",
+ "مين فينا أكثر واحد بيحكي «مش قلتلكم؟!»",
+ "مين فينا لو صار طبّاخ رح يحط كمّون على كل إشي؟",
+ "مين فينا بيقعد ساعة يختار شو يلبس؟",
+ "مين فينا لابس نفس البلوزة بكل الصور؟",
+ "مين فينا بيقدر يقعد أسبوع بالبيت بدون ما يطلع وهو مبسوط؟",
+ "مين فينا بيخبّي أكل بغرفته؟",
+ "مين فينا رح يتأخر على عرسه؟",
+ "مين فينا أول واحد بيرد عالقروب؟",
+ "مين فينا بيقرأ كل إشي بالقروب وما بيرد أبدًا؟",
+ "مين فينا بيقلّد أصوات الناس؟",
+ "مين فينا لو عمل مقلب بينكشف من أول دقيقة؟",
+ "مين فينا بيلاقي أي إشي ضايع بالبيت لما الكل بيدوّر؟",
+ "مين فينا بيموت بالشتوية والصوبة؟",
+ "مين فينا بيسوق كأنه بسباق؟",
+ "مين فينا بيسوق أبطأ من المشي؟",
+ "مين فينا بيعمل أطيب كاسة شاي؟",
+ "مين فينا بيضيّع ساعات على الفيديوهات القصيرة؟",
+ "مين فينا بيعرف شو الطبخة من ريحة الدرج؟",
+ "مين فينا بيضل يحكي «بدّي أسافر» وما بيطلع من عمّان؟",
+ "مين فينا رح ينسى إنه حاطط إشي عالغاز؟",
+ "مين فينا بيربح أي نقاش حتى لو غلطان؟",
+ "مين فينا بيحب يعزم أكثر ما ينعزم؟",
+ "مين فينا بيخلّص صحن منسف لحاله؟",
+ "مين فينا أكثر واحد بيحكي عن أيام زمان؟",
+ "مين فينا بيتعلّم لغة جديدة بس عشان مسلسل؟",
+ "مين فينا بيصحى بدون منبّه؟",
+ "مين فينا بيطفي المنبّه عشر مرات؟",
+ "مين فينا لو حدا حكاله سر، بيعرفه الكل بنفس اليوم؟",
+ "مين فينا أكثر واحد بيحفظ السر؟",
+ "مين فينا رح يعيش لـ100 سنة؟",
+ "مين فينا بيقنع الماما بأي إشي؟",
+ "مين فينا أول واحد بيبرد؟",
+ "مين فينا بيشرب قهوة أكثر من الماي؟",
+ "مين فينا رح يصير مشهور عالتيك توك؟",
+ "مين فينا بيحكي «مش جوعان» وبعدين بياكل من صحون الكل؟",
+ "مين فينا بيعرف كل الطرق المختصرة بعمّان؟",
+ "مين فينا بيقعد بالسيارة يكمّل الأغنية قبل ما ينزل؟",
+ "مين فينا بينسى اسم صاحبه وهو بيسلّم عليه؟",
+ "مين فينا ضحكته بتنسمع من آخر الشارع؟",
+ "مين فينا ممكن يتنازل عن آخر قطعة بيتزا؟",
+ "مين فينا لو صار شرطي مرور ما رح يخالف حدا؟",
+ "مين فينا بيرجع من السوق بكل إشي إلا الغرض اللي نزل عشانه؟",
+ "مين فينا بيقدر يكشف الكذبة من أول كلمة؟"
 ];
 /* "who wrote it?": personal prompts, so the answer says something about who wrote it */
 const WS = [
@@ -695,13 +944,13 @@ const MQ = [
  ["رز ولا معكرونة؟",["🍚","رز"],["🍝","معكرونة"]],
  ["شوكولاتة ولا بوظة؟",["🍫","شوكولاتة"],["🍦","بوظة"]],
  ["مسخّن ولا ورق دوالي؟",["🍗","مسخّن"],["🍃","ورق دوالي"]],
- ["فطور مالح ولا حلو؟",["🍳","مالح"],["🥞","حلو"]],
+ ["فول ولا بيض عيون عالفطور؟",["🫘","فول"],["🍳","بيض عيون"]],
  ["عصير برتقال ولا ليمون بنعنع؟",["🍊","برتقال"],["🍋","ليمون بنعنع"]],
  ["زيت وزعتر ولا لبنة؟",["🫒","زيت وزعتر"],["🥛","لبنة"]],
  ["أكل البيت ولا أكل المطاعم؟",["🏠","أكل البيت"],["🍽️","المطاعم"]],
  ["قطايف بالجبنة ولا بالجوز؟",["🧀","جبنة"],["🌰","جوز"]],
  ["شيبس ولا فشار؟",["🥔","شيبس"],["🍿","فشار"]],
- ["كعك العيد ولا معمول؟",["🍪","كعك"],["🥮","معمول"]],
+ ["معمول تمر ولا جوز؟",["🌴","تمر"],["🌰","جوز"]],
  ["تصحى بكير ولا تسهر للصبح؟",["🌅","أصحى بكير"],["🌙","أسهر"]],
  ["بحر ولا جبل؟",["🏖️","بحر"],["⛰️","جبل"]],
  ["صيف ولا شتا؟",["☀️","صيف"],["🌧️","شتا"]],
@@ -790,12 +1039,12 @@ const MQ = [
  ["بتحب تسوق بالليل؟",["🌃","آه"],["🙅","لأ"]],
  ["بتاكل وإنت واقف بالمطبخ؟",["🍽️","آه"],["🙅","لأ"]],
  ["بتحفظ أرقام التلفونات؟",["🔢","آه"],["🙅","لأ"]],
- ["تعيش أسبوع بدون حمص ولا بدون نت؟", ["🥣", "بدون حمص"], ["📶", "بدون نت"]],
- ["تكون أطول واحد بالعيلة ولا أذكى واحد؟", ["📏", "الأطول"], ["🧠", "الأذكى"]],
+ ["تسكن فوق محل فلافل ولا جنب محل حلويات؟", ["🧆", "فوق الفلافل"], ["🍰", "جنب الحلويات"]],
+ ["تكون أطول واحد بالعيلة ولا أقصر واحد؟", ["📏", "الأطول"], ["🤏", "الأقصر"]],
  ["تحضر عرس كله دبكة ولا كله خطابات؟", ["💃", "دبكة"], ["🎤", "خطابات"]],
  ["كنافة بالجبنة ولا بالقشطة؟", ["🧀", "جبنة"], ["🥛", "قشطة"]],
  ["زعتر ولا جبنة عالمنقوشة؟", ["🌿", "زعتر"], ["🧀", "جبنة"]],
- ["مقلوبة دجاج ولا باذنجان؟", ["🍗", "دجاج"], ["🍆", "باذنجان"]],
+ ["مقلوبة زهرة ولا باذنجان؟", ["🥦", "زهرة"], ["🍆", "باذنجان"]],
  ["شاورما لحمة ولا دجاج؟", ["🥩", "لحمة"], ["🍗", "دجاج"]],
  ["بطاطا مقلية ولا مشوية؟", ["🍟", "مقلية"], ["🥔", "مشوية"]],
  ["بوظة شوكولاتة ولا فانيلا؟", ["🍫", "شوكولاتة"], ["🍦", "فانيلا"]],
@@ -803,14 +1052,14 @@ const MQ = [
  ["تسوق ولا تكون الراكب؟", ["🚗", "أسوق"], ["💺", "راكب"]],
  ["قعدة بالحديقة ولا بالمول؟", ["🌳", "الحديقة"], ["🛍️", "المول"]],
  ["تلعب ورق ولا تتفرج على فيلم؟", ["🃏", "ورق"], ["🎬", "فيلم"]],
- ["تحكي مع حدا وجهًا لوجه ولا بالمسجات؟", ["🗣️", "وجهًا لوجه"], ["💬", "مسجات"]],
+ ["التلفون عالصامت ولا عالرنّة؟", ["🔕", "صامت"], ["🔔", "رنّة"]],
  ["تصحى على منبّه ولا على صوت الماما؟", ["⏰", "منبّه"], ["🗣️", "الماما"]],
  ["تنام والشباك مفتوح ولا مسكّر؟", ["🪟", "مفتوح"], ["🔒", "مسكّر"]],
  ["بتحب البيت مرتّب ولا «مرتّب على طريقتك»؟", ["✨", "مرتّب"], ["🌀", "على طريقتي"]],
  ["تلبس جرابات بالبيت ولا حافي؟", ["🧦", "جرابات"], ["🦶", "حافي"]],
- ["الحمّام الصبح ولا المسا؟", ["🌅", "الصبح"], ["🌙", "المسا"]],
+ ["بتشرب ماي بارد ولا عادي بالشتا؟", ["🧊", "بارد"], ["🚰", "عادي"]],
  ["تجرّب لعبة جديدة ولا تلعب اللعبة اللي بتعرفها؟", ["🆕", "جديدة"], ["🔁", "اللي بعرفها"]],
- ["بتحب تكون أول واحد بالطابور ولا آخر واحد؟", ["🥇", "أول"], ["🐢", "آخر"]],
+ ["بتنام عالجنب اليمين ولا الشمال؟", ["👉", "اليمين"], ["👈", "الشمال"]],
  ["بتحب الحفلات الكبيرة ولا القعدات الصغيرة؟", ["🎉", "الكبيرة"], ["🫖", "الصغيرة"]],
  ["تسافر بالقطار ولا بالسفينة؟", ["🚆", "قطار"], ["🚢", "سفينة"]],
  ["تزور الثلج ولا الصحرا؟", ["❄️", "الثلج"], ["🏜️", "الصحرا"]],
@@ -818,18 +1067,18 @@ const MQ = [
  ["تحكي كل إشي بالغناء ولا كل إشي بالرقص؟", ["🎤", "غناء"], ["💃", "رقص"]],
  ["يكون عندك ديناصور أليف ولا تنين صغير؟", ["🦖", "ديناصور"], ["🐉", "تنين"]],
  ["تقدر تتنفس تحت الماي ولا تركض بسرعة الصوت؟", ["🐟", "تحت الماي"], ["⚡", "سرعة"]],
- ["تعرف كل لغات العالم ولا كل آلات الموسيقى؟", ["🌍", "اللغات"], ["🎻", "الموسيقى"]],
- ["تاكل حلو بس ولا مالح بس طول حياتك؟", ["🍬", "حلو"], ["🥨", "مالح"]],
+ ["تقدر توقّف الوقت ولا ترجّعه دقيقة لورا؟", ["⏸️", "أوقّفه"], ["⏪", "أرجّعه"]],
+ ["تعيش بلا شاي ولا بلا شوكولاتة؟", ["🫖", "بلا شاي"], ["🍫", "بلا شوكولاتة"]],
  ["تعيش بالمستقبل ولا بزمن ستّك؟", ["🚀", "المستقبل"], ["📻", "زمن ستّي"]],
  ["يكون صوتك زي البطة ولا مشيتك زي البطريق؟", ["🦆", "صوت بطة"], ["🐧", "مشية بطريق"]],
  ["تنسى اسمك كل يوم ولا تنسى وين ساكن؟", ["🏷️", "اسمي"], ["🏠", "وين ساكن"]],
- ["بتحب الهدايا المفاجأة ولا تختار هديتك؟", ["🎁", "مفاجأة"], ["📝", "أختارها"]],
+ ["بتحب الهدية تكون أكل ولا أغراض؟", ["🍫", "أكل"], ["🎁", "أغراض"]],
  ["بتغيّر نغمة تلفونك ولا بتخليها زي ما هي؟", ["🔔", "بغيّرها"], ["🔕", "زي ما هي"]],
  ["بتاكل الفواكه مقطّعة ولا كاملة؟", ["🔪", "مقطّعة"], ["🍎", "كاملة"]],
  ["بترتّب شنطتك من قبل بيوم ولا آخر دقيقة؟", ["🧳", "قبل بيوم"], ["⏰", "آخر دقيقة"]],
  ["بتحب تسمع القصة كاملة ولا الخلاصة؟", ["📖", "كاملة"], ["✂️", "الخلاصة"]],
  ["بتكتب قائمة مشتريات ولا بتتذكر براسك؟", ["📝", "قائمة"], ["🧠", "براسي"]],
- ["بتحب تكون اللي بيحكي النكتة ولا اللي بيضحك عليها؟", ["🎤", "بحكيها"], ["😂", "بضحك"]]
+ ["بتحب تمشي تحت المطر ولا تتفرج عليه من الشباك؟", ["🌧️", "أمشي"], ["🪟", "أتفرج"]]
 ];
 /* "answer as them": personal questions you answer the way that person would */
 const JQ = [
@@ -941,7 +1190,13 @@ const CHARS = [
   {id:"c15", name:"أبو مقلب", color:"#FFA98A", eyes:"wink",  mouth:"tongue", acc:"star"},
   {id:"c16", name:"الرايق", color:"#FFE36E", eyes:"dot",   mouth:"smile",  acc:"flower"},
 ];
-function charSVG(c){
+/* moods: the same character can laugh (win), get upset (sad), sweat (nervous) or play it cool (cool) */
+const MOODS_FACE = {
+  win:{eyes:"happy", mouth:"laugh"}, sad:{eyes:"dot", mouth:"frown", extra:"sad"},
+  nervous:{eyes:"big", mouth:"wavy", extra:"sweat"}, cool:{eyes:"lid", mouth:"smirk"}
+};
+function charSVG(c, mood){
+  const mf=MOODS_FACE[mood]; if (mf) c={...c, eyes:mf.eyes, mouth:mf.mouth};
   const ink="#1d2440", shade="rgba(0,0,0,.10)";
   const eye={
     dot:   `<circle cx="37" cy="48" r="5.2" fill="${ink}"/><circle cx="63" cy="48" r="5.2" fill="${ink}"/><circle cx="38.8" cy="46.2" r="1.7" fill="#fff"/><circle cx="64.8" cy="46.2" r="1.7" fill="#fff"/>`,
@@ -950,7 +1205,8 @@ function charSVG(c){
     sleepy:`<path d="M30.5 48 Q37 54 43.5 48" stroke="${ink}" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M56.5 48 Q63 54 69.5 48" stroke="${ink}" stroke-width="4" fill="none" stroke-linecap="round"/>`,
     wink:  `<circle cx="37" cy="48" r="5.2" fill="${ink}"/><circle cx="38.8" cy="46.2" r="1.7" fill="#fff"/><path d="M56.5 49 Q63 43 69.5 49" stroke="${ink}" stroke-width="4" fill="none" stroke-linecap="round"/>`,
     none:  ``,
-  }[c.eyes];
+    lid:   `<path d="M30 49 H44" stroke="${ink}" stroke-width="4.5" stroke-linecap="round"/><path d="M56 49 H70" stroke="${ink}" stroke-width="4.5" stroke-linecap="round"/>`,
+  }[c.eyes] ?? "";
   const mouth={
     smile: `<path d="M40 63 Q50 73 60 63" stroke="${ink}" stroke-width="4" fill="none" stroke-linecap="round"/>`,
     laugh: `<path d="M37 61 Q50 82 63 61 Z" fill="${ink}"/><path d="M43 69 Q50 76 57 69 Q50 66 43 69Z" fill="#FF7A8A"/>`,
@@ -958,7 +1214,11 @@ function charSVG(c){
     smirk: `<path d="M41 66 Q52 71 61 62" stroke="${ink}" stroke-width="4" fill="none" stroke-linecap="round"/>`,
     flat:  `<path d="M42 66 L58 66" stroke="${ink}" stroke-width="4" stroke-linecap="round"/>`,
     tongue:`<path d="M40 63 Q50 73 60 63" stroke="${ink}" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M49 68 Q49 77 55 76 Q60 74 57 67Z" fill="#FF7A8A" stroke="${ink}" stroke-width="2"/>`,
-  }[c.mouth];
+    frown: `<path d="M40 71 Q50 61 60 71" stroke="${ink}" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+    wavy:  `<path d="M38 67 q3 -4 6 0 t6 0 t6 0 t6 0" stroke="${ink}" stroke-width="3.5" fill="none" stroke-linecap="round"/>`,
+  }[c.mouth] ?? "";
+  const extra = mf?.extra==="sad" ? `<path d="M28 39 L41 43.5" stroke="${ink}" stroke-width="3.5" stroke-linecap="round"/><path d="M72 39 L59 43.5" stroke="${ink}" stroke-width="3.5" stroke-linecap="round"/><path d="M66 55 q3.5 6 0 8.5 q-3.5 -2.5 0 -8.5z" fill="#7cc4ff"/>`
+              : mf?.extra==="sweat" ? `<path d="M83 24 q6 9 0 12.5 q-6 -3.5 0 -12.5z" fill="#9ad8ff" stroke="${ink}" stroke-width="1.5"/>` : "";
   const acc={
     none:"",
     glasses:`<g fill="none" stroke="${ink}" stroke-width="3"><circle cx="37" cy="47" r="11"/><circle cx="63" cy="47" r="11"/><path d="M48 46 Q50 43 52 46"/><path d="M26 45 L14 41"/><path d="M74 45 L86 41"/></g>`,
@@ -983,35 +1243,41 @@ function charSVG(c){
     <path d="M50 93 C28 93 10 80 10 54 C10 66 26 84 50 84 C74 84 90 66 90 54 C90 80 72 93 50 93Z" fill="${shade}"/>
     <ellipse cx="33" cy="27" rx="10" ry="6" fill="#fff" opacity=".35" transform="rotate(-25 33 27)"/>
     <ellipse cx="27" cy="61" rx="6" ry="3.5" fill="#FF6F91" opacity=".35"/><ellipse cx="73" cy="61" rx="6" ry="3.5" fill="#FF6F91" opacity=".35"/>
-    ${eye}${mouth}${acc}
+    ${eye}${mouth}${acc}${extra}
   </svg>`;
 }
 const AVTOK = c => "⟦"+c.id+"⟧";
 const AVS = CHARS.map(AVTOK);
 const CHAR_BY = Object.fromEntries(CHARS.map(c=>[AVTOK(c),c]));
 const svgCache = {};
-function avNode(tok){
-  const c=CHAR_BY[tok]; if (!c) return document.createTextNode(tok);
+function avNode(full){
+  const [base,mood]=full.replace("⟧","").split("~"), tok=mood ? base+"⟧" : full;
+  const c=CHAR_BY[tok]; if (!c) return document.createTextNode(full);
   const sp=document.createElement("span"); sp.className="avi"; sp.setAttribute("role","img"); sp.setAttribute("aria-label",c.name);
-  sp.innerHTML = svgCache[tok] || (svgCache[tok]=charSVG(c)); return sp;
+  sp.innerHTML = svgCache[full] || (svgCache[full]=charSVG(c,mood)); if (mood) sp.classList.add("m-"+mood); return sp;
 }
 function textWithAvatars(str){
   if (!str.includes("⟦")) return [document.createTextNode(str)];
-  return str.split(/(⟦c\d+⟧)/).filter(Boolean).map(part=>/^⟦c\d+⟧$/.test(part) ? avNode(part) : document.createTextNode(part));
+  return str.split(/(⟦c\d+(?:~[a-z]+)?⟧)/).filter(Boolean).map(part=>/^⟦c\d+(~[a-z]+)?⟧$/.test(part) ? avNode(part) : document.createTextNode(part));
 }
+/* the same avatar with a mood (emoji avatars just stay as they are) */
+const moodAv = (av, mood) => mood && /^⟦c\d+⟧$/.test(av||"") ? av.replace("⟧","~"+mood+"⟧") : av;
 const BOTS = [["بوت أبو صالح","🤖"],["بوت أم ناصر","👾"],["بوت المدير","🦾"],["بوت الجار","📟"]];
 const T_ANSWER = 60, T_VOTE = 45, T_WRITE = 120, MAXLEN = 90, QLEN = 120, NS = "mnfn-v3-";
 const MULT = {1:100, 2:100, 4:200}, BESTQ_PTS = 200, T_GUESS = 30, WHO_RIGHT = 100, WHO_FOOL = 50, T_INTRO = 40, T_MQ = 15, T_JVOTE = 30, M_RIGHT = 200, J_PICK = 300, J_VOTE = 100;
-const ORDER = [1, 2, 7, 3, 8, 4];                 // play order of segments (ids stay stable for music & colours)
+const ORDER = [7, 1, 3, 2, 8, 4];                 // play order: warm up with no writing, and the two "write & vote" segments never back to back
+const BIG = 8, SAME_BONUS = 50;                    // 8+ players: 3–4 answers per question instead of 2
+const T_ANS = {1:50, 2:45}, T_VOTE_SEG = {2:30};   // «كمّل الجملة» runs a bit faster
+const LETTERS = "ABCD";
 const activeOrder = () => ORDER.filter(id => (H.settings.segs||ORDER).includes(id));
 const SEG_MIN = {1:4, 2:4, 7:3, 3:5, 8:5, 4:7};            // rough minutes per round, for the time estimate
 const SEGS = {
-  1:{icon:"🤪", title:"مين فينا؟", rules:["كل اثنين بيوصلهم نفس السؤال على تلفوناتهم.","كل واحد بيكتب أضحك جواب خلال دقيقة، سرًّا.","الباقي بيصوّتوا للأضحك. كل صوت = 100 نقطة."], desc:"سؤال مجنون، اثنين بيجاوبوا، والكل بيصوّت. كل صوت = 100 نقطة.", kind:"q"},
-  2:{icon:"✍️", title:"كمّل الجملة", rules:["بتوصلكم بداية جملة فيها فراغ ______.","كمّلوها بأغرب أو أضحك طريقة خلال دقيقة.","الباقي بيصوّتوا. كل صوت = 100 نقطة."], desc:"بداية جملة وإنتو بتكمّلوها بأضحك طريقة. كل صوت = 100 نقطة.", kind:"s"},
+  1:{icon:"🤪", title:"مين فينا؟", rules:["بيوصلك سؤال، مثلًا: «مين فينا أكثر واحد بينام بالعزايم؟»","على تلفونك بتختار واحد منكم، وبتكتب ليش بسطر.","الكل بيصوّت لأضحك سبب. كل صوت = 100، وإذا اخترتوا نفس الشخص = 50 زيادة."], desc:"", kind:"p"},
+  2:{icon:"✍️", title:"كمّل الجملة", rules:["بتوصلكم جملة عن واحد منكم وفيها فراغ ______ 😏","كمّلوها بأضحك طريقة خلال 45 ثانية.","الباقي بيصوّتوا. كل صوت = 100 نقطة."], desc:"بداية جملة وإنتو بتكمّلوها بأضحك طريقة. كل صوت = 100 نقطة.", kind:"s"},
   3:{icon:"🕵️", title:"مين كاتبها؟", rules:["الكل بيجاوب على نفس السؤال خلال دقيقة.","بتنعرض الأجوبة بدون أسماء، وإنتو بتخمّنوا مين كاتب كل جواب.","تخمين صح = 100 نقطة، وكل واحد بتضلّله بجوابك = 50."], desc:"الكل بيجاوب على نفس السؤال، وبعدين بنخمّن مين كاتب كل جواب. تخمين صح = 100، وكل واحد بتضلّله = 50.", kind:"g"},
   7:{icon:"🔮", title:"شو بيختار؟", rules:["كل واحد بيوصله سؤال مختلف بخيارين، وبيجاوب عن حاله سرًّا.","بعدين بيطلع سؤال كل واحد على الشاشة، والكل بيحزر شو اختار.","حزرت صح = 200 نقطة."], desc:"", kind:"m"},
   8:{icon:"🎭", title:"جاوب عنه", rules:["كل واحد بيوصله سؤالين عن ناس من اللعبة.","جاوب كأنك هو، بأسلوبه وطريقته.","صاحب السؤال بيختار الجواب الأقرب إله، واللي كتبه بياخذ 300 نقطة."], desc:"", kind:"j"},
-  4:{icon:"🔥", title:"فقرة التعويض", rules:["كل واحد بيكتب سؤال مجنون خلال دقيقتين.","أسئلتكم بتروح لناس ثانيين يجاوبوا عليها، دقيقة لكل سؤال.","كل صوت = 200 نقطة، وبالآخر بنصوّت لأحلى سؤال."], desc:"إنتو بتكتبوا الأسئلة، وغيركم بيجاوب عليها. كل صوت = 200 نقطة!", kind:"w"}
+  4:{icon:"🔥", title:"فقرة التعويض", rules:["كل واحد بيكتب سؤال مجنون، أو بيختار واحد جاهز.","أسئلتكم بتروح لناس ثانيين يجاوبوا عليها، دقيقة لكل سؤال.","كل صوت = 200 نقطة، وبالآخر بنصوّت لأحلى سؤال."], desc:"إنتو بتكتبوا الأسئلة، وغيركم بيجاوب عليها. كل صوت = 200 نقطة!", kind:"w"}
 };
 
 /* ================= helpers ================= */
@@ -1021,12 +1287,35 @@ function h(tag, attrs, ...kids){
   for (const [k,v] of Object.entries(attrs||{})){
     if (v==null || v===false) continue;
     if (k==="class") el.className=v;
-    else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+    else if (k.startsWith("on")) on(el, k.slice(2), v);
     else if (k==="style") el.style.cssText=v;
     else el.setAttribute(k, v===true ? "" : v);
   }
   for (const k of kids.flat(Infinity)){ if (k==null||k===false) continue; if (k instanceof Node) el.append(k); else el.append(...textWithAvatars(String(k))); }
   return el;
+}
+/* handlers live in el.__on so a screen update can hand fresh handlers to the element that is already on screen */
+function on(el, type, fn){ const m=el.__on||(el.__on={}); if (!(type in m)) el.addEventListener(type, e=>{ const f=el.__on[type]; if (f) f(e); }); m[type]=fn; }
+/* update what is on screen to look like `to`, touching only what changed: no flicker, animations don't restart, focus stays */
+function morph(from, to){
+  if (to.dataset && to.dataset.keep && from.dataset && from.dataset.keep===to.dataset.keep) return;
+  for (const a of [...from.attributes]) if (!to.hasAttribute(a.name) && !(a.name==="open" && from.nodeName==="DETAILS")) from.removeAttribute(a.name);
+  for (const a of [...to.attributes]) if (from.getAttribute(a.name)!==a.value) from.setAttribute(a.name, a.value);
+  if (to.__on) for (const [t,fn] of Object.entries(to.__on)) on(from, t, fn);
+  if (from.__on) for (const t of Object.keys(from.__on)) if (!to.__on || !(t in to.__on)) from.__on[t]=null;
+  if ((from.nodeName==="TEXTAREA"||from.nodeName==="INPUT") && document.activeElement!==from && from.value!==to.value) from.value=to.value;
+  morphKids(from, to);
+}
+function morphKids(from, to){
+  const kids=[...to.childNodes], old=[...from.childNodes];
+  for (let i=0;i<kids.length;i++){
+    const n=kids[i], o=old[i];
+    if (!o){ from.append(n); continue; }
+    if (o.nodeType===3 && n.nodeType===3){ if (o.nodeValue!==n.nodeValue) o.nodeValue=n.nodeValue; continue; }
+    if (o.nodeType===1 && n.nodeType===1 && o.nodeName===n.nodeName && o.namespaceURI===n.namespaceURI){ morph(o,n); continue; }
+    from.replaceChild(n,o);
+  }
+  for (let i=kids.length;i<old.length;i++) old[i].remove();
 }
 const clean = (s,n)=> String(s||"").replace(/[\u0000-\u001f​-‏‪-‮⁦-⁩]/g," ").trim().slice(0,n);
 const shuffle = a => { a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]} return a; };
@@ -1058,7 +1347,7 @@ function nextPrompt(kind){
 
 /* ================= music: cheerful, generated live on the main screen ================= */
 const Music = (() => {
-  let gate, ctx, master, mus, sfx, noise, timer=null, mood=null, step=0, nextT=0, muted=false;
+  let gate, ctx, master, mus, sfx, noise, timer=null, mood=null, step=0, nextT=0, muted=false, quiet=false;
   const PENT=[0,2,4,7,9], C4=261.63;
   const f = d => { const i=((d%5)+5)%5, o=Math.floor(d/5); return C4*Math.pow(2,(PENT[i]+12*o)/12); };
   function init(){
@@ -1099,9 +1388,13 @@ const Music = (() => {
   };
   const ROOTS=[130.81,110,87.31,98]; // C A F G — bright and bouncy
   function sched(){
-    const m = MOODS[mood]; if(!m) return;
+    const m = MOODS[mood]; if(!m){ clearInterval(timer); timer=null; return; }
     const sp = 60/m.bpm/4;
-    while (nextT < ctx.currentTime + .15){
+    if (quiet || muted){                       // your own songs are playing (or sound is off): keep the beat count, make no sounds
+      while (nextT < ctx.currentTime + .2){ nextT += sp; step++; }
+      return;
+    }
+    while (nextT < ctx.currentTime + .2){
       const s=step%16, bar=Math.floor(step/16)%4, mel=MEL[m.mel], r=ROOTS[bar];
       if (s===0||s===8) kick(nextT);
       if (s===0||s===8) bassN(nextT,r,sp*2.5);
@@ -1118,7 +1411,7 @@ const Music = (() => {
   function setMood(m){
     if (!ctx || mood===m) return;
     mood=m; step=0; nextT=ctx.currentTime+.08;
-    if (!timer) timer=setInterval(sched,25);
+    if (!timer) timer=setInterval(sched,50);
   }
   const fx = {
     pop(){ const t=ctx.currentTime, o=osc("sine",380,t,.12,.4,sfx,.002); o.frequency.exponentialRampToValueAtTime(1300,t+.08); },
@@ -1137,7 +1430,7 @@ const Music = (() => {
   return {
     init, setMood, stop(){ mood=null; },
     duck(on){ if(mus) try{ mus.gain.setTargetAtTime(on?.12:.5, ctx.currentTime, .25); }catch{} Tracks.duck(on); },
-    silence(on){ if(gate) try{ gate.gain.setTargetAtTime(on?0:1, ctx.currentTime, .3); }catch{} },
+    silence(on){ quiet=!!on; if(gate) try{ gate.gain.setTargetAtTime(on?0:1, ctx.currentTime, .3); }catch{} },
     play(n,...a){ if(!ctx||muted) return; try{ fx[n](...a); }catch{} },
     toggle(){ muted=!muted; if(master) master.gain.value=muted?0:.7; Tracks.mute(muted); return muted; },
     get muted(){ return muted; }
@@ -1357,7 +1650,7 @@ function onHostMsg(conn, d){
     if (!p && byName){ p=byName; pid=byName.pid; try{ conn.send({t:"you",pid}); }catch{} }
     const keepName = p && byName && byName!==p;      // renaming onto someone else's name is not allowed: keep the old name
     conn._pid=pid;
-    if (!p){ p={pid,name,av,score:0,on:true,bot:false,conn,seen:Date.now()}; H.P.set(pid,p); Music.play("pop"); }
+    if (!p){ p={pid,name,av,score:0,on:true,bot:false,conn,seen:Date.now()}; H.P.set(pid,p); Music.play("pop"); if (H.st.ph==="lobby") announce(p); }
     else {
       const old=p.conn;
       if (!keepName) p.name=name; else try{ conn.send({t:"name",name:p.name}); }catch{}
@@ -1384,6 +1677,15 @@ setInterval(()=>{
   }
   if (changed){ checkDone(); push(); hostRender(); }
 }, 3000);
+/* a short funny line when someone joins the lobby; it goes away by itself */
+const ENTR = {c1:"وصل {n}! جهّزوا الضحك 😂", c2:"وصل {n}… وعنده جواب لكل إشي 🤓", c3:"وصل الباشا {n}! قوموا سلّموا 👑", c4:"{n} صحي أخيرًا وإجا 😴",
+  c5:"الزعيم {n} وصل. الكل يهدّي 😎", c6:"{n} وصل… بلّشت الهيصة 🎉", c7:"{n} وصل وشنبه قبله 🥸", c8:"{n} وصل… في منسف؟ 🍖",
+  c9:"{n} وصل، والماما مبسوطة 😇", c10:"{n} نزل من الفضاء 👽", c11:"{n} وصل… علّوا الموسيقى 🎧", c12:"الكابتن {n} نزل عالملعب ⚽",
+  c13:"العريس {n} وصل! زغرطوا 💐", c14:"{n} وصل… اسقوه شوية ماي 🌱", c15:"{n} وصل. انتبهوا لجيوبكم 😈", c16:"{n} وصل على رواق 🫖"};
+function announce(p){
+  const id=(String(p.av).match(/^⟦(c\d+)⟧$/)||[])[1], t={text:`${p.av} `+(ENTR[id]||"وصل {n}! 🎉").replace("{n}",p.name), id:Math.random()};
+  H.toast=t; later(3200,()=>{ if (H.toast===t){ H.toast=null; if (H.st.ph==="lobby") hostRender(); } });
+}
 function kickPlayer(pid){
   const p=H.P.get(pid); if (!p) return;
   if (!p.bot) H.kicked.add(pid);
@@ -1412,22 +1714,29 @@ function playersPanel(){
   H.panelDraw=draw; draw(); document.body.append(ov);
 }
 function countLen(p,x){ if (!H.stats||!x) return; const S=H.stats; S.len[p.pid]=(S.len[p.pid]||0)+x.length; S.cnt[p.pid]=(S.cnt[p.pid]||0)+1; }
+function countSpeed(p,x,d){ if (!H.stats || d.auto) return; const S=H.stats, sec=(Date.now()-(H.phaseAt||Date.now()))/1000;
+  const s=S.spd[p.pid]||(S.spd[p.pid]={sum:0,n:0}); s.sum+=sec; s.n++;
+  if (!S.short || x.length<S.short.text.length) S.short={text:x, pid:p.pid}; }
 function countAuto(p,d){ if (d.auto && H.stats) H.stats.auto[p.pid]=(H.stats.auto[p.pid]||0)+1; }
 function handleAction(p, d){
   const st=H.st;
   if (d.t==="ans" && st.ph==="answer"){
     const pr=H.batch?.prompts.find(x=>x.key===d.k);
     const x=clean(d.x,MAXLEN);
-    if (pr && pr.pair.includes(p.pid) && x && !pr.ans[p.pid]){ pr.ans[p.pid]=x; Music.play("blip"); countAuto(p,d); countLen(p,x); }
-  } else if (d.t==="vote" && st.ph==="vote" && d.k===H.vk && (d.c==="A"||d.c==="B") && !H.own[p.pid] && !H.votes[p.pid]){
+    const okPick = H.seg!==1 || (typeof d.who==="string" && H.P.get(d.who));
+    if (pr && pr.pair.includes(p.pid) && x && okPick && !pr.ans[p.pid]){
+      pr.ans[p.pid]=x; Music.play("blip"); countAuto(p,d); countLen(p,x); countSpeed(p,x,d);
+      if (H.seg===1){ pr.picks[p.pid]=d.who; if (H.stats) H.stats.accused[d.who]=(H.stats.accused[d.who]||0)+1; }
+    }
+  } else if (d.t==="vote" && st.ph==="vote" && d.k===H.vk && (st.opts||[]).some(o=>o[0]===d.c) && !H.own[p.pid] && !H.votes[p.pid]){
     H.votes[p.pid]=d.c; Music.play("tick");
   } else if (d.t==="q" && st.ph==="write"){
-    const x=clean(d.x,QLEN); if (x && !H.wq[p.pid]){ H.wq[p.pid]=x; Music.play("blip"); countAuto(p,d); }
+    const x=clean(d.x,QLEN); if (x && !H.wq[p.pid]){ H.wq[p.pid]=x; Used.add(x); Music.play("blip"); countAuto(p,d); }
   } else if (d.t==="ms" && st.ph==="mself" && ["A","B"].includes(d.c) && (H.mAsk[p.pid]||[]).some(x=>x.key===d.k) && !H.mAns[d.k]){
     H.mAns[d.k]=d.c; Music.play("tick");
   } else if (d.t==="mq" && st.ph==="mq" && d.k===H.mk && ["A","B"].includes(d.c) && p.pid!==H.msub && !H.mguess[p.pid]){
     H.mguess[p.pid]=d.c; Music.play("tick");
-  } else if (d.t==="jp" && st.ph==="jvote" && d.k===H.jk && p.pid===H.jtarget && ["A","B"].includes(d.c) && !H.jpick){
+  } else if (d.t==="jp" && st.ph==="jvote" && d.k===H.jk && p.pid===H.jtarget && (st.opts||[]).some(o=>o[0]===d.c) && !H.jpick){
     H.jpick=d.c; Music.play("blip");
   } else if (false && d.t==="jv" && d.k===H.jk && ["A","B"].includes(d.c) && !H.jown[p.pid] && p.pid!==H.jtarget && !H.jvotes[p.pid]){
     H.jvotes[p.pid]=d.c; Music.play("tick");
@@ -1452,7 +1761,7 @@ function meFor(pid){
   const st=H.st, me={};
   if (st.ph==="answer") me.asg=(H.batch?.prompts||[]).filter(x=>x.pair.includes(pid)).map(x=>{ const t=x.target&&H.P.get(x.target); return [x.key,x.label||x.q,x.ans[pid]?1:0, t?[t.name,t.av,x.q]:null]; });
   if (st.ph==="vote"){ me.opt=H.own[pid]||null; me.voted=H.votes[pid]||null; }   // opt set = you wrote one of these, you sit this vote out
-  if (st.ph==="write") me.done=!!H.wq[pid];
+  if (st.ph==="write"){ me.done=!!H.wq[pid]; me.sugg=(H.sugg||{})[pid]||[]; }
   if (st.ph==="bestq"){ me.own=H.bqOwn[pid]||null; me.voted=H.bq[pid]||null; }
   if (st.ph==="wans") me.done=!!H.who?.ans[pid];
   if (st.ph==="seg") me.ready=!!H.ready[pid];
@@ -1466,10 +1775,12 @@ function meFor(pid){
 }
 function sendTo(p){ if (p.conn?.open) try{ p.conn.send({t:"st", st:{...H.st, sc:sc(), me:meFor(p.pid)}}); }catch{} }
 function push(){ for (const p of H.P.values()) if(!p.bot) sendTo(p); }
+/* the clock only needs a few bytes: the full picture goes out when something actually changes (and every 5 s, just in case) */
+function pushTick(){ const m={t:"tk",pt:H.st.pt,s:H.st.t}; for (const p of H.P.values()) if(!p.bot && p.conn?.open) try{ p.conn.send(m); }catch{} }
 
 /* ---- phase engine ---- */
 function setPhase(st, T, onEnd){
-  clearInterval(H.iv); H.iv=null; H.tok++; H.closing=false; H.onEnd=onEnd||null; st.pt=H.tok; H.st=st;
+  clearInterval(H.iv); H.iv=null; H.tok++; H.closing=false; H.onEnd=onEnd||null; st.pt=H.tok; H.st=st; H.phaseAt=Date.now();
   if (T){ st.t=T; st.T=T; H.iv=setInterval(tick,1000); }
   if (RESUME[st.ph]) saveGame();
   else if (["lobby","final"].includes(st.ph)) clearSave();
@@ -1480,7 +1791,7 @@ function setPhase(st, T, onEnd){
    scores are rolled back to its start too, so nothing is counted twice. */
 const SAVE_KEY="mf.game", SAVE_FIELDS=["seg","si","rd","order","batch","di","votes","vk","own","cur","wq","bq","bqOwn","bqList","bqAuthor",
   "who","whoList","whoGuesses","whoOpts","wi","ri","wk","guess","wAuthor","revGuess","ready","mAsk","mAns","mList","mi","mk","mguess","msub",
-  "jk","jpick","jvotes","jown","jtarget","stats","allQs"];
+  "jk","jpick","jvotes","jown","jtarget","stats","allQs","sugg"];
 const RESUME = {
   seg: ()=>introDone, answer: ()=>()=>{ H.di=-1; H.seg===8 ? nextJ() : nextDuel(); }, vote: ()=>endVote, write: ()=>endWrite,
   bestq: ()=>endBestQ, wans: ()=>endWhoAns, wguess: ()=>endWho, mself: ()=>endMSelf, mq: ()=>endMaj, jvote: ()=>endJ,
@@ -1489,7 +1800,7 @@ let saveTimer=null;
 function saveGame(){
   if (!H.code || !RESUME[H.st?.ph]) return;
   try{
-    const snap={v:1, at:Date.now(), code:H.code, st:H.st, settings:H.settings, kicked:[...H.kicked],
+    const snap={v:2, at:Date.now(), code:H.code, st:H.st, settings:H.settings, kicked:[...H.kicked],
       P:[...H.P.values()].map(p=>({pid:p.pid,name:p.name,av:p.av,score:p.score,bot:!!p.bot}))};
     for (const k of SAVE_FIELDS) snap[k]=H[k];
     ls.set(SAVE_KEY, JSON.stringify(snap));
@@ -1498,7 +1809,7 @@ function saveGame(){
 function saveSoon(){ clearTimeout(saveTimer); saveTimer=setTimeout(saveGame,400); }
 function clearSave(){ try{ localStorage.removeItem(SAVE_KEY); }catch{} }
 function loadSave(){
-  try{ const s=JSON.parse(ls.get(SAVE_KEY)||"null"); if (s && s.v===1 && Date.now()-s.at < 6*3600e3 && RESUME[s.st?.ph]) return s; }catch{}
+  try{ const s=JSON.parse(ls.get(SAVE_KEY)||"null"); if (s && s.v===2 && Date.now()-s.at < 6*3600e3 && RESUME[s.st?.ph]) return s; }catch{}
   return null;
 }
 function resumeGame(){
@@ -1520,17 +1831,19 @@ function resumeGame(){
 function tick(){
   const st=H.st; st.t=Math.max(0,st.t-1);
   if (st.t<=5 && st.t>0) Music.play("tick");
-  push(); paintTimer();
-  if (st.t<=0){ clearInterval(H.iv); H.iv=null; at(1500, finish); }
+  if (st.t%5===0) push(); else pushTick();
+  paintTimer();
+  if (st.t<=0){ clearInterval(H.iv); H.iv=null; at(900, finish); }
 }
 function paintTimer(){
   const el=app.querySelector(".stage .timer"), st=H.st;
   if (!el) return hostRender();
   el.querySelector("span").textContent=st.t; el.style.setProperty("--p",st.T?st.t/st.T:0);
   el.classList.toggle("hot",st.t<=5); el.setAttribute("aria-label",st.t+" ثانية");
+  if (st.t<=5 && st.t>0){ const sp=el.querySelector("span"); sp.classList.remove("pop"); void sp.offsetWidth; sp.classList.add("pop"); }
 }
 function finish(){ if (H.closing) return; H.closing=true; clearInterval(H.iv); H.iv=null; const fn=H.onEnd; H.onEnd=null; fn&&fn(); }
-function soon(){ if (!H.closing) at(700, finish); }
+function soon(){ if (!H.closing) at(450, finish); }
 function checkDone(){
   const st=H.st, on=online();
   if (st.ph==="answer"){
@@ -1574,12 +1887,12 @@ function botsAct(){
   const st=H.st, bots=online().filter(p=>p.bot);
   for (const b of bots){
     if (st.ph==="answer") H.batch.prompts.filter(x=>x.pair.includes(b.pid)).forEach((x,i)=>
-      at(rnd(6,25)*1000*(i+1), ()=>handleAction(b,{t:"ans",k:x.key,x:pick(BOT_ANS),auto:Math.random()<.3?1:0})));
-    if (st.ph==="vote" && !H.own[b.pid]) at(rnd(3,14)*1000, ()=>handleAction(b,{t:"vote",k:H.vk,c:pick(["A","B"])}));
+      at(rnd(6,25)*1000*(i+1), ()=>handleAction(b,{t:"ans",k:x.key,x:pick(BOT_ANS),who:pick(online()).pid,auto:Math.random()<.3?1:0})));
+    if (st.ph==="vote" && !H.own[b.pid]) at(rnd(3,14)*1000, ()=>handleAction(b,{t:"vote",k:H.vk,c:pick(st.opts).at(0)}));
     if (st.ph==="write") at(rnd(8,40)*1000, ()=>handleAction(b,{t:"q",x:nextPrompt(Math.random()<.5?"q":"s")}));
     if (st.ph==="mself") (H.mAsk[b.pid]||[]).forEach((x,i)=>at(rnd(2,8)*1000*(i+1), ()=>handleAction(b,{t:"ms",k:x.key,c:pick(["A","B"])})));
     if (st.ph==="mq" && b.pid!==H.msub) at(rnd(2,10)*1000, ()=>handleAction(b,{t:"mq",k:H.mk,c:pick(["A","B"])}));
-    if (st.ph==="jvote" && b.pid===H.jtarget) at(rnd(4,14)*1000, ()=>handleAction(b,{t:"jp",k:H.jk,c:pick(["A","B"])}));
+    if (st.ph==="jvote" && b.pid===H.jtarget) at(rnd(4,14)*1000, ()=>handleAction(b,{t:"jp",k:H.jk,c:pick(st.opts).at(0)}));
     if (st.ph==="seg") at(rnd(2,7)*1000, ()=>handleAction(b,{t:"ready"}));
     if (st.ph==="wans") at(rnd(6,30)*1000, ()=>handleAction(b,{t:"wa",x:pick(BOT_ANS),auto:Math.random()<.3?1:0}));
     if (st.ph==="wguess" && b.pid!==H.wAuthor) at(rnd(3,12)*1000, ()=>{ const ok=st.opts.filter(o=>o[0]!==b.pid); handleAction(b,{t:"g",k:H.wk,id:pick(ok)[0]}); });
@@ -1595,14 +1908,30 @@ function fairPairs(ids){
   else { for(let i=0;i<n;i++) out.push([s[i],s[(i+1)%n]]); }          // odd: each player exactly twice
   return shuffle(out);
 }
-
+/* 8+ players: split everyone into groups of 3–4 that answer the same question (8 → 4+4, 9 → 3+3+3, 10 → 4+3+3…).
+   everyone still answers exactly once per round; fewer players keep the classic 1-on-1 */
+function groupsFor(ids){
+  const n=ids.length; if (n<BIG) return fairPairs(ids);
+  const k=Math.ceil(n/4), s=shuffle(ids), out=[]; let i=0;
+  for (let g=0; g<k; g++){ const size=Math.floor(n/k)+(g<n%k?1:0); out.push(s.slice(i,i+size)); i+=size; }
+  return shuffle(out);
+}
+/* «كمّل الجملة»: half the time the sentence has one of the players in it (never one of the people answering it, when possible) */
+function sentenceFor(group, ids, seen={}){
+  if (ids.length>=3){
+    const others=ids.filter(id=>!group.includes(id)), pool=shuffle(others.length?others:ids).sort((a,b)=>(seen[a]||0)-(seen[b]||0));
+    const who=H.P.get(pool[0]); if (who) seen[who.pid]=(seen[who.pid]||0)+1;    // spread the names: nobody shows up twice before everyone showed up once
+    if (who) return { q:pickFresh(SN,x=>x).replace("{P}", `${who.av} ${who.name}`), qp:who.pid };
+  }
+  return { q:nextPrompt("s"), qp:null };
+}
 /* ---- game flow ---- */
 function startGame(){
   if (online().length<3) return;
   clearLater();
   for (const p of H.P.values()) p.score=0;
-  H.stats={votes:{}, sweeps:{}, right:{}, fooled:{}, auto:{}, seg4start:null, len:{}, cnt:{}, mGuessN:{}, mRight:{}};
-  H.seg=0; H.si=-1; H.order=activeOrder(); Music.play("tada");
+  H.stats={votes:{}, sweeps:{}, right:{}, fooled:{}, auto:{}, seg4start:null, len:{}, cnt:{}, mGuessN:{}, mRight:{}, accused:{}, spd:{}, short:null, best:null};
+  H.seg=0; H.si=-1; H.order=activeOrder(); H.ranks={}; Music.play("tada");
   nextSegment();
 }
 function nextSegment(){
@@ -1625,61 +1954,103 @@ function moreRounds(restart){ if (H.rd < H.settings.rounds){ H.rd++; restart(); 
 function nextRound(){
   H.rd++;
   if (H.rd>H.settings.rounds) return nextSegment();
-  const kind=SEGS[H.seg].kind;
-  const prompts=fairPairs(online().map(p=>p.pid)).map((pair,i)=>({key:`${H.seg}.${H.rd}.${i}.${Date.now()%1e6}`, q:nextPrompt(kind), pair, ans:{}, author:null}));
-  H.batch={prompts, mult:MULT[H.seg]};
+  const ids=online().map(p=>p.pid), stamp=Date.now()%1e6, seen={};
+  const prompts=groupsFor(ids).map((pair,i)=>{
+    const base={key:`${H.seg}.${H.rd}.${i}.${stamp}`, pair, ans:{}, picks:{}, author:null};
+    return H.seg===1 ? {...base, q:pickFresh(MF,x=>x)} : {...base, ...sentenceFor(pair, ids, seen)};
+  });
+  H.batch={prompts, mult:MULT[H.seg], big:ids.length>=BIG};
   startAnswer();
 }
 function startAnswer(){
   const per={}; for (const x of H.batch.prompts) for (const pid of x.pair) per[pid]=(per[pid]||0)+1;
   const most=Math.max(1,...Object.values(per));
   Music.setMood("answer");
-  setPhase({ph:"answer", seg:H.seg, rd:H.rd, rds:rdsFor(H.seg), per:most, np:H.batch.prompts.length}, T_ANSWER*most, ()=>{ H.di=-1; H.seg===8 ? nextJ() : nextDuel(); });
+  setPhase({ph:"answer", seg:H.seg, rd:H.rd, rds:rdsFor(H.seg), per:most, np:H.batch.prompts.length}, (T_ANS[H.seg]||T_ANSWER)*most, ()=>{ H.di=-1; H.seg===8 ? nextJ() : nextDuel(); });
   botsAct();
 }
+/* who did they pick in «مين فينا؟» */
+function accOf(x,pid){ const t=x.picks&&x.picks[pid], p=t&&H.P.get(t); return p ? [p.name,p.av,t===pid?1:0] : null; }
 function nextDuel(){
   H.di++;
   const prompts=H.batch.prompts;
   if (H.di>=prompts.length) return afterBatch();
-  const x=prompts[H.di], [pa,pb]=x.pair, A=x.ans[pa], B=x.ans[pb], mult=H.batch.mult;
+  const x=prompts[H.di], mult=H.batch.mult;
   const head={seg:H.seg, rd:H.rd, rds:rdsFor(H.seg), di:H.di, dn:prompts.length, q:x.q};
-  if (!A && !B){ Music.stop(); Music.play("womp"); setPhase({...head, ph:"reveal", res:{skip:true}}); at(4000,nextDuel); return; }
-  if (!A || !B){
-    const w=H.P.get(A?pa:pb), votes=Math.max(1,Math.ceil((online().length-2)/2)), pts=votes*mult;
+  const done=shuffle(x.pair.filter(pid=>x.ans[pid]));
+  if (!done.length){ Music.stop(); Music.play("womp"); setPhase({...head, ph:"reveal", res:{skip:true}}); at(4000,nextDuel); return; }
+  if (done.length===1){
+    const w=H.P.get(done[0]), votes=Math.max(1,Math.ceil((online().length-x.pair.length)/2)), pts=votes*mult;
     if (w) w.score+=pts;
     Music.stop(); Music.play("tada");
-    setPhase({...head, ph:"reveal", res:{solo:true, text:A||B, name:w?.name||"", av:w?.av||"", pts}});
+    setPhase({...head, ph:"reveal", res:{solo:true, text:x.ans[done[0]], acc:accOf(x,done[0]), name:w?.name||"", av:w?.av||"", pts}});
     at(5500,nextDuel); return;
   }
-  const flip=Math.random()<.5, idA=flip?pb:pa, idB=flip?pa:pb;
-  H.vk++; H.votes={}; H.own={[idA]:"A",[idB]:"B"}; H.cur={idA,idB};
+  H.vk++; H.votes={}; H.own={}; H.cur={ids:{}};
+  const opts=done.map((pid,i)=>{ const k=LETTERS[i]; H.own[pid]=k; H.cur.ids[k]=pid; return [k, x.ans[pid], accOf(x,pid)]; });
   Music.setMood("vote");
-  setPhase({...head, ph:"vote", vk:H.vk, A:x.ans[idA], B:x.ans[idB], vc:0, vt:online().filter(p=>!H.own[p.pid]).length}, T_VOTE, endVote);
+  setPhase({...head, ph:"vote", vk:H.vk, opts, vc:0, vt:online().filter(p=>!H.own[p.pid]).length}, T_VOTE_SEG[H.seg]||T_VOTE, endVote);
   botsAct();
 }
 function endVote(){
-  const st=H.st, vs=Object.values(H.votes), vA=vs.filter(v=>v==="A").length, vB=vs.length-vA, mult=H.batch.mult;
-  const win=vA>vB?"A":vB>vA?"B":"tie";
-  const pA=H.P.get(H.cur.idA), pB=H.P.get(H.cur.idB);
-  const res={vA,vB,win,pts:{A:vA*mult,B:vB*mult}};
-  const free={A:vA,B:vB};
-  if (win!=="tie"){ const lose=win==="A"?"B":"A"; if (free[win]>=2 && free[lose]===0){ res.sweep=true; res.bonus=mult; res.pts[win]+=mult; } }
-  const who={A:[pA?.name||"",pA?.av||""],B:[pB?.name||"",pB?.av||""]};
+  const st=H.st, mult=H.batch.mult, L=st.opts.map(o=>o[0]), x=H.batch.prompts[H.di];
+  const cnt=Object.fromEntries(L.map(k=>[k,0])); for (const v of Object.values(H.votes)) if (v in cnt) cnt[v]++;
+  const total=L.reduce((t,k)=>t+cnt[k],0), max=Math.max(...L.map(k=>cnt[k]));
+  const winners=max>0 ? L.filter(k=>cnt[k]===max) : [], win=winners.length===1 ? winners[0] : "tie";
+  // with 3–4 answers on screen the votes are shared by more people, so each vote is worth more: every group is worth the same
+  const per = H.batch.big ? mult*L.length/2 : mult;
+  const pts=Object.fromEntries(L.map(k=>[k, Math.round(cnt[k]*per/10)*10]));
+  const res={cnt,total,win,winners,pts,sweep:false,bonus:0,same:null};
+  if (win!=="tie" && total>=2 && cnt[win]===total){ res.sweep=true; res.bonus=mult; pts[win]+=mult; }
+  if (H.seg===1){                       // two or more picked the same person: they agree, bonus for each
+    const by={}; for (const k of L){ const t=x.picks[H.cur.ids[k]]; if (t) (by[t]=by[t]||[]).push(k); }
+    const best=Object.entries(by).filter(([,ks])=>ks.length>=2).sort((a,b)=>b[1].length-a[1].length)[0];
+    if (best){ const p=H.P.get(best[0]); res.same={name:p?.name||"", av:p?.av||"", ks:best[1], n:best[1].length}; for (const k of best[1]) pts[k]+=SAME_BONUS; }
+  }
+  const who=Object.fromEntries(L.map(k=>{ const p=H.P.get(H.cur.ids[k]); return [k,[p?.name||"",p?.av||""]]; }));
+  const fast=H.seg===2;
   Music.stop();
   setPhase({...st, ph:"reveal", rv:0, res, t:0});
-  at(2600,()=>{ H.st.rv=1; Music.play("roll",2.4); push(); hostRender(); });
-  at(5100,()=>{ H.st.rv=2; H.st.res.who=who; if(pA) pA.score+=res.pts.A; if(pB) pB.score+=res.pts.B;
+  at(fast?2000:2600,()=>{ H.st.rv=1; Music.play("roll",fast?1.8:2.4); push(); hostRender(); });
+  at(fast?4000:5100,()=>{ H.st.rv=2; H.st.res.who=who;
+    for (const k of L){ const p=H.P.get(H.cur.ids[k]); if (p) p.score+=pts[k]; }
     if (H.stats){ const S=H.stats;
-      if (H.seg<=2){ S.votes[H.cur.idA]=(S.votes[H.cur.idA]||0)+vA; S.votes[H.cur.idB]=(S.votes[H.cur.idB]||0)+vB; }
-      if (res.sweep){ const w=win==="A"?H.cur.idA:H.cur.idB; S.sweeps[w]=(S.sweeps[w]||0)+1; } }
-    Music.play(vA+vB===0?"womp":res.sweep?"applause":"tada"); if(res.sweep) confetti(); push(); hostRender(); });
-  at(10500,nextDuel);
+      for (const k of L){ const pid=H.cur.ids[k];
+        if (H.seg<=2) S.votes[pid]=(S.votes[pid]||0)+cnt[k];
+        if (!S.best || cnt[k]>S.best.votes) S.best={votes:cnt[k], text:st.opts.find(o=>o[0]===k)[1], q:st.q, pid, acc:st.opts.find(o=>o[0]===k)[2]}; }
+      if (res.sweep){ const w=H.cur.ids[win]; S.sweeps[w]=(S.sweeps[w]||0)+1; } }
+    Music.play(total===0?"womp":res.sweep?"applause":"tada"); if(res.sweep) confetti(); push(); hostRender(); });
+  at(fast?8500:10500,nextDuel);
 }
 const rdsFor = seg => H.settings.rounds;
-function afterBatch(){
+/* the standings screen between segments, with up to two funny lines about who went up or down */
+function scoreScreen(seg, then){
   Music.setMood("lobby");
-  setPhase({ph:"score", seg:H.seg, rd:H.rd, rds:rdsFor(H.seg)});
-  at(9000, ()=>{
+  setPhase({ph:"score", seg, rd:H.rd, rds:rdsFor(seg), cm:standingsLines(), ttl: seg===1 ? accusedTitle() : null});
+  at(9000, then);
+}
+function standingsLines(){
+  const ranked=sc().sort((a,b)=>b[3]-a[3]), now={}; ranked.forEach((p,i)=>now[p[0]]=i+1);
+  const prev=H.ranks||{}, first=!Object.keys(prev).length, out=[]; H.ranks=now;
+  if (ranked.length<2 || ranked[0][3]<=0) return out;
+  const nm=p=>`${p[2]} ${p[1]}`, lead=ranked[0];
+  if (first) out.push(`${nm(lead)} ${pick(["أول المتصدّرين 🥇","فاتح عالكل 🥇"])}`);
+  else if (prev[lead[0]]===1) out.push(`${nm(lead)} ${pick(["متربّع عالقمة 👑","ما حدا قادر عليه 😎","مكيّف فوق 👑"])}`);
+  else out.push(`${nm(lead)} ${pick(["خطف المركز الأول! ⚡","قعد عالكرسي الأول 👑"])}`);
+  const moves=ranked.filter(p=>prev[p[0]] && p[0]!==lead[0]).map(p=>[p, prev[p[0]]-now[p[0]]]);
+  const up=moves.filter(m=>m[1]>0).sort((a,b)=>b[1]-a[1])[0], down=moves.filter(m=>m[1]<0).sort((a,b)=>a[1]-b[1])[0];
+  if (up) out.push(`${nm(up[0])} ${up[1]>=2 ? `طالع صاروخ 🚀 (+${up[1]} مراكز)` : pick(["طالع صاروخ 🚀","ولّع! 🔥","مين وقّفه؟ 💨"])}`);
+  else if (down) out.push(`${nm(down[0])} ${pick(["نازل نازل 📉","وقع عن الدرج 🪜","بدّه فزعة 🆘"])}`);
+  else if (ranked.length>=3) out.push(`${nm(ranked.at(-1))} ${pick(["لسا بيسخّن 🐢","بيلعب على مهله 🫖"])}`);
+  return out.slice(0,2);
+}
+function accusedTitle(){
+  const best=Object.entries(H.stats?.accused||{}).filter(([pid])=>H.P.get(pid)).sort((a,b)=>b[1]-a[1])[0];
+  if (!best || best[1]<2) return null; const p=H.P.get(best[0]);
+  return `🎯 المتّهَم الأول: ${p.av} ${p.name} (${cnt(best[1],"مرة","مرتين","مرات","مرة")})`;
+}
+function afterBatch(){
+  scoreScreen(H.seg, ()=>{
     if ([1,2].includes(H.seg)) return nextRound();
     if (H.seg===4){ if (!moreRounds(startWrite)) startBestQ(); return; }
     if (H.seg===8){ if (!moreRounds(startJawab)) nextSegment(); return; }
@@ -1711,7 +2082,7 @@ function endMSelf(){
 }
 function nextMaj(){
   H.mi++;
-  if (H.mi>=H.mList.length){ Music.setMood("lobby"); setPhase({ph:"score", seg:7, rd:H.rd, rds:rdsFor(7)}); at(9000,()=>{ if (!moreRounds(startMaj)) nextSegment(); }); return; }
+  if (H.mi>=H.mList.length) return scoreScreen(7, ()=>{ if (!moreRounds(startMaj)) nextSegment(); });
   const x=H.mList[H.mi], s=H.P.get(x.pid);
   H.mk++; H.mguess={}; H.msub=x.pid;
   Music.setMood("vote");
@@ -1737,43 +2108,42 @@ function endMaj(){
 function startJawab(){
   const order=shuffle(online().map(p=>p.pid)), M=order.length;
   if (M<3) return skipSeg(8);
-  const stamp=Date.now()%1e6;
+  const stamp=Date.now()%1e6, G=M>=BIG?3:2;          // 8+ players: three people write about each person
   const prompts=order.map((pid,i)=>{
     const t=H.P.get(pid), q=pickFresh(JQ, x=>x);
-    return { key:`8.${i}.${stamp}`, q, target:pid, label:`🎭 جاوب كأنك ${t.av} ${t.name}:\n${q}`, pair:[order[(i+1)%M], order[(i+2)%M]], ans:{} };
+    return { key:`8.${i}.${stamp}`, q, target:pid, label:`🎭 جاوب كأنك ${t.av} ${t.name}:\n${q}`, pair:ring(order,i,G), ans:{} };
   });
-  H.batch={prompts:shuffle(prompts), mult:J_VOTE};
+  H.batch={prompts:shuffle(prompts), mult:J_VOTE, big:M>=BIG};
   startAnswer();
 }
 function nextJ(){
   H.di++;
   const prompts=H.batch.prompts;
   if (H.di>=prompts.length) return afterBatch();
-  const x=prompts[H.di], [pa,pb]=x.pair, A=x.ans[pa], B=x.ans[pb], t=H.P.get(x.target);
-  const head={seg:8, rd:1, rds:1, di:H.di, dn:prompts.length, q:x.q, tn:[t?.name||"",t?.av||""]};
-  if (!A && !B){ Music.stop(); Music.play("womp"); setPhase({...head, ph:"reveal", res:{skip:true}}); at(4000,nextJ); return; }
-  if (!A || !B){
-    const w=H.P.get(A?pa:pb); if (w) w.score+=J_PICK;
+  const x=prompts[H.di], t=H.P.get(x.target), done=shuffle(x.pair.filter(pid=>x.ans[pid]));
+  const head={seg:8, rd:H.rd, rds:rdsFor(8), di:H.di, dn:prompts.length, q:x.q, tn:[t?.name||"",t?.av||""]};
+  if (!done.length){ Music.stop(); Music.play("womp"); setPhase({...head, ph:"reveal", res:{skip:true}}); at(4000,nextJ); return; }
+  if (done.length===1){
+    const w=H.P.get(done[0]); if (w) w.score+=J_PICK;
     Music.stop(); Music.play("tada");
-    setPhase({...head, ph:"reveal", res:{solo:true, text:A||B, name:w?.name||"", av:w?.av||"", pts:J_PICK}});
+    setPhase({...head, ph:"reveal", res:{solo:true, text:x.ans[done[0]], name:w?.name||"", av:w?.av||"", pts:J_PICK}});
     at(5500,nextJ); return;
   }
-  const flip=Math.random()<.5, idA=flip?pb:pa, idB=flip?pa:pb;
-  H.jk++; H.jpick=null; H.jvotes={}; H.jown={[idA]:"A",[idB]:"B"}; H.jtarget=x.target; H.cur={idA,idB};
+  H.jk++; H.jpick=null; H.jvotes={}; H.jown={}; H.jtarget=x.target; H.cur={ids:{}};
+  const opts=done.map((pid,i)=>{ const k=LETTERS[i]; H.jown[pid]=k; H.cur.ids[k]=pid; return [k, x.ans[pid]]; });
   Music.setMood("vote");
-  setPhase({...head, ph:"jvote", jk:H.jk, A:x.ans[idA], B:x.ans[idB], vc:0, vt:jVoters().length}, T_JVOTE, endJ);
+  setPhase({...head, ph:"jvote", jk:H.jk, opts, vc:0, vt:0}, T_JVOTE, endJ);
   botsAct();
 }
 const jVoters = () => [];   // only the person the question is about picks; nobody else votes here
 function endJ(){
-  const st=H.st, vs=Object.values(H.jvotes), vA=vs.filter(v=>v==="A").length, vB=vs.length-vA;
-  const pick=H.jpick, pA=H.P.get(H.cur.idA), pB=H.P.get(H.cur.idB);
-  const pts={A:pick==="A"?J_PICK:0, B:pick==="B"?J_PICK:0};
-  const who={A:[pA?.name||"",pA?.av||""],B:[pB?.name||"",pB?.av||""]};
+  const st=H.st, L=st.opts.map(o=>o[0]), pick=H.jpick;
+  const pts=Object.fromEntries(L.map(k=>[k, pick===k?J_PICK:0]));
+  const who=Object.fromEntries(L.map(k=>{ const p=H.P.get(H.cur.ids[k]); return [k,[p?.name||"",p?.av||""]]; }));
   Music.stop();
-  setPhase({...st, ph:"jrev", rv:0, vA, vB, pick, pts, t:0});
+  setPhase({...st, ph:"jrev", rv:0, pick, pts, t:0});
   at(2400,()=>{ H.st.rv=1; Music.play(pick?"roll":"womp",1.6); push(); hostRender(); });
-  at(4400,()=>{ H.st.rv=2; H.st.who=who; if(pA) pA.score+=pts.A; if(pB) pB.score+=pts.B; Music.play("tada"); push(); hostRender(); });
+  at(4400,()=>{ H.st.rv=2; H.st.who=who; for (const k of L){ const p=H.P.get(H.cur.ids[k]); if (p) p.score+=pts[k]; } Music.play("tada"); push(); hostRender(); });
   at(9800,nextJ);
 }
 /* segment 3: who wrote it? everyone answers the same prompt once, everyone guesses every answer except their own */
@@ -1797,7 +2167,7 @@ function nextWho(){
   const opts=online().map(p=>[p.pid,p.name,p.av]);
   H.whoOpts[H.wi]=opts;
   Music.setMood("vote");
-  setPhase({ph:"wguess", seg:3, q:H.who.q, x, opts, wi:H.wi, wn:H.whoList.length, wk:H.wk, vc:0, vt:Math.max(0,online().length-1)}, T_GUESS, endWho);
+  setPhase({ph:"wguess", seg:3, q:H.who.q, x, opts, wi:H.wi, wn:H.whoList.length, wk:H.wk, vc:0, vt:Math.max(0,online().length-1)}, online().length>=BIG ? 20 : T_GUESS, endWho);
   botsAct();
 }
 function endWho(){
@@ -1813,7 +2183,7 @@ function startWhoReveal(){
 }
 function nextReveal(){
   H.ri++;
-  if (H.ri>=H.whoList.length){ Music.setMood("lobby"); setPhase({ph:"score", seg:3, rd:H.rd, rds:rdsFor(3)}); at(9000,()=>{ if (!moreRounds(startWho)) nextSegment(); }); return; }
+  if (H.ri>=H.whoList.length) return scoreScreen(3, ()=>{ if (!moreRounds(startWho)) nextSegment(); });
   const [author,x]=H.whoList[H.ri], guesses=H.whoGuesses[H.ri]||{}, opts=H.whoOpts[H.ri]||[];
   H.revGuess=guesses; H.wAuthor=author;
   const a=H.P.get(author), tally={};
@@ -1829,9 +2199,14 @@ function nextReveal(){
     Music.duck(false); Music.play(right?"tada":"womp"); if(fooled>=2 && right===0) confetti(); push(); hostRender(); });
   at(8500,nextReveal);
 }
+/* the next g players after position i, in a circle (never i itself) */
+const ring=(order,i,g)=>Array.from({length:g},(_,j)=>order[(i+1+j)%order.length]);
 /* segment 4 */
 function startWrite(){
   H.wq={};
+  // three ready questions for each player, for anyone who can't think of one
+  const used=Used.load(), pool=shuffle(QS.filter(q=>!used.has(q))); let i=0;
+  H.sugg=Object.fromEntries(online().map(p=>[p.pid, Array.from({length:3},()=>pool.length ? pool[(i++)%pool.length] : pick(QS))]));
   if (H.rd<=1){ H.allQs=[]; if (H.stats) H.stats.seg4start=Object.fromEntries([...H.P.values()].map(p=>[p.pid,p.score])); }
   Music.setMood("write");
   setPhase({ph:"write", seg:4}, T_WRITE, endWrite);
@@ -1840,24 +2215,24 @@ function startWrite(){
 function endWrite(){
   const order=shuffle(online().map(p=>p.pid)), M=order.length;
   if (M<3) return skipSeg(4);
-  const stamp=Date.now()%1e6, writers=order.filter(pid=>H.wq[pid]);
+  const stamp=Date.now()%1e6, writers=order.filter(pid=>H.wq[pid]), G=M>=BIG?3:2;
   let prompts;
   if (writers.length===M){
     // everyone wrote: each question goes to the next two players in a circle, so everyone answers exactly 2 and never their own
-    prompts=order.map((pid,i)=>({ key:`4.${i}.${stamp}`, q:H.wq[pid], author:pid, pair:[order[(i+1)%M], order[(i+2)%M]], ans:{} }));
+    prompts=order.map((pid,i)=>({ key:`4.${i}.${stamp}`, q:H.wq[pid], author:pid, pair:ring(order,i,G), ans:{} }));
   } else if (writers.length){
     // only the questions players actually wrote; each to the two least-busy players who did not write it
     const load=Object.fromEntries(order.map(pid=>[pid,0]));
     prompts=shuffle(writers).map((pid,i)=>{
-      const pick2=shuffle(order.filter(x=>x!==pid)).sort((a,b)=>load[a]-load[b]).slice(0,2);
+      const pick2=shuffle(order.filter(x=>x!==pid)).sort((a,b)=>load[a]-load[b]).slice(0,G);
       pick2.forEach(x=>load[x]++);
       return { key:`4.${i}.${stamp}`, q:H.wq[pid], author:pid, pair:pick2, ans:{} };
     });
   } else {
     // nobody wrote anything: fall back to the game's own questions so the round still happens
-    prompts=order.map((pid,i)=>({ key:`4.${i}.${stamp}`, q:nextPrompt(Math.random()<.5?"q":"s"), author:null, pair:[order[(i+1)%M], order[(i+2)%M]], ans:{} }));
+    prompts=order.map((pid,i)=>({ key:`4.${i}.${stamp}`, q:nextPrompt(Math.random()<.5?"q":"s"), author:null, pair:ring(order,i,G), ans:{} }));
   }
-  H.batch={prompts:shuffle(prompts), mult:MULT[4]};
+  H.batch={prompts:shuffle(prompts), mult:MULT[4], big:M>=BIG};
   H.allQs=(H.allQs||[]).concat(prompts.filter(x=>x.author));
   startAnswer();
 }
@@ -1912,7 +2287,35 @@ function computeAwards(){
   }
   return out;
 }
+/* end of the night: a few funny numbers, then the best answer of the whole game, then the awards and the podium */
+function nightStats(){
+  const S=H.stats; if (!S) return [];
+  const P_=pid=>H.P.get(pid), out=[];
+  const sp=Object.entries(S.spd||{}).filter(([pid,s])=>s.n>=2 && P_(pid)).map(([pid,s])=>[pid,s.sum/s.n]).sort((a,b)=>a[1]-b[1])[0];
+  if (sp) out.push({icon:"⚡", title:"أسرع واحد بالكتابة", pid:sp[0], line:`معدّله ${Math.max(1,Math.round(sp[1]))} ثانية للجواب`});
+  const ac=Object.entries(S.accused||{}).filter(([pid])=>P_(pid)).sort((a,b)=>b[1]-a[1])[0];
+  if (ac && ac[1]>=2) out.push({icon:"🎯", title:"المتّهَم الأول", pid:ac[0], line:`اختاروه ${cnt(ac[1],"مرة","مرتين","مرات","مرة")} بـ«مين فينا؟»`});
+  if (S.short && P_(S.short.pid) && [...S.short.text].length<=14) out.push({icon:"🤏", title:"أقصر جواب", pid:S.short.pid, line:`«${S.short.text}»`});
+  return out.map(x=>{ const p=P_(x.pid); return {...x, who:[p.name,p.av]}; });
+}
 function finalScreen(){
+  const list=nightStats();
+  if (!list.length) return bestAnswerScreen();
+  Music.setMood("lobby"); Music.play("whistle");
+  setPhase({ph:"stats", rv:-1, list});
+  let t=2200;
+  list.forEach((_,i)=>{ at(t,()=>{ H.st.rv=i; Music.play("pop"); push(); hostRender(); }); t+=3600; });
+  at(t+800, bestAnswerScreen);
+}
+function bestAnswerScreen(){
+  const b=H.stats?.best, p=b && H.P.get(b.pid);
+  if (!b || !p || b.votes<1) return awardsScreen();
+  Music.stop(); Music.play("roll",2.2);
+  setPhase({ph:"bestans", rv:0, q:b.q, text:b.text, acc:b.acc, who:[p.name,p.av], votes:b.votes});
+  at(2400,()=>{ H.st.rv=1; Music.play("tada"); confetti(); push(); hostRender(); });
+  at(9000, awardsScreen);
+}
+function awardsScreen(){
   const list=computeAwards();
   if (!list.length) return podiumScreen();
   Music.setMood("vote");
@@ -1966,12 +2369,14 @@ function timerEl(t,T){ const el=h("div",{class:"timer"+(t<=5?" hot":""),role:"ti
 function board(list, myPid){
   const sorted=[...list].sort((a,b)=>b[3]-a[3]);
   // on a phone the yellow row is "you"; on the main screen it is first place
-  return h("div",{class:"board"}, sorted.map((p,i)=>h("div",{class:"rowp"+((myPid ? p[0]===myPid : i===0&&p[3]>0)?" first":"")+(p[4]?"":" off")},
+  return h("div",{class:"board"+(!myPid && sorted.length>6?" many":"")}, sorted.map((p,i)=>h("div",{class:"rowp"+((myPid ? p[0]===myPid : i===0&&p[3]>0)?" first":"")+(p[4]?"":" off")},
     h("span",{class:"r"}, i===0&&p[3]>0&&myPid ? "👑" : i+1), h("div",{class:"av","aria-hidden":"true"},p[2]), h("span",{class:"nm"},p[1]+(p[0]===myPid?" (إنت)":"")), h("span",{class:"sc"},p[3].toLocaleString("en")))));
 }
 function qrBox(size=170){
+  const keep=H.code+"."+size, ex=document.querySelector(`.joinbox[data-keep="${keep}"]`);
+  if (ex) return ex.cloneNode(true);          // same code: reuse the drawn QR instead of drawing it again
   const url=joinUrl(H.code);
-  const box=h("div",{class:"joinbox"}, h("div",{class:"qr"}), h("span",{class:"jtip"},"📷 صوّروا الكود"), h("span",{class:"jtip small"},"أو ادخلوا الرقم ",h("b",{},H.code)));
+  const box=h("div",{class:"joinbox","data-keep":H.code+"."+size}, h("div",{class:"qr"}), h("span",{class:"jtip"},"📷 صوّروا الكود"), h("span",{class:"jtip small"},"أو ادخلوا الرقم ",h("b",{},H.code)));
   if (window.QRCode){ try{ new QRCode(box.querySelector(".qr"),{text:url,width:size,height:size,colorDark:"#0f1f3b",colorLight:"#f5f9ff",correctLevel:QRCode.CorrectLevel.M}); }catch{} }
   else box.querySelector(".qr").append(h("span",{class:"small"},"ما قدرنا نرسم الـQR. افتحوا الرابط واكتبوا الكود."));
   return box;
@@ -1981,6 +2386,8 @@ function showQR(){
     h("div",{style:"display:flex;flex-direction:column;gap:14px;align-items:center"}, qrBox(280), h("button",{class:"btn",onclick:()=>ov.remove()},"تمام")));
   document.body.append(ov);
 }
+/* «مين فينا؟»: who the answer is about, on top of the card */
+function accLine(acc){ return acc ? h("div",{class:"acc"}, h("span",{},"اختار"), h("span",{"aria-hidden":"true"},acc[1]), h("b",{},acc[0]), acc[2] ? h("small",{},"اعترف على حاله 😂") : null) : null; }
 function waitingFor(list){ return null; }   // names are hidden, the count next to the timer is enough
 function waitingForNames(list){
   if (!list.length) return null;
@@ -1994,7 +2401,7 @@ function segLabel(st){
 function sceneFor(st){
   if (!st || st.ph==="lobby") return "0";
   if (["podium","final"].includes(st.ph)) return "5";
-  if (st.ph==="awards") return "6";
+  if (["awards","stats","bestans"].includes(st.ph)) return "6";
   if (["bestq","bestqr"].includes(st.ph)) return "4";
   return st.seg ? String(st.seg) : "0";
 }
@@ -2023,6 +2430,7 @@ function hostRender(){
       h("div",{class:"lobby"},
         qrBox(),
         h("div",{class:"lcol"},
+          H.toast ? h("div",{class:"toast",role:"status"}, H.toast.text) : null,
           on.length ? h("div",{class:"lobbyp"}, on.map(p=>avatar(p.av,p.name,true,null,p.pid)))
                     : h("p",{class:"empty"}, H.net ? "صوّروا الكود وادخلوا 📱" : "ضيفوا بوتات من الإعدادات للتجربة"),
           h("button",{class:"btn big-btn",disabled:!can,onclick:startGame}, can?"يلّا نبلّش ▶":`بدنا ${3-on.length} كمان`),
@@ -2067,14 +2475,14 @@ function hostRender(){
     const per={}, done={};
     for (const x of H.batch.prompts) for (const pid of x.pair){ per[pid]=(per[pid]||0)+1; if(x.ans[pid]) done[pid]=(done[pid]||0)+1; }
     body=[
-      h("h2",{class:"disp qcard"}, "جاوبوا من تلفوناتكم ✍️"),
+      h("h2",{class:"disp qcard"}, st.seg===1 ? "اختاروا واحد منكم واكتبوا ليش 👆" : "جاوبوا من تلفوناتكم ✍️"),
       h("div",{class:"lobbyp"}, on.filter(p=>per[p.pid]).map(p=>avatar(p.av,p.name,(done[p.pid]||0)>=per[p.pid],`${done[p.pid]||0}/${per[p.pid]}`))),
       timerEl(st.t,st.T)
     ];
   } else if (st.ph==="vote"){
     body=[
       h("h2",{class:"disp qcard qsm"}, st.q),
-      h("div",{class:"answers"}, h("div",{class:"ans"},h("span",{class:"tag"},"A"),st.A), h("div",{class:"ans"},h("span",{class:"tag"},"B"),st.B)),
+      h("div",{class:"answers n"+st.opts.length}, st.opts.map(([k,txt,acc])=>h("div",{class:"ans"}, h("span",{class:"tag"},k), accLine(acc), txt))),
       h("div",{class:"duel"}, timerEl(st.t,st.T), h("span",{class:"kind"},`صوّتوا · ${st.vc||0}/${st.vt||0}`)),
       waitingFor(on.filter(p=>!H.own[p.pid] && !H.votes[p.pid]))
     ];
@@ -2095,9 +2503,10 @@ function hostRender(){
       h("h2",{class:"disp qcard qsm"}, st.q),
       h("div",{class:"answers",style:"grid-template-columns:minmax(0,1fr);width:min(720px,100%)"}, h("div",{class:"ans"+(rev&&st.rv?" win":"")}, st.x, rev&&st.rv ? h("div",{class:"owner"},"✍️ ",r.author[2]," ",r.author[1]) : null)),
       rev&&st.rv ? null : h("p",{class:"kind",style:"font-size:1.6rem;margin:0"}, rev ? "مين كاتبه؟ 🥁" : "مين كاتب هالجواب؟ 🕵️"),
-      rev ? h("div",{class:"lobbyp"}, st.tally.map(([pid,name,av,n])=>h("div",{class:"who"+(st.rv&&pid===r.author[0]?" ok":"")},
-              h("span",{class:"tick",style:n?"":"opacity:.4"},n), h("div",{class:"av","aria-hidden":"true"},av), h("div",{class:"nm"},name),
-              h("div",{class:"gbar"},h("i",{style:`width:${n/max*100}%`})))))
+      rev ? h("div",{class:"lineup"+(st.rv?"":" scan")}, st.tally.map(([pid,name,av,n],i)=>{ const caught=st.rv&&pid===r.author[0];
+              const mood = !st.rv ? "nervous" : caught ? (r.right>=r.fooled?"sad":"cool") : null;
+              return h("div",{class:"sus"+(caught?" caught":st.rv?" off":""),style:`--i:${i}`},
+                h("span",{class:"accn"}, n?`👉 ${n}`:""), h("div",{class:"av","aria-hidden":"true"},moodAv(av,mood)), h("div",{class:"nm"},name)); }))
           : null,
       rev && st.rv ? h("p",{class:"banner"}, r.right?`${r.right} خمّنوها صح (+${WHO_RIGHT} لكل واحد)`:"ولا حدا عرفه! 🕵️", r.fooled?` · ${r.author[1]} ضلّل ${r.fooled} (+${r.pts})`:"") : null,
       rev ? null : h("div",{class:"duel"}, timerEl(st.t,st.T), h("span",{class:"kind"},`خمّنوا · ${st.vc||0}/${st.vt||0}`)),
@@ -2107,24 +2516,31 @@ function hostRender(){
     const r=st.res;
     if (r.skip) body=[h("h2",{class:"disp qcard qsm"},st.q), h("p",{class:"banner"},"ولا حدا جاوب 😶"), h("p",{class:"muted"},"ولا نقطة لهالسؤال.")];
     else if (r.solo) body=[h("h2",{class:"disp qcard qsm"},st.q),
-      h("div",{class:"answers",style:"grid-template-columns:minmax(0,1fr);width:min(640px,100%)"}, h("div",{class:"ans win"}, r.text, h("div",{class:"owner"},r.av," ",r.name," ",h("span",{class:"pts"},"+"+r.pts)))),
-      h("p",{class:"muted"},"الثاني ما لحق يكتب ⏰")];
+      h("div",{class:"answers",style:"grid-template-columns:minmax(0,1fr);width:min(640px,100%)"}, h("div",{class:"ans win"}, accLine(r.acc), r.text, h("div",{class:"owner hop"},moodAv(r.av,"win")," ",r.name," ",h("span",{class:"pts"},"+"+r.pts)))),
+      h("p",{class:"muted"},"الباقي ما لحقوا يكتبوا ⏰")];
     else {
-      const tot=Math.max(1,r.vA+r.vB);
-      const card=(k,txt)=>h("div",{class:"ans"+(st.rv>=1&&r.win!=="tie"?(r.win===k?" win":" lose"):"")},
-        h("span",{class:"tag"},k), txt,
-        h("div",{class:"bar"+(st.rv===0?" anim":"")},h("i",{style:`width:${(k==="A"?r.vA:r.vB)/tot*100}%`})),
-        h("div",{class:"vn"},votesTxt(k==="A"?r.vA:r.vB)),
-        st.rv>=2 && r.who ? h("div",{class:"owner"}, r.who[k][1]," ",r.who[k][0]," ", h("span",{class:"pts"},"+"+r.pts[k])) : null);
+      const tot=Math.max(1,r.total);
+      const card=([k,txt,acc])=>{ const won=r.winners.includes(k), mood=st.rv>=2&&r.total ? (won?"win":"sad") : null;
+        return h("div",{class:"ans"+(st.rv>=1&&r.total?(won?" win":" lose"):"")},
+          h("span",{class:"tag"},k), accLine(acc), txt,
+          h("div",{class:"bar"+(st.rv===0?" anim":"")},h("i",{style:`width:${r.cnt[k]/tot*100}%`})),
+          h("div",{class:"vn"},votesTxt(r.cnt[k])),
+          st.rv>=2 && r.who ? h("div",{class:"owner"+(mood==="win"?" hop":"")}, moodAv(r.who[k][1],mood)," ",r.who[k][0]," ", h("span",{class:"pts"},"+"+r.pts[k])) : null); };
       body=[
         h("h2",{class:"disp qcard qsm"},st.q),
-        h("div",{class:"answers"}, card("A",st.A), card("B",st.B)),
-        st.rv===1 ? h("p",{class:"banner"}, r.win==="tie"?"تعادل! مين كتبهم؟":"الجواب الفائز… بس مين كاتبه؟ 🥁") : null,
-        st.rv>=2 ? h("p",{class:"banner"}, r.win==="tie"?"تعادل!": r.sweep?`💥 سحق! كل الأصوات · بونص +${r.bonus}`:"🎉 مبروك!") : null
+        h("div",{class:"answers n"+st.opts.length}, st.opts.map(card)),
+        st.rv===1 ? h("p",{class:"banner"}, !r.total?"ولا حدا صوّت 😶":r.win==="tie"?"تعادل! مين كتبهم؟":"الجواب الفائز… بس مين كاتبه؟ 🥁") : null,
+        // one line only, so the screen stays calm: a sweep or a tie first, then "they agreed", then a plain cheer (only for 1-on-1)
+        st.rv>=2 ? (r.win==="tie" || r.sweep ? h("p",{class:"banner"}, r.win==="tie"?"تعادل!":`💥 سحق! كل الأصوات · بونص +${r.bonus}`)
+                    : r.same ? h("p",{class:"kind same"}, `🎯 ${r.same.n===2?"ثنين":r.same.n} اتفقوا على ${r.same.av} ${r.same.name}! +${SAME_BONUS} لكل واحد`)
+                    : st.opts.length===2 ? h("p",{class:"banner"},"🎉 مبروك!") : null) : null
       ];
     }
   } else if (st.ph==="score"){
-    body=[h("p",{class:"banner"}, st.seg===4?"نتيجة فقرة التعويض":"الترتيب لهلّأ"), board(sc())];
+    body=[h("p",{class:"banner"}, st.seg===4?"نتيجة فقرة التعويض":"الترتيب لهلّأ"),
+      st.ttl ? h("p",{class:"kind same"}, st.ttl) : null,
+      board(sc()),
+      (st.cm||[]).length ? h("div",{class:"cm"}, st.cm.map(l=>h("span",{class:"cmline"},l))) : null];
   } else if (st.ph==="bestq"){
     body=[
       h("h2",{class:"disp qcard"},"أحلى سؤال؟ 👑"),
@@ -2154,7 +2570,8 @@ function hostRender(){
       shown ? [h("div",{class:"bar anim"},h("i",{style:`width:${n/tot*100}%`})), h("div",{class:"vn"}, n ? (n===1?"واحد توقّع هاد":`${n===2?"اثنين":n} توقّعوا هاد`) : "ولا حدا توقّع هاد")] : null,
       shown&&st.real===k ? h("div",{class:"jpick"},`✅ ${st.sn[0]} اختار هاد`) : null);
     body=[
-      h("div",{class:"subj"}, h("div",{class:"av","aria-hidden":"true"},st.sn[1]), h("span",{class:"nm"},`${st.sn[0]} شو اختار؟`), h("span",{class:"kind"},`${st.i+1}/${st.n}`)),
+      h("div",{class:"subj"}, rev&&st.rv ? h("div",{class:"av","aria-hidden":"true"}, moodAv(st.sn[1], st.rv>=2 ? (st.right?.length ? "sad" : "cool") : null))
+                                     : h("div",{class:"av faces","aria-hidden":"true"}, h("span",{class:"f1"},moodAv(st.sn[1],"nervous")), h("span",{class:"f2"},moodAv(st.sn[1],"cool"))), h("span",{class:"nm"},`${st.sn[0]} شو اختار؟`), h("span",{class:"kind"},`${st.i+1}/${st.n}`)),
       h("h2",{class:"disp qcard qsm"}, st.q),
       h("div",{class:"mopts"}, opt("A",st.a,st.cA), opt("B",st.b,st.cB)),
       rev ? (st.rv>=2 ? h("div",{class:"mres"}, h("p",{class:"banner"}, st.right.length ? `عرفوه! +${st.pts}` : "ولا حدا عرفه 😅"),
@@ -2163,19 +2580,32 @@ function hostRender(){
       rev ? null : waitingFor(on.filter(p=>p.pid!==H.msub && !H.mguess[p.pid]))
     ];
   } else if (st.ph==="jvote" || st.ph==="jrev"){
-    const rev=st.ph==="jrev", tot=Math.max(1,(st.vA||0)+(st.vB||0));
-    const card=(k,txt)=>h("div",{class:"ans"+(rev&&st.rv>=1&&st.pick===k?" win":"")},
+    const rev=st.ph==="jrev", picked=rev&&st.rv>=1 ? st.pick : null;
+    const card=([k,txt])=>h("div",{class:"ans bubble"+(picked===k?" win":picked?" lose":"")},
       h("span",{class:"tag"},k), txt,
-      rev&&st.rv>=1&&st.pick===k ? h("div",{class:"jpick"},`🎯 ${st.tn[0]} اختار هاد`) : null,
-      rev&&st.rv>=2&&st.who ? h("div",{class:"owner"}, st.who[k][1]," ",st.who[k][0]," ", st.pts[k]?h("span",{class:"pts"},"+"+st.pts[k]):null) : null);
+      picked===k ? h("div",{class:"jpick"},`🎯 ${st.tn[0]} اختار هاد`) : null,
+      rev&&st.rv>=2&&st.who ? h("div",{class:"owner"+(st.pts[k]?" hop":"")}, moodAv(st.who[k][1], picked?(st.pts[k]?"win":"sad"):null)," ",st.who[k][0]," ", st.pts[k]?h("span",{class:"pts"},"+"+st.pts[k]):null) : null);
     body=[
-      h("p",{class:"kind"},`🎭 عن ${st.tn[1]} ${st.tn[0]}`),
-      h("h2",{class:"disp qcard qsm"}, st.q),
-      h("div",{class:"answers"}, card("A",st.A), card("B",st.B)),
+      h("div",{class:"thinker"}, h("div",{class:"av big","aria-hidden":"true"}, moodAv(st.tn[1], picked?"win":"cool")),
+        h("span",{class:"kind"},`💭 شو بيحكي ${st.tn[0]}؟`), h("h2",{class:"disp qcard qsm"}, st.q)),
+      h("div",{class:"answers bubbles n"+st.opts.length}, st.opts.map(card)),
       rev ? (st.rv===1&&!st.pick ? h("p",{class:"banner"},`${st.tn[0]} ما اختار 🤷`) : null)
           : h("div",{class:"duel"}, timerEl(st.t,st.T),
               h("span",{class:"kind"}, st.picked?`🎯 ${st.tn[0]} اختار ✓`:`🎯 ${st.tn[0]} عم يختار الجواب الأقرب إله…`))
     ];
+  } else if (st.ph==="stats"){
+    body=[h("p",{class:"banner"},"📊 أرقام الليلة"),
+      h("div",{class:"stats"}, st.list.slice(0,st.rv+1).map(x=>h("div",{class:"statrow"},
+        h("span",{class:"sic","aria-hidden":"true"},x.icon),
+        h("div",{class:"stx"}, h("span",{class:"stt"},x.title), h("span",{class:"stl"},x.line)),
+        h("div",{class:"owner hop"}, moodAv(x.who[1],"win")," ",x.who[0]))))];
+  } else if (st.ph==="bestans"){
+    body=[h("p",{class:"banner"},"⭐ أحلى جواب الليلة"),
+      h("h2",{class:"disp qcard qsm"}, st.q),
+      h("div",{class:"answers",style:"grid-template-columns:minmax(0,1fr);width:min(720px,100%)"},
+        h("div",{class:"ans"+(st.rv?" win":"")}, accLine(st.acc), st.text, h("div",{class:"vn"},votesTxt(st.votes)),
+          st.rv ? h("div",{class:"owner hop"}, moodAv(st.who[1],"win")," ",st.who[0]) : null)),
+      st.rv ? null : h("p",{class:"kind"},"مين كاتبه؟ 🥁")];
   } else if (st.ph==="awards"){
     const a=st.list[st.rv];
     body = st.rv<0
@@ -2198,14 +2628,20 @@ function hostRender(){
       h("button",{class:"btn",onclick:toLobby},"نلعب كمان مرة")];
   }
   const wasOpen = H.keepSettings || app.querySelector("details.settings")?.open;
-  app.replaceChildren(bar, h("main",{class:"stage"}, body));
+  // same moment of the game (more votes coming in, someone joined…): just update what changed.
+  // a new moment (new phase, next reveal step): draw it fresh so its entrance animations play.
+  const key=[st.ph,st.pt,st.rv,st.shown?1:0,st.ph==="lobby"?"":st.di].join("|");
+  const next=h("div",{}, bar, h("main",{class:"stage"}, body));
+  if (key===H.drawKey && app.firstElementChild?.classList.contains("hbar")) morphKids(app, next);
+  else app.replaceChildren(...next.childNodes);
+  H.drawKey=key;
   if (wasOpen){ const d=app.querySelector("details.settings"); if (d) d.open=true; }
   if (H.panelDraw) H.panelDraw();
   H.keepSettings=false;
 }
 
 /* ================= PLAYER ================= */
-const P = { ms:{}, out:[], peer:null, conn:null, pid:null, name:"", av:"", code:"", st:null, sentA:{}, sentV:{}, sentQ:false, draft:"", draftKey:"", sig:null, found:false, retry:null };
+const P = { ms:{}, pick:{}, out:[], peer:null, conn:null, pid:null, name:"", av:"", code:"", st:null, sentA:{}, sentV:{}, sentQ:false, draft:"", draftKey:"", sig:null, found:false, retry:null };
 function myPid(){ let id=ls.get("mf.pid"); if(!id){ id=Math.random().toString(36).slice(2,12); ls.set("mf.pid",id);} return id; }
 
 function joinForm(err, preset){
@@ -2251,7 +2687,7 @@ function playerJoin(code,name,av){
   P.peer.on("disconnected", ()=>{ try{ P.peer.reconnect(); }catch{} });
 }
 function connectHost(){
-  const conn=P.peer.connect(NS+P.code,{reliable:true});
+  const conn=P.peer.connect(NS+P.code,{reliable:true,serialization:"json"});
   P.conn=conn;
   conn.on("open", ()=>{ P.found=true; conn.send({t:"hello",pid:P.pid,name:P.name,av:P.av}); flush(); });
   conn.on("data", d=>{
@@ -2261,6 +2697,7 @@ function connectHost(){
     if (d && d.t==="who"){ try{ conn.send({t:"hello",pid:P.pid,name:P.name,av:P.av}); }catch{} return; }
     if (d && d.t==="you" && typeof d.pid==="string"){ P.pid=d.pid; ls.set("mf.pid",d.pid); P.sig=null; return; }
     if (d && d.t==="kicked"){ P.kicked=true; clearTimeout(P.retry); P.retry=null; try{ P.peer?.destroy(); }catch{} kickedScreen(); return; }
+    if (d && d.t==="tk"){ if (P.st && P.st.pt===d.pt){ P.st.t=d.s; playerRender(); } return; }
     if (d && d.t==="st"){ P.st=d.st; P.out=P.out.filter(o=>o.pt===d.st.pt && !confirmed(o.msg,d.st)); playerRender(); } });
   conn.on("close", ()=>{ if (P.conn===conn && !P.kicked) retryLater(); });
   conn.on("error", ()=>{ if (P.conn===conn && !P.kicked) retryLater(); });
@@ -2325,6 +2762,26 @@ function writeBox(id, maxlen, placeholder, key){
   area.addEventListener("input",()=>{P.draft=area.value; cnt.textContent=`${area.value.length}/${maxlen}`;});
   return [area,cnt];
 }
+/* one coloured line on the phone that always says what to do right now: yellow = your turn, blue = look at the screen, grey = wait */
+function doLine(st, me, f){
+  if (!st) return ["",""];
+  const look=["👀 عيونكم عالشاشة","look"], wait=t=>["⏳ "+t,"wait"], act=t=>[t,"act"];
+  switch (st.ph){
+    case "lobby": return wait("استنى لحد ما تبلّش اللعبة");
+    case "seg": return (me.ready||P.sentV["r"+st.pt]) ? wait("بنستنى الباقي يجهزوا") : act("📖 اقرأ القواعد واكبس جاهز");
+    case "answer": return f.cur ? act({1:"👆 اختار حدا واكتب ليش", 2:"✍️ كمّل الجملة بأضحك طريقة", 4:"✍️ جاوب على سؤال صاحبك", 8:"🎭 جاوب كأنك هو"}[st.seg]||"✍️ اكتب جوابك") : wait("استنى الباقي يخلّصوا");
+    case "vote": return me.opt ? ["🤞 جوابك عالشاشة","look"] : f.voted ? wait("استنى النتيجة") : act("👆 اختار الأضحك");
+    case "wans": return f.wrote ? wait("استنى الباقي") : act("✍️ جاوب على السؤال، سرًّا");
+    case "wguess": return me.author ? ["🤫 هاد جوابك، ولا كلمة!","look"] : f.voted ? wait("استنى الباقي") : act("🤔 احزر مين كتب هالجواب");
+    case "write": return f.wrote ? wait("استنى الباقي") : act("✍️ اكتب سؤال أو اختار واحد جاهز");
+    case "mself": return f.mcur ? act("🤫 جاوب عن حالك") : wait("استنى الباقي");
+    case "mq": return me.sub ? ["😐 خلّي وجهك عادي","look"] : f.voted ? wait("استنى نشوف شو اختار") : act(`🔮 احزر شو اختار ${st.sn[0]}`);
+    case "jvote": return me.role==="t" && !f.voted ? act("🎯 اختار الأقرب إلك") : look;
+    case "bestq": return f.voted ? wait("استنى النتيجة") : act("👑 صوّت لأحلى سؤال");
+    case "score": return ["🏆 هيك الترتيب لهلّأ","look"];
+    default: return look;
+  }
+}
 function playerRender(){
   const st=P.st, me=st?.me||{};
   const mine=st?.sc?.find(s=>s[0]===P.pid);
@@ -2336,13 +2793,17 @@ function playerRender(){
   const wrote = (st?.ph==="write"||st?.ph==="wans") && (me.done || P.sentQ===st.pt);
   if (st && st.t!=null && st.t<=2 && P.draft.trim()){
     const v=clean(P.draft, st.ph==="write"?QLEN:MAXLEN);
-    if (st.ph==="answer" && cur && P.draftKey===cur[0]){ P.sentA[cur[0]]=1; send({t:"ans",k:cur[0],x:v,auto:1}); P.draft=""; return playerRender(); }
+    if (st.ph==="answer" && cur && P.draftKey===cur[0] && (st.seg!==1 || P.pick[cur[0]])){ P.sentA[cur[0]]=1; send({t:"ans",k:cur[0],x:v,who:P.pick[cur[0]],auto:1}); P.draft=""; return playerRender(); }
     if (st.ph==="wans" && !wrote && P.draftKey==="wans"+st.pt){ P.sentQ=st.pt; send({t:"wa",x:v,auto:1}); P.draft=""; return playerRender(); }
     if (st.ph==="write" && !wrote && P.draftKey==="write"+st.pt){ P.sentQ=st.pt; send({t:"q",x:v,auto:1}); P.draft=""; return playerRender(); }
   }
+  // «مين فينا؟»: picked someone but wrote nothing: still send the pick when time runs out
+  if (st && st.ph==="answer" && st.seg===1 && cur && st.t!=null && st.t<=2 && P.pick[cur[0]] && !P.draft.trim()){
+    P.sentA[cur[0]]=1; send({t:"ans",k:cur[0],x:"🤐",who:P.pick[cur[0]],auto:1}); return playerRender(); }
   const sig = st ? [st.ph,st.pt,st.shown?1:0,st.seg,st.rd,st.di,st.vk,st.rv,cur?.[0]||"",voted||"",wrote?1:0,me.opt||"",me.author?1:0,me.role||"",me.sub?1:0,["score","final"].includes(st.ph)?JSON.stringify(st.sc):""].join("|") : "none";
   if (sig===P.sig && app.querySelector(".phone .ptop")){
-    app.querySelectorAll(".ptimer").forEach(el=>{ el.textContent=st?.t??""; el.classList.toggle("hot",(st?.t??99)<=5); });
+    app.querySelectorAll(".ptimer").forEach(el=>{ const was=el.textContent; el.textContent=st?.t??""; const hot=(st?.t??99)<=5; el.classList.toggle("hot",hot);
+      if (hot && st.t>0 && was!==el.textContent){ el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop"); } });
     const pts=app.querySelector(".ptop .pts"); if(pts) pts.textContent=(mine?mine[3]:0).toLocaleString("en");
     return;
   }
@@ -2368,7 +2829,7 @@ function playerRender(){
     if (wrote) body=[h("p",{class:"big"},"وصل جوابك ✓"),h("p",{class:"muted center"},"خلّي وجهك عادي 😐 بعدين الكل رح يخمّن مين كاتبه.")];
     else {
       const [area,cnt]=writeBox("pans",MAXLEN,"اكتب جوابك…","wans"+st.pt);
-      body=[ h("div",{class:"ptop"},h("span",{class:"lbl"},"مين كاتبها؟ جاوب سرًّا"),clock()),
+      body=[ h("div",{class:"ptop"},h("span",{class:"lbl"},""),clock()),
         h("p",{class:"disp pq"},st.q), area, cnt,
         h("p",{class:"muted small"},"بعدين الكل رح يخمّن مين كاتب كل جواب. ضلّلهم وبتاخد نقاط."),
         h("button",{class:"btn",onclick:()=>{const v=clean(area.value,MAXLEN); if(v){ P.sentQ=st.pt; send({t:"wa",x:v}); P.draft=""; playerRender(); }}},"ابعت الجواب") ];
@@ -2377,7 +2838,7 @@ function playerRender(){
   else if (st.ph==="wguess"){
     if (me.author) body=[h("p",{class:"big"},"هاد جوابك 🤫"),h("p",{class:"muted center"},"ولا كلمة! كل واحد بيخمّن غلط بيعطيك "+WHO_FOOL+" نقطة، والكشف بالآخر."), h("p",{class:"center"},clock())];
     else if (voted) body=[h("p",{class:"big"},"وصل تخمينك ✓"),h("p",{class:"muted center"},"الكشف بالآخر بعد ما نخلّص كل الأجوبة 🤫")];
-    else body=[ h("div",{class:"ptop"},h("span",{class:"lbl"},"مين كاتب هالجواب؟"),clock()),
+    else body=[ h("div",{class:"ptop"},h("span",{class:"lbl"},`${st.wi+1} من ${st.wn}`),clock()),
       h("p",{class:"muted"},st.q),
       h("p",{class:"disp pq"},"«"+st.x+"»"),
       ...st.opts.filter(o=>o[0]!==P.pid).map(([id,name,av])=>h("button",{class:"vbtn",onclick:()=>{ P.sentV["w"+st.pt]=name; send({t:"g",k:st.wk,id}); playerRender(); }},
@@ -2394,28 +2855,34 @@ function playerRender(){
     if (wrote) body=[h("p",{class:"big"},"وصل سؤالك ✓"),h("p",{class:"muted center"},"غيرك رح يجاوب عليه. استنى الباقي.")];
     else {
       const [area,cnt]=writeBox("pq",QLEN,"اكتب سؤال مجنون أو بداية جملة…","write"+st.pt);
-      body=[ h("div",{class:"ptop"},h("span",{class:"lbl"},"فقرة التعويض: اكتب سؤال"),clock()),
-        h("p",{class:"muted"},"اسأل إشي بيطلّع أجوبة مضحكة. ممكن تكتب جملة ناقصة كمان."), area, cnt,
-        h("button",{class:"btn",onclick:()=>{const v=clean(area.value,QLEN); if(v){ P.sentQ=st.pt; send({t:"q",x:v}); playerRender(); }}},"ابعت السؤال") ];
+      body=[ h("div",{class:"ptop"},h("span",{class:"lbl"},""),clock()),
+        area, cnt,
+        h("button",{class:"btn",onclick:()=>{const v=clean(area.value,QLEN); if(v){ P.sentQ=st.pt; send({t:"q",x:v}); playerRender(); }}},"ابعت سؤالي"),
+        (me.sugg||[]).length ? h("div",{class:"sugg"}, h("p",{class:"lbl"},"💡 أو اختار واحد جاهز:"),
+          me.sugg.map(q=>h("button",{class:"vbtn sbtn",onclick:()=>{ P.sentQ=st.pt; send({t:"q",x:q}); P.draft=""; playerRender(); }}, h("span",{},q)))) : null ];
     }
   }
   else if (st.ph==="answer"){
     if (cur){
-      const [area,cnt]=writeBox("pans",MAXLEN, st.seg===8 ? "جاوب زي ما هو بيجاوب…" : "اكتب أضحك إشي ببالك…", cur[0]);
-      body=[ h("div",{class:"ptop"},h("span",{class:"lbl"}, total>1?`سؤال ${idx+1} من ${total}`:"دورك! جاوب سرًّا"), clock()),
+      const seg1=st.seg===1, chosen=P.pick[cur[0]];
+      const [area,cnt]=writeBox("pans",MAXLEN, seg1 ? "ليش؟ اكتب السبب بسطر…" : st.seg===8 ? "جاوب زي ما هو بيجاوب…" : "اكتب أضحك إشي ببالك…", cur[0]);
+      const tiles = seg1 ? h("div",{class:"ptiles"}, (st.sc||[]).filter(s=>s[4]).map(([pid,name,av])=>
+        h("button",{class:"ptile","aria-pressed":String(chosen===pid),onclick:()=>{ P.pick[cur[0]]=pid; P.sig=null; playerRender(); }},
+          h("span",{class:"tav","aria-hidden":"true"},av), h("span",{class:"tnm"}, pid===P.pid ? "إنت 🙈" : name)))) : null;
+      body=[ h("div",{class:"ptop"},h("span",{class:"lbl"}, total>1?`سؤال ${idx+1} من ${total}`:""), clock()),
         cur[3] ? h("div",{class:"asbox"}, h("div",{class:"asav","aria-hidden":"true"},cur[3][1]), h("div",{}, h("small",{},"🎭 هالسؤال مش عنك! جاوب كأنك"), h("b",{},cur[3][0]))) : null,
-        h("p",{class:"disp pq"},cur[3]?cur[3][2]:cur[1]), area, cnt,
-        h("button",{class:"btn",onclick:()=>{const v=clean(area.value,MAXLEN); if(v){ P.sentA[cur[0]]=1; send({t:"ans",k:cur[0],x:v}); P.draft=""; playerRender(); }}},"ابعت الجواب") ];
+        h("p",{class:"disp pq"},cur[3]?cur[3][2]:cur[1]), tiles, area, cnt,
+        h("button",{class:"btn",disabled:seg1&&!chosen,onclick:()=>{const v=clean(area.value,MAXLEN); if(v && (!seg1||P.pick[cur[0]])){ P.sentA[cur[0]]=1; send({t:"ans",k:cur[0],x:v,who:P.pick[cur[0]]}); P.draft=""; playerRender(); }}}, seg1&&!chosen ? "اختار حدا أول 👆" : "ابعت") ];
     } else if (total) body=[h("p",{class:"big"},"وصلت أجوبتك ✓"),h("p",{class:"muted center"},"لا تفضح حالك بوجهك. استنى التصويت."), h("p",{class:"center"},clock())];
     else body=[h("p",{class:"big"},"استنّى شوي"),h("p",{class:"muted center"},"هالجولة ما إلك سؤال. الجولة الجاية إلك.")];
   }
   else if (st.ph==="vote"){
-    if (me.opt) body=[h("p",{class:"big"},"جوابك على الشاشة 🤞"),h("p",{class:"muted center"},"إنت والي ضدك ما بتصوّتوا بهالسؤال. الباقي بيقرروا."), h("p",{class:"center"},clock())];
+    if (me.opt) body=[h("p",{class:"big"},"جوابك على الشاشة 🤞"),h("p",{class:"muted center"},"اللي كتبوا بهالسؤال ما بيصوّتوا. الباقي بيقرروا."), h("p",{class:"center"},clock())];
     else if (voted) body=[h("p",{class:"big"},`صوّتت لـ ${voted} ✓`),h("p",{class:"muted center"},"استنى النتيجة…")];
     else {
-      const opt=(k,txt)=>h("button",{class:"vbtn",onclick:()=>{ P.sentV["v"+st.pt]=k; send({t:"vote",k:st.vk,c:k}); playerRender(); }},
-        h("b",{},k), h("span",{}, txt));
-      body=[ h("div",{class:"ptop"},h("span",{class:"lbl"},"مين الأضحك؟"),clock()), h("p",{class:"muted"},st.q), opt("A",st.A), opt("B",st.B) ];
+      const opt=([k,txt,acc])=>h("button",{class:"vbtn",onclick:()=>{ P.sentV["v"+st.pt]=k; send({t:"vote",k:st.vk,c:k}); playerRender(); }},
+        h("b",{},k), h("span",{}, acc ? h("small",{class:"vacc"},acc[1]," ",acc[0]) : null, txt));
+      body=[ h("div",{class:"ptop"},h("span",{class:"lbl"},""),clock()), h("p",{class:"muted"},st.q), ...(st.opts||[]).map(opt) ];
     }
   }
   else if (st.ph==="reveal"){
@@ -2430,7 +2897,7 @@ function playerRender(){
   else if (st.ph==="bestq"){
     const vkey="bq"+st.pt;
     if (voted) body=[h("p",{class:"big"},"وصل صوتك ✓"),h("p",{class:"muted center"},"استنى النتيجة…")];
-    else body=[ h("div",{class:"ptop"},h("span",{class:"lbl"},"أحلى سؤال؟"),clock()),
+    else body=[ h("div",{class:"ptop"},h("span",{class:"lbl"},""),clock()),
       ...st.qs.map(([id,q],i)=>h("button",{class:"vbtn",disabled:me.own===id,onclick:()=>{ P.sentV[vkey]=String(i+1); send({t:"bq",id}); playerRender(); }},
         h("b",{},i+1), h("span",{}, q, me.own===id ? h("small",{},"هاد سؤالك") : null))) ];
   }
@@ -2439,7 +2906,7 @@ function playerRender(){
     const btn=([ic,lb],fn)=>h("button",{class:"vbtn mbtn",onclick:fn},h("span",{class:"mic","aria-hidden":"true"},ic),h("span",{},lb));
     if (!mcur) body = mtot ? [h("p",{class:"big"},"وصل ✓"),h("p",{class:"muted center"},"بعدين الكل رح يحزر شو اخترت 🤫"),h("p",{class:"center"},clock())]
                            : [h("p",{class:"big"},"استنى شوي"),h("p",{class:"muted center"},"هالجولة ما إلك سؤال، بس رح تحزر عن الباقي 🔮")];
-    else body=[h("div",{class:"ptop"},h("span",{class:"lbl"}, mtot>1?`🤫 عن حالك · ${midx+1} من ${mtot}`:"🤫 جاوب عن حالك"),clock()),
+    else body=[h("div",{class:"ptop"},h("span",{class:"lbl"}, mtot>1?`${midx+1} من ${mtot}`:""),clock()),
       h("p",{class:"disp pq"},mcur[1]),
       ...["A","B"].map(k=>btn(k==="A"?mcur[2]:mcur[3],()=>{ P.ms[mcur[0]]=k; send({t:"ms",k:mcur[0],c:k}); P.sig=null; playerRender(); }))];
   }
@@ -2448,7 +2915,7 @@ function playerRender(){
     const btn=(k,[ic,lb])=>h("button",{class:"vbtn mbtn",onclick:()=>{ P.sentV[key]=k; send({t:"mq",k:st.mk,c:k}); playerRender(); }},h("span",{class:"mic","aria-hidden":"true"},ic),h("span",{},lb));
     if (me.sub) body=[h("p",{class:"big"},"🤫 هاد سؤالك!"),h("p",{class:"muted center"},"الكل عم يحزر شو اخترت. خلّي وجهك عادي 😐"),h("p",{class:"center"},clock())];
     else if (voted) body=[h("p",{class:"big"},"وصل ✓"),h("p",{class:"muted center"},`استنى نشوف شو اختار ${st.sn[0]}…`)];
-    else body=[h("div",{class:"ptop"},h("span",{class:"lbl"},`${st.sn[1]} ${st.sn[0]} شو اختار؟`),clock()), h("p",{class:"disp pq"},st.q), btn("A",st.a), btn("B",st.b)];
+    else body=[h("div",{class:"ptop"},h("span",{class:"lbl"},`${st.i+1} من ${st.n}`),clock()), h("p",{class:"disp pq"},st.q), btn("A",st.a), btn("B",st.b)];
   }
   else if (st.ph==="mr"){
     const mine=st.right?.some(r=>r[0]===P.pid);
@@ -2462,12 +2929,14 @@ function playerRender(){
     else if (me.role!=="t") body=[h("p",{class:"big"},"👀"),h("p",{class:"muted center"},`${st.tn[0]} عم يختار الجواب الأقرب إله. شوف الشاشة!`),h("p",{class:"center"},clock())];
     else if (voted) body=[h("p",{class:"big"},`اخترت ${voted} ✓`),h("p",{class:"muted center"},"استنى النتيجة…")];
     else {
-      const t=me.role==="t", opt=k=>h("button",{class:"vbtn",onclick:()=>{ P.sentV[key]=k; send({t:t?"jp":"jv",k:st.jk,c:k}); playerRender(); }},h("b",{},k),h("span",{},k==="A"?st.A:st.B));
-      body=[h("div",{class:"ptop"},h("span",{class:"lbl"}, t?"🎯 أي جواب بيشبهك أكثر؟":"😂 مين الأضحك؟"),clock()),
-        h("p",{class:"muted"}, t ? `كتبوا عنك: ${st.q}` : `عن ${st.tn[0]}: ${st.q}`), opt("A"), opt("B")];
+      const opt=([k,txt])=>h("button",{class:"vbtn",onclick:()=>{ P.sentV[key]=k; send({t:"jp",k:st.jk,c:k}); playerRender(); }},h("b",{},k),h("span",{},txt));
+      body=[h("div",{class:"ptop"},h("span",{class:"lbl"},""),clock()),
+        h("p",{class:"muted"}, `كتبوا عنك: ${st.q}`), ...(st.opts||[]).map(opt)];
     }
   }
   else if (st.ph==="jrev") body=[h("p",{class:"big"}, st.rv>=2 ? "شوف الشاشة! 👀" : "🥁")];
+  else if (st.ph==="stats") body=[h("p",{class:"big"},"📊 أرقام الليلة"), h("p",{class:"muted center"},"عيونكم عالشاشة 👀")];
+  else if (st.ph==="bestans") body=[h("p",{class:"big"},"⭐ أحلى جواب الليلة"), st.rv && st.who ? h("p",{class:"muted center"},`كاتبه ${st.who[1]} ${st.who[0]}`) : h("p",{class:"muted center"},"🥁")];
   else if (st.ph==="awards"){
     const a=st.list[st.rv], mine=a && st.shown && a.who.some(w=>w[0]===P.pid);
     body = mine ? [h("p",{class:"big"},"🏆 مبروك!"), h("p",{class:"big",style:"font-size:3rem"},a.icon), h("p",{class:"big"},`إنت ${a.title}!`), h("p",{class:"muted center"},a.why)]
@@ -2483,7 +2952,8 @@ function playerRender(){
     const sorted=[...(st.sc||[])].sort((a,b)=>b[3]-a[3]); const rank=sorted.findIndex(s=>s[0]===P.pid)+1;
     body=[h("p",{class:"big"}, st.ph==="final" ? (rank===1?["👑 إنت",h("br"),"ملك الضحك!"]:`خلصت! ترتيبك ${rank}`) : `ترتيبك ${rank||"-"} من ${sorted.length}`), board(sorted,P.pid)];
   }
-  app.replaceChildren(h("div",{class:"phone"}, top, h("main",{class:"pmain"},body)));
+  const [dlText,dlTone]=doLine(st,me,{cur,voted,wrote,mcur,mtot});
+  app.replaceChildren(h("div",{class:"phone"}, top, dlText ? h("div",{class:"doline "+dlTone, role:"status"}, dlText) : null, h("main",{class:"pmain"},body)));
   if (hadFocus) setTimeout(()=>{ const a=document.querySelector(".phone textarea"); if(a){ a.focus(); a.setSelectionRange(a.value.length,a.value.length); } },0);
 }
 
