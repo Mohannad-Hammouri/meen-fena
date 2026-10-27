@@ -1324,6 +1324,7 @@ const ls = { get(k){try{return localStorage.getItem(k)}catch{return null}}, set(
 async function wake(){ try{ await navigator.wakeLock?.request("screen"); }catch{} }
 const netOK = () => typeof window.Peer === "function";
 function joinUrl(code){ return location.href.split(/[?#]/)[0] + "?c=" + code; }
+const inFrame = () => { try { return window.self!==window.top; } catch { return true; } };   // e.g. the preview inside Claude
 const localOnly = () => location.protocol==="file:" || /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
 
 /* fresh prompts every game: remembered across games on the main screen */
@@ -2435,6 +2436,7 @@ function hostRender(){
                     : h("p",{class:"empty"}, H.net ? "صوّروا الكود وادخلوا 📱" : "ضيفوا بوتات من الإعدادات للتجربة"),
           h("button",{class:"btn big-btn",disabled:!can,onclick:startGame}, can?"يلّا نبلّش ▶":`بدنا ${3-on.length} كمان`),
           H.netMsg ? h("div",{class:"warn",role:"status"},H.netMsg) : null,
+          inFrame() ? h("div",{class:"warn"},"إنتو فاتحين اللعبة جوّا Claude، فالتلفونات ما رح تقدر تدخل. للعب الحقيقي افتحوها من رابطكم على GitHub Pages.") : null,
           H.net && localOnly() ? h("div",{class:"warn"},"الصفحة مفتوحة من localhost أو كملف، فالتلفونات ما رح توصل. افتحوها من رابط الشبكة أو الاستضافة.") : null)),
       h("details",{class:"settings"},
         h("summary",{},"⚙️ إعدادات"),
@@ -2676,6 +2678,9 @@ function playerJoin(code,name,av){
   ls.set("mf.last", JSON.stringify({code, at:Date.now()}));
   if (!netOK()) return joinForm("ما قدرنا نحمّل مكتبة الاتصال. تأكد إنك فاتح رابط اللعبة الأصلي ومعك إنترنت.", code);
   status("عم ندوّر على الغرفة…", `الكود ${code}`);
+  // never hang on "searching": after 15 s say what to check
+  clearTimeout(P.joinTimer);
+  P.joinTimer=setTimeout(()=>{ if (!P.found && !P.kicked) joinForm("الاتصال ما زبط. تأكد إنك فاتح نفس رابط اللعبة اللي على الشاشة (مش رابط Claude)، وإنه معك إنترنت، وجرّب كمان مرة.", code); }, 15000);
   try { P.peer?.destroy(); } catch {}
   P.peer=new Peer();
   P.peer.on("open", connectHost);
@@ -2689,7 +2694,7 @@ function playerJoin(code,name,av){
 function connectHost(){
   const conn=P.peer.connect(NS+P.code,{reliable:true,serialization:"json"});
   P.conn=conn;
-  conn.on("open", ()=>{ P.found=true; conn.send({t:"hello",pid:P.pid,name:P.name,av:P.av}); flush(); });
+  conn.on("open", ()=>{ P.found=true; clearTimeout(P.joinTimer); conn.send({t:"hello",pid:P.pid,name:P.name,av:P.av}); flush(); });
   conn.on("data", d=>{
     if (P.conn!==conn) return;                      // messages for an older link of this same phone
     if (d && d.t==="replaced"){ P.kicked=true; clearTimeout(P.retry); P.retry=null; replacedScreen(); return; }
