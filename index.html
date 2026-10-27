@@ -152,6 +152,10 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 .answers.n3 .bar,.answers.n4 .bar{margin-top:10px}
 .answers.n3 .vn,.answers.n4 .vn{font-size:.95rem;margin-top:2px}
 @media (max-width:900px){.answers.n3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.pk .pkn{font-family:var(--display);font-weight:800;white-space:nowrap}
+.pk .pkn .avi{width:1.25em;height:1.25em;vertical-align:-.25em}
+.vbtn .pk .pkn{color:inherit;font-size:inherit;font-family:var(--display);line-height:inherit}
+.pk .pkself{font-size:.7em;color:#4a6290;font-weight:700}
 .ans .acc{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 8px;margin:0 0 8px;font-family:var(--display);font-size:.78em;color:var(--skydeep);line-height:1.2}
 .ans .acc .avi{width:1.7em;height:1.7em}
 .ans .acc small{flex-basis:100%;font-size:.62em;color:#4a6290;font-family:var(--body)}
@@ -270,12 +274,23 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 .stage{font-size:1.2rem}
 .title{font-size:clamp(3rem,8vw,5.5rem);color:var(--sun);margin:0;text-shadow:0 5px 0 var(--ink)}
 .lcol{display:flex;flex-direction:column;gap:20px;align-items:center;min-width:0}
+.lpanel{padding:18px 22px 24px;border-radius:26px;background:rgba(255,255,255,.04);border:1.5px solid var(--line)}
+.lhead{display:flex;align-items:center;justify-content:space-between;width:100%;font-family:var(--display);font-weight:800;font-size:1.3rem;color:var(--cream)}
+.lcount{min-width:2.2em;padding:0 12px;border-radius:999px;background:var(--sun);color:var(--ink);text-align:center;font-variant-numeric:tabular-nums}
+.who.ghost .av{border-style:dashed;background:transparent;opacity:.55;font-family:var(--display);color:var(--muted);font-size:2rem}
+.who.ghost .nm{opacity:.35}
+.lobby .lobbyp .who.ghost .av{animation:none}
+.title .tsub{display:block;font-family:var(--body);font-size:clamp(1rem,1.8vw,1.3rem);font-weight:600;color:var(--muted);text-shadow:none;margin-top:4px;letter-spacing:0}
+.joinbox .jhead{font-family:var(--display);font-weight:800;color:var(--skydeep);font-size:1.1rem}
+.big-btn:not(:disabled){box-shadow:0 5px 0 var(--skydeep),0 0 0 7px rgba(140,200,255,.14)}
 .big-btn{font-size:1.5rem;padding:18px 40px;border-radius:20px}
 .empty{font-size:1.4rem;color:var(--muted);margin:0}
 .ibtn{width:48px;height:48px;border-radius:50%;border:2px solid var(--line);background:transparent;color:var(--cream);font-size:1.3rem;display:grid;place-items:center;cursor:pointer}
 .ibtn:hover{background:var(--panel)}
 details.settings{width:min(560px,100%);border:1.5px solid var(--line);border-radius:18px;padding:12px 16px;background:rgba(255,255,255,.03)}
-details.settings summary{cursor:pointer;font-weight:700;color:var(--muted);text-align:center;list-style-position:inside;padding:4px 0}
+details.settings summary{cursor:pointer;font-weight:700;color:var(--muted);text-align:center;list-style:none;padding:4px 0}
+details.settings summary::-webkit-details-marker{display:none}
+details.settings summary::marker{content:""}
 details.settings[open]{display:flex;flex-direction:column;gap:18px}
 details.settings[open] summary{color:var(--cream)}
 .sgroup{display:flex;flex-direction:column;gap:10px;text-align:start;padding:14px 0;border-top:1px solid var(--line)}
@@ -285,6 +300,7 @@ details.settings[open] summary{color:var(--cream)}
 .stitle small{color:var(--muted);font-size:.85rem}
 .chips.nums{display:flex;gap:10px;flex-wrap:wrap}
 .chips.nums .chip{width:48px;height:48px;justify-content:center;padding:0;font-size:1.1rem}
+@media (max-width:480px){.chips.nums{gap:5px}.chips.nums .chip{width:34px;height:34px;font-size:1rem}}
 .segopts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .segopt{display:flex;align-items:center;gap:8px;min-width:0;min-height:52px;padding:10px 12px;border-radius:14px;border:1.5px solid var(--line);background:transparent;color:var(--muted);font-family:inherit;font-weight:700;font-size:.95rem;cursor:pointer;text-align:start}
 .segopt .scn{flex:1;min-width:0;line-height:1.3}
@@ -1262,7 +1278,7 @@ function textWithAvatars(str){
 }
 /* the same avatar with a mood (emoji avatars just stay as they are) */
 const moodAv = (av, mood) => mood && /^⟦c\d+⟧$/.test(av||"") ? av.replace("⟧","~"+mood+"⟧") : av;
-const BOTS = [["بوت أبو صالح","🤖"],["بوت أم ناصر","👾"],["بوت المدير","🦾"],["بوت الجار","📟"]];
+const BOTS = [["بوت أبو صالح","🤖"],["بوت أم ناصر","👾"],["بوت المدير","🦾"],["بوت الجار","📟"],["بوت السوّاق","🚕"],["بوت الحلّاق","💈"],["بوت الخالة","📻"]];
 const T_ANSWER = 60, T_VOTE = 45, T_WRITE = 120, MAXLEN = 90, QLEN = 120, NS = "mnfn-v3-";
 const MULT = {1:100, 2:100, 4:200}, BESTQ_PTS = 200, T_GUESS = 30, WHO_RIGHT = 100, WHO_FOOL = 50, T_INTRO = 40, T_MQ = 15, T_JVOTE = 30, M_RIGHT = 200, J_PICK = 300, J_VOTE = 100;
 const ORDER = [7, 1, 3, 2, 8, 4];                 // play order: warm up with no writing, and the two "write & vote" segments never back to back
@@ -2377,7 +2393,8 @@ function qrBox(size=170){
   const keep=H.code+"."+size, ex=document.querySelector(`.joinbox[data-keep="${keep}"]`);
   if (ex) return ex.cloneNode(true);          // same code: reuse the drawn QR instead of drawing it again
   const url=joinUrl(H.code);
-  const box=h("div",{class:"joinbox","data-keep":H.code+"."+size}, h("div",{class:"qr"}), h("span",{class:"jtip"},"📷 صوّروا الكود"), h("span",{class:"jtip small"},"أو ادخلوا الرقم ",h("b",{},H.code)));
+  const box=h("div",{class:"joinbox","data-keep":H.code+"."+size}, h("span",{class:"jhead"},"📱 ادخلوا من تلفوناتكم"), h("div",{class:"qr"}),
+    h("span",{class:"jtip small"},"صوّروا الكود، أو اكتبوا الرقم:"), h("span",{class:"code2"},H.code));
   if (window.QRCode){ try{ new QRCode(box.querySelector(".qr"),{text:url,width:size,height:size,colorDark:"#0f1f3b",colorLight:"#f5f9ff",correctLevel:QRCode.CorrectLevel.M}); }catch{} }
   else box.querySelector(".qr").append(h("span",{class:"small"},"ما قدرنا نرسم الـQR. افتحوا الرابط واكتبوا الكود."));
   return box;
@@ -2388,6 +2405,11 @@ function showQR(){
   document.body.append(ov);
 }
 /* «مين فينا؟»: who the answer is about, on top of the card */
+/* «مين فينا؟»: one sentence, same colour: "⟦face⟧ سارة، بتروح تجيب ماي وبترجع بعد ساعة" */
+function pickText(acc, txt){
+  if (!acc) return txt;
+  return h("span",{class:"pk"}, h("b",{class:"pkn"}, acc[1]," ",acc[0]), acc[2] ? h("span",{class:"pkself"}," (اختار حاله 😂)") : null, "، ", txt);
+}
 function accLine(acc){ return acc ? h("div",{class:"acc"}, h("span",{},"اختار"), h("span",{"aria-hidden":"true"},acc[1]), h("b",{},acc[0]), acc[2] ? h("small",{},"اعترف على حاله 😂") : null) : null; }
 function waitingFor(list){ return null; }   // names are hidden, the count next to the timer is enough
 function waitingForNames(list){
@@ -2427,13 +2449,15 @@ function hostRender(){
   if (st.ph==="lobby"){
     const can=on.length>=3, real=on.filter(p=>!p.bot);
     body=[
-      h("h1",{class:"disp title"},"مين فينا؟"),
+      h("h1",{class:"disp title"},"مين فينا؟", h("small",{class:"tsub"},"لعبة ضحك للعيلة والصحاب")),
       h("div",{class:"lobby"},
         qrBox(),
-        h("div",{class:"lcol"},
+        h("div",{class:"lcol lpanel"},
+          h("div",{class:"lhead"}, h("span",{},"👥 اللاعبين"), h("span",{class:"lcount"}, on.length)),
           H.toast ? h("div",{class:"toast",role:"status"}, H.toast.text) : null,
-          on.length ? h("div",{class:"lobbyp"}, on.map(p=>avatar(p.av,p.name,true,null,p.pid)))
-                    : h("p",{class:"empty"}, H.net ? "صوّروا الكود وادخلوا 📱" : "ضيفوا بوتات من الإعدادات للتجربة"),
+          h("div",{class:"lobbyp"}, on.map(p=>avatar(p.av,p.name,true,null,p.pid)),
+            Array.from({length:Math.max(0,3-on.length)},()=>h("div",{class:"who ghost","aria-hidden":"true"}, h("div",{class:"av"},"؟"), h("div",{class:"nm"},"…")))),
+          on.length ? null : h("p",{class:"empty"}, H.net ? "صوّروا الكود وادخلوا 📱" : "ضيفوا بوتات من الإعدادات للتجربة"),
           h("button",{class:"btn big-btn",disabled:!can,onclick:startGame}, can?"يلّا نبلّش ▶":`بدنا ${3-on.length} كمان`),
           H.netMsg ? h("div",{class:"warn",role:"status"},H.netMsg) : null,
           inFrame() ? h("div",{class:"warn"},"إنتو فاتحين اللعبة جوّا Claude، فالتلفونات ما رح تقدر تدخل. للعب الحقيقي افتحوها من رابطكم على GitHub Pages.") : null,
@@ -2456,7 +2480,7 @@ function hostRender(){
         h("div",{class:"sgroup"},
           h("div",{class:"stitle"}, h("span",{},"🤖 بوتات للتجربة"), h("small",{},"لاعبين وهميين")),
           h("div",{class:"chips nums"},
-            ...[0,1,2,3,4].map(n=>h("button",{class:"chip","aria-pressed":String(H.settings.bots===n),onclick:()=>{H.settings.bots=n;syncBots();Music.play("boing");H.keepSettings=true;hostRender();}},n)))))
+            ...[0,1,2,3,4,5,6,7].map(n=>h("button",{class:"chip","aria-pressed":String(H.settings.bots===n),onclick:()=>{H.settings.bots=n;syncBots();Music.play("boing");H.keepSettings=true;hostRender();}},n)))))
     ];
   } else if (st.ph==="seg"){
     const s=SEGS[st.seg];
@@ -2484,7 +2508,7 @@ function hostRender(){
   } else if (st.ph==="vote"){
     body=[
       h("h2",{class:"disp qcard qsm"}, st.q),
-      h("div",{class:"answers n"+st.opts.length}, st.opts.map(([k,txt,acc])=>h("div",{class:"ans"}, h("span",{class:"tag"},k), accLine(acc), txt))),
+      h("div",{class:"answers n"+st.opts.length}, st.opts.map(([k,txt,acc])=>h("div",{class:"ans"}, h("span",{class:"tag"},k), pickText(acc,txt)))),
       h("div",{class:"duel"}, timerEl(st.t,st.T), h("span",{class:"kind"},`صوّتوا · ${st.vc||0}/${st.vt||0}`)),
       waitingFor(on.filter(p=>!H.own[p.pid] && !H.votes[p.pid]))
     ];
@@ -2508,7 +2532,7 @@ function hostRender(){
       rev ? h("div",{class:"lineup"+(st.rv?"":" scan")}, st.tally.map(([pid,name,av,n],i)=>{ const caught=st.rv&&pid===r.author[0];
               const mood = !st.rv ? "nervous" : caught ? (r.right>=r.fooled?"sad":"cool") : null;
               return h("div",{class:"sus"+(caught?" caught":st.rv?" off":""),style:`--i:${i}`},
-                h("span",{class:"accn"}, n?`👉 ${n}`:""), h("div",{class:"av","aria-hidden":"true"},moodAv(av,mood)), h("div",{class:"nm"},name)); }))
+                h("span",{class:"accn"}, n?`${n} 👇`:""), h("div",{class:"av","aria-hidden":"true"},moodAv(av,mood)), h("div",{class:"nm"},name)); }))
           : null,
       rev && st.rv ? h("p",{class:"banner"}, r.right?`${r.right} خمّنوها صح (+${WHO_RIGHT} لكل واحد)`:"ولا حدا عرفه! 🕵️", r.fooled?` · ${r.author[1]} ضلّل ${r.fooled} (+${r.pts})`:"") : null,
       rev ? null : h("div",{class:"duel"}, timerEl(st.t,st.T), h("span",{class:"kind"},`خمّنوا · ${st.vc||0}/${st.vt||0}`)),
@@ -2518,13 +2542,13 @@ function hostRender(){
     const r=st.res;
     if (r.skip) body=[h("h2",{class:"disp qcard qsm"},st.q), h("p",{class:"banner"},"ولا حدا جاوب 😶"), h("p",{class:"muted"},"ولا نقطة لهالسؤال.")];
     else if (r.solo) body=[h("h2",{class:"disp qcard qsm"},st.q),
-      h("div",{class:"answers",style:"grid-template-columns:minmax(0,1fr);width:min(640px,100%)"}, h("div",{class:"ans win"}, accLine(r.acc), r.text, h("div",{class:"owner hop"},moodAv(r.av,"win")," ",r.name," ",h("span",{class:"pts"},"+"+r.pts)))),
+      h("div",{class:"answers",style:"grid-template-columns:minmax(0,1fr);width:min(640px,100%)"}, h("div",{class:"ans win"}, pickText(r.acc, r.text), h("div",{class:"owner hop"},moodAv(r.av,"win")," ",r.name," ",h("span",{class:"pts"},"+"+r.pts)))),
       h("p",{class:"muted"},"الباقي ما لحقوا يكتبوا ⏰")];
     else {
       const tot=Math.max(1,r.total);
       const card=([k,txt,acc])=>{ const won=r.winners.includes(k), mood=st.rv>=2&&r.total ? (won?"win":"sad") : null;
         return h("div",{class:"ans"+(st.rv>=1&&r.total?(won?" win":" lose"):"")},
-          h("span",{class:"tag"},k), accLine(acc), txt,
+          h("span",{class:"tag"},k), pickText(acc,txt),
           h("div",{class:"bar"+(st.rv===0?" anim":"")},h("i",{style:`width:${r.cnt[k]/tot*100}%`})),
           h("div",{class:"vn"},votesTxt(r.cnt[k])),
           st.rv>=2 && r.who ? h("div",{class:"owner"+(mood==="win"?" hop":"")}, moodAv(r.who[k][1],mood)," ",r.who[k][0]," ", h("span",{class:"pts"},"+"+r.pts[k])) : null); };
@@ -2605,7 +2629,7 @@ function hostRender(){
     body=[h("p",{class:"banner"},"⭐ أحلى جواب الليلة"),
       h("h2",{class:"disp qcard qsm"}, st.q),
       h("div",{class:"answers",style:"grid-template-columns:minmax(0,1fr);width:min(720px,100%)"},
-        h("div",{class:"ans"+(st.rv?" win":"")}, accLine(st.acc), st.text, h("div",{class:"vn"},votesTxt(st.votes)),
+        h("div",{class:"ans"+(st.rv?" win":"")}, pickText(st.acc, st.text), h("div",{class:"vn"},votesTxt(st.votes)),
           st.rv ? h("div",{class:"owner hop"}, moodAv(st.who[1],"win")," ",st.who[0]) : null)),
       st.rv ? null : h("p",{class:"kind"},"مين كاتبه؟ 🥁")];
   } else if (st.ph==="awards"){
@@ -2886,7 +2910,7 @@ function playerRender(){
     else if (voted) body=[h("p",{class:"big"},`صوّتت لـ ${voted} ✓`),h("p",{class:"muted center"},"استنى النتيجة…")];
     else {
       const opt=([k,txt,acc])=>h("button",{class:"vbtn",onclick:()=>{ P.sentV["v"+st.pt]=k; send({t:"vote",k:st.vk,c:k}); playerRender(); }},
-        h("b",{},k), h("span",{}, acc ? h("small",{class:"vacc"},acc[1]," ",acc[0]) : null, txt));
+        h("b",{},k), h("span",{}, pickText(acc, txt)));
       body=[ h("div",{class:"ptop"},h("span",{class:"lbl"},""),clock()), h("p",{class:"muted"},st.q), ...(st.opts||[]).map(opt) ];
     }
   }
