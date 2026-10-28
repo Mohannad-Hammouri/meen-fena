@@ -196,7 +196,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 .settings{display:flex;flex-direction:column;gap:12px;align-items:center}
 .settings .row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center}
 .board{width:min(640px,100%);display:flex;flex-direction:column;gap:10px}
-@media (min-width:900px){.stage .board.many{display:grid;grid-template-columns:1fr 1fr;width:min(1100px,100%)}}
+@media (min-width:900px){.stage .board.many{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(var(--rows),auto);grid-auto-flow:column;column-gap:18px;width:min(1100px,100%)}}
 .rowp{display:grid;grid-template-columns:44px 56px minmax(0,1fr) auto;align-items:center;gap:12px;background:var(--panel);border-radius:16px;padding:10px 16px;text-align:start}
 .rowp .r{font-family:var(--display);font-weight:800;font-size:1.5rem;color:var(--muted)}
 .rowp .av{width:50px;height:50px;font-size:1.8rem;border-width:2px}
@@ -2347,7 +2347,7 @@ function awardsScreen(){
 }
 function podiumScreen(){
   const ranked=sc().sort((a,b)=>b[3]-a[3]), top=ranked.slice(0,3);
-  Music.setMood("lobby"); Music.duck(true);
+  Music.setMood("lobby");
   setPhase({ph:"podium", rv:0, top});
   Music.play("roll",2.6);
   const step=(rv,fx)=>{ H.st.rv=rv; if(fx) Music.play(fx); push(); hostRender(); };
@@ -2356,7 +2356,7 @@ function podiumScreen(){
   at(t,()=>step(2,"tada")); t+=4800;
   at(t,()=>{ step(3); Music.play("roll",3); }); t+=3400;
   at(t,()=>{ step(4,"applause"); confetti(); }); t+=7500;
-  at(t,()=>{ Music.duck(false); setPhase({ph:"final", top}); confetti(); });
+  at(t,()=>{ setPhase({ph:"final", top}); confetti(); });
 }
 function kingLine(p){ return p ? [h("span",{class:"kl"},`👑 ${p[2]} ${p[1]}`), h("span",{class:"kl"},"ملك الضحك!")] : "خلصت اللعبة"; }
 function podium(top, rv, animate){
@@ -2386,7 +2386,8 @@ function timerEl(t,T){ const el=h("div",{class:"timer"+(t<=5?" hot":""),role:"ti
 function board(list, myPid){
   const sorted=[...list].sort((a,b)=>b[3]-a[3]);
   // on a phone the yellow row is "you"; on the main screen it is first place
-  return h("div",{class:"board"+(!myPid && sorted.length>6?" many":"")}, sorted.map((p,i)=>h("div",{class:"rowp"+((myPid ? p[0]===myPid : i===0&&p[3]>0)?" first":"")+(p[4]?"":" off")},
+  const many=!myPid && sorted.length>6;
+  return h("div",{class:"board"+(many?" many":""), style: many ? `--rows:${Math.ceil(sorted.length/2)}` : null}, sorted.map((p,i)=>h("div",{class:"rowp"+((myPid ? p[0]===myPid : i===0&&p[3]>0)?" first":"")+(p[4]?"":" off")},
     h("span",{class:"r"}, i===0&&p[3]>0&&myPid ? "👑" : i+1), h("div",{class:"av","aria-hidden":"true"},p[2]), h("span",{class:"nm"},p[1]+(p[0]===myPid?" (إنت)":"")), h("span",{class:"sc"},p[3].toLocaleString("en")))));
 }
 function qrBox(size=170){
