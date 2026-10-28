@@ -196,11 +196,24 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 .settings{display:flex;flex-direction:column;gap:12px;align-items:center}
 .settings .row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center}
 .board{width:min(640px,100%);display:flex;flex-direction:column;gap:10px}
-@media (min-width:900px){.stage .board.many{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(var(--rows),auto);grid-auto-flow:column;column-gap:18px;width:min(1100px,100%)}}
+.board.many{gap:6px;width:min(720px,100%)}
+.board.many .rowp{padding:5px 16px}
+.board.many .rowp .av{width:40px;height:40px;font-size:1.4rem}
+.board.many .rowp .r,.board.many .rowp .sc{font-size:1.25rem}
+.rowp .nm{display:flex;align-items:center;gap:10px;min-width:0}
+.rowp .nmt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.rowp .rtag{flex:none;padding:2px 10px;border-radius:999px;background:rgba(255,255,255,.1);color:var(--sun);font-size:.85rem;font-weight:700;white-space:nowrap}
+.rowp.first .rtag{background:rgba(15,31,59,.12);color:var(--ink)}
+.phone .rowp .nm{flex-direction:column;align-items:flex-start;gap:2px}
+.phone .rowp .rtag{font-size:.75rem;padding:1px 8px}
+.scorehead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:center;gap:6px 18px}
+.scorehead .sh1{font-family:var(--display);font-weight:800;font-size:clamp(1.5rem,3vw,2.2rem);color:var(--sun)}
+.scorehead .sh2{font-family:var(--display);font-weight:700;font-size:clamp(1.05rem,2vw,1.4rem);color:var(--mint)}
+.scorehead .avi{width:1.3em;height:1.3em}
 .rowp{display:grid;grid-template-columns:44px 56px minmax(0,1fr) auto;align-items:center;gap:12px;background:var(--panel);border-radius:16px;padding:10px 16px;text-align:start}
 .rowp .r{font-family:var(--display);font-weight:800;font-size:1.5rem;color:var(--muted)}
 .rowp .av{width:50px;height:50px;font-size:1.8rem;border-width:2px}
-.rowp .nm{font-weight:700;font-size:1.1rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rowp .nm{font-weight:700;font-size:1.1rem}
 .rowp .sc{font-family:var(--display);font-weight:800;font-size:1.5rem;color:var(--sun);font-variant-numeric:tabular-nums}
 .rowp.first{background:var(--sun);color:var(--ink)}
 .rowp.first .sc,.rowp.first .r{color:var(--ink)}
@@ -2048,18 +2061,16 @@ function scoreScreen(seg, then){
 }
 function standingsLines(){
   const ranked=sc().sort((a,b)=>b[3]-a[3]), now={}; ranked.forEach((p,i)=>now[p[0]]=i+1);
-  const prev=H.ranks||{}, first=!Object.keys(prev).length, out=[]; H.ranks=now;
+  const prev=H.ranks||{}, first=!Object.keys(prev).length, out={}; H.ranks=now;
   if (ranked.length<2 || ranked[0][3]<=0) return out;
-  const nm=p=>`${p[2]} ${p[1]}`, lead=ranked[0];
-  if (first) out.push(`${nm(lead)} ${pick(["أول المتصدّرين 🥇","فاتح عالكل 🥇"])}`);
-  else if (prev[lead[0]]===1) out.push(`${nm(lead)} ${pick(["متربّع عالقمة 👑","ما حدا قادر عليه 😎","مكيّف فوق 👑"])}`);
-  else out.push(`${nm(lead)} ${pick(["خطف المركز الأول! ⚡","قعد عالكرسي الأول 👑"])}`);
+  const lead=ranked[0];
+  out[lead[0]] = first ? pick(["🥇 أول المتصدّرين","🥇 فاتح عالكل"]) : prev[lead[0]]===1 ? pick(["👑 متربّع عالقمة","😎 ما حدا قادر عليه"]) : pick(["⚡ خطف المركز الأول","👑 قعد عالكرسي الأول"]);
   const moves=ranked.filter(p=>prev[p[0]] && p[0]!==lead[0]).map(p=>[p, prev[p[0]]-now[p[0]]]);
   const up=moves.filter(m=>m[1]>0).sort((a,b)=>b[1]-a[1])[0], down=moves.filter(m=>m[1]<0).sort((a,b)=>a[1]-b[1])[0];
-  if (up) out.push(`${nm(up[0])} ${up[1]>=2 ? `طالع صاروخ 🚀 (+${up[1]} مراكز)` : pick(["طالع صاروخ 🚀","ولّع! 🔥","مين وقّفه؟ 💨"])}`);
-  else if (down) out.push(`${nm(down[0])} ${pick(["نازل نازل 📉","وقع عن الدرج 🪜","بدّه فزعة 🆘"])}`);
-  else if (ranked.length>=3) out.push(`${nm(ranked.at(-1))} ${pick(["لسا بيسخّن 🐢","بيلعب على مهله 🫖"])}`);
-  return out.slice(0,2);
+  if (up) out[up[0][0]] = up[1]>=2 ? `🚀 طالع صاروخ +${up[1]}` : pick(["🚀 طالع صاروخ","🔥 ولّع"]);
+  if (down && !out[down[0][0]]) out[down[0][0]] = pick(["📉 نازل نازل","🪜 وقع عن الدرج","🆘 بدّه فزعة"]);
+  const last=ranked.at(-1); if (ranked.length>=3 && !out[last[0]]) out[last[0]] = pick(["🐢 لسا بيسخّن","🫖 على مهله"]);
+  return out;
 }
 function accusedTitle(){
   const best=Object.entries(H.stats?.accused||{}).filter(([pid])=>H.P.get(pid)).sort((a,b)=>b[1]-a[1])[0];
@@ -2383,12 +2394,13 @@ const seenAv=new Set();
 function avatar(av,name,ok,badge,pid){ const fresh=pid&&!seenAv.has(pid); if(pid) seenAv.add(pid);
   return h("div",{class:"who"+(ok?" ok":"")+(fresh?" new":"")}, badge?h("span",{class:"tick"},badge):null, h("div",{class:"av","aria-hidden":"true"},av), h("div",{class:"nm"},name)); }
 function timerEl(t,T){ const el=h("div",{class:"timer"+(t<=5?" hot":""),role:"timer","aria-label":t+" ثانية"},h("span",{},t)); el.style.setProperty("--p",T?t/T:0); return el; }
-function board(list, myPid){
-  const sorted=[...list].sort((a,b)=>b[3]-a[3]);
-  // on a phone the yellow row is "you"; on the main screen it is first place
-  const many=!myPid && sorted.length>6;
-  return h("div",{class:"board"+(many?" many":""), style: many ? `--rows:${Math.ceil(sorted.length/2)}` : null}, sorted.map((p,i)=>h("div",{class:"rowp"+((myPid ? p[0]===myPid : i===0&&p[3]>0)?" first":"")+(p[4]?"":" off")},
-    h("span",{class:"r"}, i===0&&p[3]>0&&myPid ? "👑" : i+1), h("div",{class:"av","aria-hidden":"true"},p[2]), h("span",{class:"nm"},p[1]+(p[0]===myPid?" (إنت)":"")), h("span",{class:"sc"},p[3].toLocaleString("en")))));
+function board(list, myPid, tags){
+  const sorted=[...list].sort((a,b)=>b[3]-a[3]), tg=tags||{};
+  // on a phone the yellow row is "you"; on the main screen it is first place. lots of players: slimmer rows, still one column
+  return h("div",{class:"board"+(sorted.length>6?" many":"")}, sorted.map((p,i)=>h("div",{class:"rowp"+((myPid ? p[0]===myPid : i===0&&p[3]>0)?" first":"")+(p[4]?"":" off")},
+    h("span",{class:"r"}, i===0&&p[3]>0&&myPid ? "👑" : i+1), h("div",{class:"av","aria-hidden":"true"},p[2]),
+    h("span",{class:"nm"}, h("span",{class:"nmt"},p[1]+(p[0]===myPid?" (إنت)":"")), tg[p[0]] ? h("span",{class:"rtag"},tg[p[0]]) : null),
+    h("span",{class:"sc"},p[3].toLocaleString("en")))));
 }
 function qrBox(size=170){
   const keep=H.code+"."+size, ex=document.querySelector(`.joinbox[data-keep="${keep}"]`);
@@ -2564,10 +2576,8 @@ function hostRender(){
       ];
     }
   } else if (st.ph==="score"){
-    body=[h("p",{class:"banner"}, st.seg===4?"نتيجة فقرة التعويض":"الترتيب لهلّأ"),
-      st.ttl ? h("p",{class:"kind same"}, st.ttl) : null,
-      board(sc()),
-      (st.cm||[]).length ? h("div",{class:"cm"}, st.cm.map(l=>h("span",{class:"cmline"},l))) : null];
+    body=[h("div",{class:"scorehead"}, h("span",{class:"sh1"}, st.seg===4?"🏆 نتيجة فقرة التعويض":"🏆 الترتيب لهلّأ"), st.ttl ? h("span",{class:"sh2"}, st.ttl) : null),
+      board(sc(), null, st.cm)];
   } else if (st.ph==="bestq"){
     body=[
       h("h2",{class:"disp qcard"},"أحلى سؤال؟ 👑"),
@@ -2980,7 +2990,7 @@ function playerRender(){
   }
   else if (st.ph==="score"||st.ph==="final"){
     const sorted=[...(st.sc||[])].sort((a,b)=>b[3]-a[3]); const rank=sorted.findIndex(s=>s[0]===P.pid)+1;
-    body=[h("p",{class:"big"}, st.ph==="final" ? (rank===1?["👑 إنت",h("br"),"ملك الضحك!"]:`خلصت! ترتيبك ${rank}`) : `ترتيبك ${rank||"-"} من ${sorted.length}`), board(sorted,P.pid)];
+    body=[h("p",{class:"big"}, st.ph==="final" ? (rank===1?["👑 إنت",h("br"),"ملك الضحك!"]:`خلصت! ترتيبك ${rank}`) : `ترتيبك ${rank||"-"} من ${sorted.length}`), board(sorted,P.pid,st.cm)];
   }
   const [dlText,dlTone]=doLine(st,me,{cur,voted,wrote,mcur,mtot});
   app.replaceChildren(h("div",{class:"phone"}, top, dlText ? h("div",{class:"doline "+dlTone, role:"status"}, dlText) : null, h("main",{class:"pmain"},body)));
